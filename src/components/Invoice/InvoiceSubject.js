@@ -60,6 +60,12 @@ export class InvoiceSubject extends Component {
           {subject.billingBankAccountIban && `${labels.billingBankAccountIban} ${subject.billingBankAccountIban}`}
           {subject.billingBankAccountIban && <br/>}
         </p>}
+        {!editMode && <p>
+          {subject.billingBankAccountNo && `${labels.billingBankAccountNo} ${subject.billingBankAccountNo}`}
+          {subject.billingBankAccountNo && <br/>}
+          {subject.billingBankAccountSortCode && `${labels.billingBankAccountSortCode} ${subject.billingBankAccountSortCode}`}
+          {subject.billingBankAccountSortCode && <br/>}
+        </p>}
 
         {editMode && <form>
           <input type="text" placeholder={labels.billingBankAccountBic} name="billingBankAccountBic" className="Half-size" value={subject.billingBankAccountBic} onChange={this.handleChange} /><br />

@@ -71,11 +71,36 @@ export class Invoice extends Component {
         const savedInvoiceState = JSON.parse(localStorage.getItem('savedInvoiceState'))
         if (savedInvoiceState.provider) {
           this.state = savedInvoiceState
-          document.title = `${savedInvoiceState.invoiceMeta.invoiceSeries}${savedInvoiceState.invoiceMeta.invoiceNo}`
+          document.title = this.constructTitle(savedInvoiceState)
         }
       } catch (err) {
         console.log('No previously saved invoice in browser local storage')
       }
+    }
+  }
+
+  getInvoiceTotalPayable = ({invoiceEntries, invoiceMeta}) => {
+    const total = invoiceEntries.reduce((grandTotal, entry) => {
+      return grandTotal + parseFloat(entry.total)
+    }, 0)
+
+    const multiplier = this.getVatMultiplier(invoiceMeta.vatRate)
+
+    return total * multiplier
+  }
+
+  constructTitle = (savedInvoiceState = {}) => {
+    try {
+      const invoiceDateISO = String(savedInvoiceState.invoiceMeta.invoiceDate).split('/').reverse().join('_')
+      const invoiceCurrency = savedInvoiceState.invoiceMeta.currency
+      const invoiceCurrencyISO = invoiceCurrency === '£' ? 'GBP' : invoiceCurrency === '€' ? 'EUR' : invoiceCurrency
+      const invoiceTotal = Number(this.getInvoiceTotalPayable(savedInvoiceState)).toFixed(2);
+      const vatInclusive = Number(savedInvoiceState.invoiceMeta.vatRate) > 0 ? ' VAT incl. ' : ' NON-VAT '
+      const nameOnFile = `${savedInvoiceState.customer.companyName}, ${savedInvoiceState.customer.name}`
+
+      return `${invoiceDateISO} - ${savedInvoiceState.invoiceMeta.invoiceSeries}${savedInvoiceState.invoiceMeta.invoiceNo} - ${invoiceCurrencyISO}${invoiceTotal}${vatInclusive} - (PENDING) - ${nameOnFile}`
+    } catch (error) {
+      return '- INVOICE INFORMATION INCOMPLETE -';
     }
   }
 
@@ -97,7 +122,7 @@ export class Invoice extends Component {
           editMode: false
         }
         localStorage.setItem('savedInvoiceState', JSON.stringify(saveState))
-        document.title = `${saveState.invoiceMeta.invoiceSeries}${saveState.invoiceMeta.invoiceNo}`
+        document.title = this.constructTitle(saveState)
       } catch (err) {
         console.log('Could not save invoice state to browser local storage')
       }
