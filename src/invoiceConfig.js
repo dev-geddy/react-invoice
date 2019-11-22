@@ -1,6 +1,8 @@
-import invoiceConfig from '../../invoiceConfig';
+/*
+* YOUR DEFAULT INVOICE INFO TO BE CONFIGURED HERE
+* */
 
-export const defaultState = {
+export default {
   editMode: false,
   lang: 'en',
   history: [],
@@ -18,7 +20,6 @@ export const defaultState = {
     billingBankAccountBic: 'Bic',
     billingBankAccountNo: 'Account no.',
     billingBankAccountSortCode: 'Sort code',
-    ...invoiceConfig.provider
   },
   customer: {
     companyName: 'CompanyName Ltd',
@@ -30,29 +31,24 @@ export const defaultState = {
     addressLine4: 'Country',
     companyRegNo: '10203040',
     companyVatNo: '100200300',
-    ...invoiceConfig.customer
   },
   invoiceMeta: {
     invoiceDate: '05/11/2017',
-    invoiceSeries: 'EXP-',
+    invoiceSeries: 'SERIES-',
     invoiceNo: '10001',
     currency: '£',
     brandName: 'Company',
     brandSubName: 'Name',
     vatRate: '20',
-    ...invoiceConfig.invoiceMeta
   },
-  invoiceEntries:
-    invoiceConfig.invoiceEntries.length > 0 ?
-    [...invoiceConfig.invoiceEntries]:
-    [
-      {
-        dateProvided: '04/11/2017',
-        description: 'Consultation',
-        qty: '1',
-        qtyType: 'h',
-        rate: '200',
-        total: '200',
-      }
-    ]
+  invoiceEntries: [
+    {
+      dateProvided: '22/11/2019',
+      description: 'Web Development',
+      qty: '1',
+      qtyType: 'h',
+      rate: '30',
+      total: '30',
+    }
+  ]
 }
