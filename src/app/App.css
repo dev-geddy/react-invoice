@@ -2,9 +2,43 @@ html, body, #root, .App {
   height: 100%;
 }
 
+.App {
+  display: flex;
+  flex-direction: column;
+}
+
+.App-header {
+  flex-grow: 0;
+  border-bottom: 1px solid #cacaca;
+  background-color: rgba(0, 0, 0, 0.11);
+}
+
+.App-header > h1 {
+  font-size: 17px;
+  margin: 7px 15px;
+  font-weight: normal;
+}
+
+.App-header > h1 > strong {
+  font-weight: bold;
+}
+
+.App-content {
+  flex-grow: 1;
+}
+
+.App-footer {
+  flex-grow: 0;
+  height: 20px;
+  border-top: 1px solid #cacaca;
+  background-color: rgba(0, 0, 0, 0.11);
+  font-size: 11px;
+  text-align: center;
+  color: #666;
+}
+
 .App-content-columns {
   display: flex;
-  height: 100%;
 }
 
 .App-invoice-list {
@@ -34,9 +68,11 @@ html, body, #root, .App {
 .App-invoice-list-items > li {
   border-bottom: 1px solid #cacaca;
   margin: 0;
-
 }
 
+.App-invoice-list-items > li > a > small {
+  font-size: 11px;
+}
 .App-invoice-list-items > li > a {
   display: block;
   font-size: 15px;
@@ -47,4 +83,11 @@ html, body, #root, .App {
 
 .App-invoice-list-items > li > a:hover {
   background-color: rgba(0, 0, 0, 0.07);
+}
+
+@media print {
+  .App-header { display: none; }
+  .App-footer { display: none; }
+  .App-invoice-list { display: none; }
+  .App-invoice-form { display: none; }
 }
