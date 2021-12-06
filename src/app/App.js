@@ -9,14 +9,28 @@ class App extends Component {
         <header className="App-header">
 
         </header>
-        <div className="App-content">
-          <Invoice />
+        <div className="App-content App-content-columns">
+          <div className="App-invoice-list">
+            <ul className="App-invoice-list-items">
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+              <li><a href="#">Item</a></li>
+            </ul>
+          </div>
+          <div className="App-invoice-form">
+
+          </div>
+          <div className="App-invoice-preview">
+            <Invoice />
+          </div>
         </div>
         <footer>
 
         </footer>
       </div>
-    );
+    )
   }
 }
 

@@ -1,0 +1,50 @@
+html, body, #root, .App {
+  height: 100%;
+}
+
+.App-content-columns {
+  display: flex;
+  height: 100%;
+}
+
+.App-invoice-list {
+  flex-grow: 0;
+  width: 20%;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-right: 1px solid #cacaca;
+}
+
+.App-invoice-form {
+  flex-grow: 0;
+  width: 40%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #cacaca;
+}
+
+.App-invoice-preview {
+  flex-grow: 1;
+}
+
+.App-invoice-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.App-invoice-list-items > li {
+  border-bottom: 1px solid #cacaca;
+  margin: 0;
+
+}
+
+.App-invoice-list-items > li > a {
+  display: block;
+  font-size: 15px;
+  text-decoration: none;
+  color: #333;
+  padding: 7px 15px;
+}
+
+.App-invoice-list-items > li > a:hover {
+  background-color: rgba(0, 0, 0, 0.07);
+}
