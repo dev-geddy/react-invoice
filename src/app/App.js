@@ -1,29 +1,48 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from 'react'
+import CssBaseline from "@mui/material/CssBaseline"
+import {createTheme, ThemeProvider} from "@mui/material/styles"
+import './App.css'
 import Invoice from '../components/Invoice'
-import StoredInvoicesList from "../components/StoredInvoicesList";
+import StoredInvoicesList from "../components/StoredInvoicesList"
+import InvoiceForm from "../components/InvoiceForm"
+
+const theme = createTheme({
+  typography: {
+    fontFamily: [
+      '"Open Sans"',
+      'BlinkMacSystemFont',
+    ].join(','),
+  },
+})
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1>REACTIVE<strong>LABS</strong></h1>
-        </header>
-        <div className="App-content App-content-columns">
-          <StoredInvoicesList />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className="App">
+          <header className="App-header">
+            <h1>REACTIVE<strong>LABS</strong></h1>
+          </header>
+          <div className="App-content App-content-columns">
+            <div className="App-invoice-list">
+              <StoredInvoicesList />
+            </div>
 
-          <div className="App-invoice-form">
 
+            <div className="App-invoice-form">
+              <InvoiceForm />
+            </div>
+
+            <div className="App-invoice-preview">
+              <Invoice />
+            </div>
           </div>
-          <div className="App-invoice-preview">
-            <Invoice />
-          </div>
+          <footer className="App-footer">
+            &copy;2021
+          </footer>
         </div>
-        <footer className="App-footer">
-          &copy;2021
-        </footer>
-      </div>
+      </ThemeProvider>
     )
   }
 }

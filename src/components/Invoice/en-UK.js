@@ -18,6 +18,7 @@ export const labels = {
   vatBasis: 'VAT Basis',
   vatAmount: 'VAT Amount',
   vatRate: 'VAT rate',
+  vatRatePct: 'VAT rate %',
   currency: 'Currency',
   vat: 'VAT',
   totalPayable: 'Total Payable',

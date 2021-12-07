@@ -110,6 +110,8 @@ hr {
 .Invoice-footer {
   text-align: center;
   margin: 25px 0 0 0;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 @media print {

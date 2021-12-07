@@ -3,11 +3,23 @@ import './Invoice.css'
 import InvoiceSubject from './InvoiceSubject'
 import InvoiceEntries from './InvoiceEntries'
 import InvoiceMeta from './InvoiceMeta'
-import InvoiceHistory from './InvoiceHistory'
-import {defaultState} from './defaultState'
 import {labels} from './en-UK'
+import connectWithRedux from "../../decorators/connectWithRedux";
+import {selectors as invoiceSelector} from "../../redux/invoice/reducer";
+import invoiceActions from "../../redux/invoice/actions";
 
-export class Invoice extends Component {
+@connectWithRedux((state) => ({
+  isLoading: invoiceSelector.isLoading(state),
+  uuid: invoiceSelector.uuid(state),
+  invoiceMeta: invoiceSelector.invoiceMeta(state),
+  provider: invoiceSelector.provider(state),
+  customer: invoiceSelector.customer(state),
+  invoiceEntries: invoiceSelector.invoiceEntries(state),
+}), {
+
+})
+
+class Invoice extends Component {
   qtyTypes = [
     {
       name: '',
@@ -50,37 +62,8 @@ export class Invoice extends Component {
     }
   ]
 
-  newInvoiceEntry = {
-    dateProvided: 'DD/MM/YYYY',
-    description: labels.enterEntryDescription,
-    qty: '1',
-    qtyType: '',
-    rate: '0',
-    total: '0',
-  }
-
-  state = {
-    ...defaultState
-  }
-
-  constructor(props) {
-    super(props)
-    if (window.localStorage) {
-      try {
-        const {localStorage} = window
-        const savedInvoiceState = JSON.parse(localStorage.getItem('savedInvoiceState'))
-        if (savedInvoiceState.provider) {
-          this.state = savedInvoiceState
-          document.title = this.constructTitle(savedInvoiceState)
-        }
-      } catch (err) {
-        console.log('No previously saved invoice in browser local storage')
-      }
-    }
-  }
-
   getInvoiceTotalPayable = ({invoiceEntries, invoiceMeta}) => {
-    const total = invoiceEntries.reduce((grandTotal, entry) => {
+    const total = invoiceEntries?.reduce((grandTotal, entry) => {
       return grandTotal + parseFloat(entry.total)
     }, 0)
 
@@ -89,95 +72,36 @@ export class Invoice extends Component {
     return total * multiplier
   }
 
-  constructTitle = (savedInvoiceState = {}) => {
+  constructTitle = ({provider, customer, invoiceEntries, invoiceMeta, uuid}) => {
     try {
-      const invoiceDateISO = String(savedInvoiceState.invoiceMeta.invoiceDate).split('/').reverse().join('_')
-      const invoiceCurrency = savedInvoiceState.invoiceMeta.currency
+      const invoiceDateISO = String(invoiceMeta.invoiceDate).split('/').reverse().join('_')
+      const invoiceCurrency = invoiceMeta.currency
       const invoiceCurrencyISO = invoiceCurrency === '£' ? 'GBP' : invoiceCurrency === '€' ? 'EUR' : invoiceCurrency
-      const invoiceTotal = Number(this.getInvoiceTotalPayable(savedInvoiceState)).toFixed(2);
-      const vatInclusive = Number(savedInvoiceState.invoiceMeta.vatRate) > 0 ? ' VAT incl. ' : ' NON-VAT '
-      const nameOnFile = `${savedInvoiceState.customer.companyName}, ${savedInvoiceState.customer.name}`
+      const invoiceTotal = Number(this.getInvoiceTotalPayable({invoiceEntries, invoiceMeta})).toFixed(2);
+      const vatInclusive = Number(invoiceMeta.vatRate) > 0 ? ' VAT incl. ' : ' NON-VAT '
+      const nameOnFile = `${customer.companyName}, ${customer.name}`
 
-      return `${invoiceDateISO} - ${savedInvoiceState.invoiceMeta.invoiceSeries}${savedInvoiceState.invoiceMeta.invoiceNo} - ${invoiceCurrencyISO}${invoiceTotal}${vatInclusive} - (PENDING) - ${nameOnFile}`
+      return `${invoiceDateISO} - ${invoice.invoiceMeta.invoiceSeries}${invoice.invoiceMeta.invoiceNo} - ${invoiceCurrencyISO}${invoiceTotal}${vatInclusive} - (PENDING) - ${nameOnFile}`
     } catch (error) {
       return '- INVOICE INFORMATION INCOMPLETE -';
     }
   }
 
-  handleModeChange = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const {editMode} = this.state
-
-    this.setState({
-      editMode: !editMode
-    })
-
-    if (editMode === true) {
-      try {
-        const {localStorage} = window
-        const saveState = {
-          ...this.state,
-          editMode: false
-        }
-        localStorage.setItem('savedInvoiceState', JSON.stringify(saveState))
-        document.title = this.constructTitle(saveState)
-      } catch (err) {
-        console.log('Could not save invoice state to browser local storage')
-      }
-    }
-  }
-
-  handleSubjectUpdate = (subjectType, subjectField, subjectValue) => {
-
-    let updatedProvider = {
-      ...this.state[subjectType]
-    }
-
-    updatedProvider[subjectField] = subjectValue
-
-    if (subjectType === 'provider') {
-      this.setState({
-        provider: updatedProvider
-      })
-    } else if (subjectType === 'customer') {
-      this.setState({
-        customer: updatedProvider
-      })
-    } else {
-      this.setState({
-        invoiceMeta: updatedProvider
-      })
-    }
-  }
-
-  handleEntryUpdate = (entryIndex, entryRow) => {
-    this.state.invoiceEntries[entryIndex] = entryRow
-    this.forceUpdate()
-  }
-
-  handleEntryAdd = () => {
-    this.state.invoiceEntries.push(this.newInvoiceEntry)
-    this.forceUpdate()
-  }
-
-  handleEntryRemove = (entryIndex) => {
-    console.log('handleEntryRemove ', entryIndex)
-    this.state.invoiceEntries.splice(entryIndex, 1);
-    this.forceUpdate()
+  componentDidMount() {
+    const {provider, customer, invoiceEntries, invoiceMeta, uuid} = this.props
+    document.title = this.constructTitle({provider, customer, invoiceEntries, invoiceMeta, uuid})
   }
 
   getVatMultiplier = (vat) => {
     return parseFloat(100 + parseFloat(vat)) / 100
   }
 
-  getTotalsAndVat = (entries) => {
-    const total = entries.reduce((grandTotal, entry) => {
+  getTotalsAndVat = (entries, invoiceMeta) => {
+    const total = entries?.reduce((grandTotal, entry) => {
       return grandTotal + parseFloat(entry.total)
     }, 0)
 
-    const multiplier = this.getVatMultiplier(this.state.invoiceMeta.vatRate)
+    const multiplier = this.getVatMultiplier(invoiceMeta?.vatRate)
 
     return {
       total: total,
@@ -187,104 +111,39 @@ export class Invoice extends Component {
     }
   }
 
-  componentDidMount() {
-    try {
-      const {localStorage} = window
-      const invoicesHistory = JSON.parse(localStorage.getItem('invoicesHistory'))
-      if (invoicesHistory.length > 0) {
-        this.setState({history: invoicesHistory})
-      }
-    } catch (err) {
-      console.log('Invoices history error...')
-    }
-  }
-
-  updateHistory(history) {
-    localStorage.setItem('invoicesHistory', JSON.stringify(history))
-    this.setState({history})
-  }
-
-  handleNewInvoice = (event) => {
-    event.preventDefault()
-
-  }
-  handleSaveInvoice = (event) => {
-    event.preventDefault()
-
-    let history = this.state.history || []
-    const newEntry = {
-      ...this.state,
-      history: undefined
-    }
-
-    history.push(newEntry)
-    this.updateHistory(history)
-  }
-  handleEditInvoice = (index) => {
-    const {history} = this.state
-
-    const loadEntry = history[index]
-    const newState = {
-      ...loadEntry,
-      editMode: true,
-      history
-    }
-    this.setState(newState)
-  }
-  handleDeleteInvoice = (index) => {
-    let history = this.state.history
-
-    history.splice(index, 1);
-    this.updateHistory(history)
-  }
-
   render() {
-
-    const {provider, customer, invoiceEntries, invoiceMeta, editMode, history} = this.state
-    const {total, totalVat, vatAmount, vatBasis} = this.getTotalsAndVat(invoiceEntries)
+    const {provider, customer, invoiceEntries, invoiceMeta} = this.props
+    const {total, totalVat, vatAmount, vatBasis} = this.getTotalsAndVat(invoiceEntries, invoiceMeta)
 
     return (
       <div className="Invoice">
-        {editMode && <InvoiceHistory savedInvoices={history}
-                                     onEdit={this.handleEditInvoice.bind(this)}
-                                     onDelete={this.handleDeleteInvoice.bind(this)}
-                                     onSave={this.handleSaveInvoice.bind(this)}
-                                     onNew={this.handleNewInvoice.bind(this)}/>}
         <header className="Invoice-header">
-          <h1 className="Logo" onClick={this.handleModeChange}>
-            <span className="Logo-part-1">{invoiceMeta.brandName}</span>
-            <span className="Logo-part-2">{invoiceMeta.brandSubName}</span>
+          <h1 className="Logo">
+            <span className="Logo-part-1">{invoiceMeta?.brandName}</span>
+            <span className="Logo-part-2">{invoiceMeta?.brandSubName}</span>
           </h1>
           <div className="Header-meta">
-            {provider.companyName && <span>{provider.companyName}</span>}
+            {provider.companyName && <span>{provider?.companyName}</span>}
             {provider.companyName && <br/>}
-            {provider.companyRegNo && <span>{labels.companyRegNo} <strong>{provider.companyRegNo}</strong></span>}
+            {provider.companyRegNo && <span>{labels.companyRegNo} <strong>{provider?.companyRegNo}</strong></span>}
             {provider.companyRegNo && <br/>}
-            {provider.companyVatNo && <span>{labels.companyVatNo} <strong>{provider.companyVatNo}</strong></span>}
+            {provider.companyVatNo && <span>{labels.companyVatNo} <strong>{provider?.companyVatNo}</strong></span>}
           </div>
           <hr/>
         </header>
         <div className="Invoice-body">
           <div className="Invoice-subjects">
-            <InvoiceSubject subject={provider} subjectType={'provider'} editMode={editMode}
-                            onUpdate={this.handleSubjectUpdate}/>
-            <InvoiceSubject subject={customer} subjectType={'customer'} editMode={editMode}
-                            onUpdate={this.handleSubjectUpdate}/>
+            <InvoiceSubject subject={provider} subjectType={'provider'} />
+            <InvoiceSubject subject={customer} subjectType={'customer'} />
           </div>
           <div className="Invoice-the-invoice">
             <h2>{labels.invoice}</h2>
-            <InvoiceMeta meta={invoiceMeta} provider={provider} editMode={editMode}
-                         onUpdate={this.handleSubjectUpdate}/>
+            <InvoiceMeta meta={invoiceMeta} provider={provider} />
             <p>&nbsp;</p>
           </div>
           <div className="Invoice-details">
             <h3>{labels.worksCompleted}</h3>
-            <InvoiceEntries entries={invoiceEntries}
-                            invoiceMeta={invoiceMeta}
-                            editMode={editMode}
-                            onUpdate={this.handleEntryUpdate}
-                            onRemove={this.handleEntryRemove}
-                            onAdd={this.handleEntryAdd}/>
+            <InvoiceEntries entries={invoiceEntries} invoiceMeta={invoiceMeta} />
             <p>&nbsp;</p>
             <table className="Invoice-table Table-wide">
               <tbody>
