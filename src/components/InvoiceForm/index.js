@@ -149,7 +149,6 @@ class StoredInvoicesList extends PureComponent {
                   <Grid item>
                     <Button
                       size="small"
-                      // variant="outlined"
                       color="secondary"
                       endIcon={displaySection.provider ? <VisibilityOffIcon />:<VisibilityIcon />}
                       onClick={this.handleSectionVisibility('provider')}
@@ -178,7 +177,6 @@ class StoredInvoicesList extends PureComponent {
                   <Grid item>
                     <Button
                       size="small"
-                      // variant="outlined"
                       color="secondary"
                       endIcon={displaySection.customer ? <VisibilityOffIcon />:<VisibilityIcon />}
                       onClick={this.handleSectionVisibility('customer')}
