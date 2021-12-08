@@ -61,6 +61,10 @@ const defaultState = {
   invoice: {},
   invoices: [],
   isLoading: false,
+  displaySection: {
+    provider: true,
+    customer: true,
+  },
   ...defaultInvoiceState
 }
 
@@ -69,6 +73,7 @@ export const selectors = {
   isLoading: (state) => selectors.state(state).isLoading,
   error: (state) => selectors.state(state).error,
   invoiceEntries: (state) => selectors.state(state).invoiceEntries,
+  displaySection: (state) => selectors.state(state).displaySection,
   invoiceMeta: (state) => selectors.state(state).invoiceMeta,
   provider: (state) => selectors.state(state).provider,
   customer: (state) => selectors.state(state).customer,
@@ -91,6 +96,14 @@ const setInvoice = (state, {invoice}) => ({
 const setLoading = (state, {isLoading}) => ({
   ...state,
   isLoading
+})
+
+const displaySectionSwitch = (state, {section, display}) => ({
+  ...state,
+  displaySection: {
+    ...state.displaySection,
+    [section]: display !== undefined ? display : !state.displaySection[section]
+  }
 })
 
 const setInvoices = (state, {invoices}) => ({
@@ -164,6 +177,7 @@ export default (state = defaultState, {type, payload}) => {
     case types.ADD_INVOICE_ENTRY: return addInvoiceEntry(state, payload)
     case types.LOCK_INVOICE: return lockInvoice(state, payload)
     case types.START_NEW_INVOICE: return startNewInvoice(state, payload)
+    case types.DISPLAY_SECTION_SWITCH: return displaySectionSwitch(state, payload)
     default: return state
   }
 }

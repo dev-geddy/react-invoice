@@ -39,8 +39,6 @@ export class InvoiceParty extends PureComponent {
   render() {
     const {meta, provider, locked} = this.props
 
-    console.log('meta.invoiceDate', meta.invoiceDate)
-
     return (
       <Fragment>
         <Typography variang="subtitle2" {...subtitleStyle}>{labels.invoiceMeta}</Typography>

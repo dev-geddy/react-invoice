@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import CssBaseline from "@mui/material/CssBaseline"
 import {createTheme, ThemeProvider} from "@mui/material/styles"
 import './App.css'
@@ -15,7 +15,7 @@ const theme = createTheme({
   },
 })
 
-class App extends Component {
+class App extends PureComponent {
   render() {
     return (
       <ThemeProvider theme={theme}>

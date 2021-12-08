@@ -20,6 +20,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LockIcon from '@mui/icons-material/Lock';
 import LockResetIcon from '@mui/icons-material/LockReset';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {labels} from "../Invoice/en-UK";
 
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.isLoading(state),
@@ -29,6 +34,7 @@ import LockResetIcon from '@mui/icons-material/LockReset';
   provider: invoiceSelector.provider(state),
   customer: invoiceSelector.customer(state),
   invoiceEntries: invoiceSelector.invoiceEntries(state),
+  displaySection: invoiceSelector.displaySection(state),
 }), {
   addInvoiceEntry: invoiceActions.addInvoiceEntry,
   removeInvoiceEntry: invoiceActions.removeInvoiceEntry,
@@ -37,6 +43,7 @@ import LockResetIcon from '@mui/icons-material/LockReset';
   storeNewInvoice: invoiceActions.storeNewInvoice,
   lockInvoice: invoiceActions.lockInvoice,
   deleteInvoice: invoiceActions.deleteInvoice,
+  displaySectionSwitch: invoiceActions.displaySectionSwitch,
 })
 
 class StoredInvoicesList extends PureComponent {
@@ -106,9 +113,13 @@ class StoredInvoicesList extends PureComponent {
     this.props.deleteInvoice(uuid)
   }
 
+  handleSectionVisibility = (section) => () => {
+    this.props.displaySectionSwitch(section)
+  }
+
   render = () => {
     const {isLoading} = this.props
-    const {provider, customer, invoiceMeta, invoiceEntries, uuid} = this.props
+    const {provider, customer, invoiceMeta, invoiceEntries, uuid, displaySection} = this.props
     const locked = invoiceMeta?.locked
 
     return (
@@ -129,22 +140,62 @@ class StoredInvoicesList extends PureComponent {
           <Grid item xs={12}>
             <Grid container justifyContent="center" spacing={1} sx={{p: 1}}>
               <Grid item sx={{width: '50%', p: 1}}>
-                <InvoiceParty
-                  locked={locked || isLoading}
-                  subject={provider}
-                  subjectType={'provider'}
-                  editMode={true}
-                  onUpdate={this.handleInvoiceUpdate('provider')}
-                />
+                <Grid container justifyContent="left" alignItems="center" spacing={1} sx={{p: 1}}>
+                  <Grid item sx={{flexGrow: 1}}>
+                    <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px', fontWeight: 200}}>
+                      {labels.provider}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="small"
+                      // variant="outlined"
+                      color="secondary"
+                      endIcon={displaySection.provider ? <VisibilityOffIcon />:<VisibilityIcon />}
+                      onClick={this.handleSectionVisibility('provider')}
+                    >
+                      {displaySection.provider ? 'Hide' : 'Show'} Form
+                    </Button>
+                  </Grid>
+                </Grid>
+
+                {displaySection.provider &&
+                  <InvoiceParty
+                    locked={locked || isLoading}
+                    subject={provider}
+                    editMode={true}
+                    onUpdate={this.handleInvoiceUpdate('provider')}
+                  />
+                }
               </Grid>
               <Grid item sx={{width: '50%', p: 1}}>
-                <InvoiceParty
-                  locked={locked || isLoading}
-                  subject={customer}
-                  subjectType={'customer'}
-                  editMode={true}
-                  onUpdate={this.handleInvoiceUpdate('customer')}
-                />
+                <Grid container justifyContent="left" alignItems="center" spacing={1} sx={{p: 1}}>
+                  <Grid item sx={{flexGrow: 1}}>
+                    <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px', fontWeight: 200}}>
+                      {labels.customer}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      size="small"
+                      // variant="outlined"
+                      color="secondary"
+                      endIcon={displaySection.customer ? <VisibilityOffIcon />:<VisibilityIcon />}
+                      onClick={this.handleSectionVisibility('customer')}
+                    >
+                      {displaySection.customer ? 'Hide' : 'Show'} Form
+                    </Button>
+                  </Grid>
+                </Grid>
+
+                {displaySection.customer &&
+                  <InvoiceParty
+                    locked={locked || isLoading}
+                    subject={customer}
+                    editMode={true}
+                    onUpdate={this.handleInvoiceUpdate('customer')}
+                  />
+                }
               </Grid>
             </Grid>
             <Divider />

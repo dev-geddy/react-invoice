@@ -1,7 +1,6 @@
 import React, {PureComponent, Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {
-  FormControl,
   TextField,
   Typography,
 } from '@mui/material'
@@ -9,12 +8,6 @@ import {labels} from '../Invoice/en-UK'
 import {inputStyle, subtitleStyle} from '../../shared-styles'
 
 export class InvoiceParty extends PureComponent {
-
-  subjectTypes = {
-    provider: labels.provider,
-    customer: labels.customer
-  }
-
   handleChange = (event) => {
     const {name, value} = event.target
     this.props.onUpdate(name, value)
@@ -23,16 +16,11 @@ export class InvoiceParty extends PureComponent {
   render() {
     const {
       subject,
-      subjectType,
       locked,
     } = this.props
 
-    const subjectTypeName = this.subjectTypes[subjectType] || ''
-
     return (
       <Fragment>
-        <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px', fontWeight: 200}}>{subjectTypeName}</Typography>
-
         <Typography variang="subtitle2" {...subtitleStyle}>Company details</Typography>
         <TextField disabled={locked} label={labels.companyName} name="companyName" value={subject.companyName} onChange={this.handleChange} fullWidth size="small" margin="dense" {...inputStyle} />
         <TextField disabled={locked} label={labels.companyRegNo} name="companyRegNo" value={subject.companyRegNo} onChange={this.handleChange} fullWidth size="small" margin="dense" {...inputStyle} />
@@ -60,7 +48,6 @@ export class InvoiceParty extends PureComponent {
 
 InvoiceParty.propTypes = {
   subject: PropTypes.object,
-  subjectType: PropTypes.string,
   editMode: PropTypes.bool,
   onUpdate: PropTypes.func
 }
