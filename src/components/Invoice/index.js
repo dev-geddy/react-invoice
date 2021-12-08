@@ -6,7 +6,6 @@ import InvoiceMeta from './InvoiceMeta'
 import {labels} from './en-UK'
 import connectWithRedux from "../../decorators/connectWithRedux";
 import {selectors as invoiceSelector} from "../../redux/invoice/reducer";
-import invoiceActions from "../../redux/invoice/actions";
 
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.isLoading(state),

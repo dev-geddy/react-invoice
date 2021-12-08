@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import CssBaseline from "@mui/material/CssBaseline"
 import {createTheme, ThemeProvider} from "@mui/material/styles"
 import './App.css'
-import Invoice from '../components/Invoice'
-import StoredInvoicesList from "../components/StoredInvoicesList"
-import InvoiceForm from "../components/InvoiceForm"
+import Invoice from '../Invoice'
+import StoredInvoicesList from "../StoredInvoicesList"
+import InvoiceForm from "../InvoiceForm"
 
 const theme = createTheme({
   typography: {
@@ -28,7 +28,6 @@ class App extends Component {
             <div className="App-invoice-list">
               <StoredInvoicesList />
             </div>
-
 
             <div className="App-invoice-form">
               <InvoiceForm />

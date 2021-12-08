@@ -31,16 +31,16 @@ export const invoiceActions = {
     payload: {
     }
   }),
-  getInvoice: (invoiceId) => ({
+  getInvoice: (uuid) => ({
     type: types.GET_STORED_INVOICE,
     payload: {
-      invoiceId
+      uuid
     }
   }),
-  getActiveInvoice: (invoiceId) => ({
+  getActiveInvoice: (uuid) => ({
     type: types.GET_ACTIVE_INVOICE,
     payload: {
-      invoiceId
+      uuid
     }
   }),
   setInvoice: (invoice) => ({

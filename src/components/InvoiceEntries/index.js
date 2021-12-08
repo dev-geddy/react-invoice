@@ -58,16 +58,16 @@ export class InvoiceEntries extends PureComponent {
                   <TextField disabled={locked} label={labels.description} name="description" value={entry.description} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
                 </Grid>
                 <Grid item sx={{width: '55px', p: 0}}>
-                  <TextField disabled={locked} label={labels.qty} name="qty" value={entry.qty} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
+                  <TextField disabled={locked} label={labels.qty} name="qty" value={entry.qty} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} type="number" />
                 </Grid>
                 <Grid item sx={{width: '60px', p: 0}}>
                   <TextField disabled={locked} label={labels.unit} name="qtyType" value={entry.qtyType} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
                 </Grid>
                 <Grid item sx={{width: '60px', p: 0}}>
-                  <TextField disabled={locked} label={labels.rate} name="rate" value={entry.rate} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
+                  <TextField disabled={locked} label={labels.rate} name="rate" value={entry.rate} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} type="number" />
                 </Grid>
                 <Grid item sx={{width: '80px', p: 0}}>
-                  <TextField disabled={locked} label={labels.total} name="total" value={entry.total} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
+                  <TextField disabled={locked} label={labels.total} name="total" value={entry.total} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} type="number" />
                 </Grid>
                 <Grid item sx={{width: '30px', p: 0}}>
                   <IconButton disabled={locked} color="error" aria-label="Delete Entry" component="span" style={{position: 'relative', top: '3px'}} onClick={this.handleRemove(index)}>

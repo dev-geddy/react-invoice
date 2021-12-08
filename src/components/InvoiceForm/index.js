@@ -1,9 +1,13 @@
 import React, {PureComponent, Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {
+  Alert,
+  Box,
   Divider,
   Grid,
-  Skeleton, Button,
+  Skeleton,
+  Button,
+  Typography,
 } from '@mui/material'
 
 import connectWithRedux from '../../decorators/connectWithRedux'
@@ -109,13 +113,24 @@ class StoredInvoicesList extends PureComponent {
 
     return (
       <Fragment>
-        {isLoading && <Skeleton width="100%" height="30" variant="wave" />}
+        {uuid &&
+          <Fragment>
+            <Alert severity="info"><strong>Note:</strong> Editing existing invoice ${uuid}</Alert>
+            <Divider />
+          </Fragment>
+        }
+        {!uuid &&
+          <Fragment>
+            <Alert severity="success"><strong>Note:</strong> Creating new invoice</Alert>
+            <Divider />
+          </Fragment>
+        }
         <Grid sx={{ flexGrow: 1 }} container>
           <Grid item xs={12}>
             <Grid container justifyContent="center" spacing={1} sx={{p: 1}}>
               <Grid item sx={{width: '50%', p: 1}}>
                 <InvoiceParty
-                  locked={locked}
+                  locked={locked || isLoading}
                   subject={provider}
                   subjectType={'provider'}
                   editMode={true}
@@ -124,7 +139,7 @@ class StoredInvoicesList extends PureComponent {
               </Grid>
               <Grid item sx={{width: '50%', p: 1}}>
                 <InvoiceParty
-                  locked={locked}
+                  locked={locked || isLoading}
                   subject={customer}
                   subjectType={'customer'}
                   editMode={true}
@@ -136,7 +151,7 @@ class StoredInvoicesList extends PureComponent {
             <Grid container justifyContent="center" spacing={1} sx={{p: 1}}>
               <Grid item sx={{width: '100%', p: 1}}>
                 <InvoiceEntries
-                  locked={locked}
+                  locked={locked || isLoading}
                   entries={invoiceEntries}
                   onAdd={this.handleAddEntry}
                   onUpdate={this.handleEntryUpdate}
@@ -150,24 +165,38 @@ class StoredInvoicesList extends PureComponent {
                 <InvoiceMeta
                   meta={invoiceMeta}
                   provider={provider}
-                  locked={locked}
+                  locked={locked || isLoading}
                   onUpdate={this.handleInvoiceUpdate('invoiceMeta')}
                   onUpdateProvider={this.handleInvoiceUpdate('provider')}
                 />
               </Grid>
             </Grid>
             <Divider />
+            {uuid &&
+              <Box sx={{p: 1}}>
+                <Typography variant="body2" component="div" style={{fontSize: '12px'}}>
+                  <strong>Note:</strong> Editing existing invoice ${uuid}
+                </Typography>
+              </Box>
+            }
+            {!uuid &&
+              <Box sx={{p: 1}}>
+                <Typography variant="body2" component="div" style={{fontSize: '12px'}}>
+                  <strong>Note:</strong> Creating new invoice
+                </Typography>
+              </Box>
+            }
             <Grid container justifyContent="left" spacing={1} sx={{p: 1}}>
               {!locked &&
                 <Grid item sx={{width: 'auto'}}>
-                  <Button variant="contained" color="primary" size="small" startIcon={<SaveIcon />} onClick={this.handleInvoiceSave}>
+                  <Button disabled={isLoading} variant="contained" color="primary" size="small" startIcon={<SaveIcon />} onClick={this.handleInvoiceSave}>
                     Save invoice
                   </Button>
                 </Grid>
               }
               {uuid &&
                 <Grid item sx={{width: 'auto'}}>
-                  <Button variant="contained" color="secondary" size="small"
+                  <Button disabled={isLoading} variant="contained" color="secondary" size="small"
                           startIcon={locked ? <LockResetIcon/> : <LockIcon/>} onClick={this.handleInvoiceLock(uuid)}>
                     {locked ? 'Unlock' : 'Lock'}
                   </Button>
@@ -175,7 +204,7 @@ class StoredInvoicesList extends PureComponent {
               }
               {uuid && !locked &&
                 <Grid item sx={{width: 'auto'}}>
-                  <Button variant="contained" color="error" size="small" startIcon={<DeleteForeverIcon/>}
+                  <Button disabled={isLoading} variant="contained" color="error" size="small" startIcon={<DeleteForeverIcon/>}
                           onClick={this.handleInvoiceDelete(uuid)}>
                     Delete invoice
                   </Button>

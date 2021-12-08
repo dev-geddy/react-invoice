@@ -6,9 +6,7 @@ const day = date.getDate()
 const month = date.getMonth()
 const year = date.getFullYear()
 const today = `${day}/${month}/${year}`
-const defaultState = {
-  invoice: {},
-  invoices: [],
+const defaultInvoiceState = {
   uuid: '',
   lang: 'en',
   provider: {
@@ -59,6 +57,12 @@ const defaultState = {
     }
   ],
 }
+const defaultState = {
+  invoice: {},
+  invoices: [],
+  isLoading: false,
+  ...defaultInvoiceState
+}
 
 export const selectors = {
   state: (state) => state.invoice,
@@ -80,8 +84,13 @@ export const selectors = {
 
 const setInvoice = (state, {invoice}) => ({
   ...state,
-  invoice, // deprecate
+  // invoice, // deprecate
   ...invoice, // rewrite the state values
+})
+
+const setLoading = (state, {isLoading}) => ({
+  ...state,
+  isLoading
 })
 
 const setInvoices = (state, {invoices}) => ({
@@ -139,8 +148,14 @@ const addInvoiceEntry = (state, {entryData}) => ({
   ]
 })
 
+const startNewInvoice = (state, {}) => ({
+  ...state,
+  ...defaultInvoiceState
+})
+
 export default (state = defaultState, {type, payload}) => {
   switch (type) {
+    case types.SET_LOADING: return setLoading(state, payload)
     case types.SET_INVOICES: return setInvoices(state, payload)
     case types.SET_INVOICE: return setInvoice(state, payload)
     case types.UPDATE_INVOICE_SECTION: return updateInvoiceSection(state, payload)
@@ -148,6 +163,7 @@ export default (state = defaultState, {type, payload}) => {
     case types.REMOVE_INVOICE_ENTRY: return removeInvoiceEntry(state, payload)
     case types.ADD_INVOICE_ENTRY: return addInvoiceEntry(state, payload)
     case types.LOCK_INVOICE: return lockInvoice(state, payload)
+    case types.START_NEW_INVOICE: return startNewInvoice(state, payload)
     default: return state
   }
 }

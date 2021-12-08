@@ -20,6 +20,7 @@ import invoiceActions from '../../redux/invoice/actions'
 import {selectors as invoiceSelector} from '../../redux/invoice/reducer'
 
 const StyledList = styled(List)({
+  paddingTop: 0,
   '& .MuiListItemButton-root': {
     paddingLeft: 12,
     paddingRight: 12,
@@ -33,10 +34,6 @@ const StyledList = styled(List)({
   },
 })
 
-const isInvoiceSelected = (itemUuid, activeUuid) => {
-  return itemUuid && itemUuid === activeUuid
-}
-
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.state(state).isLoading,
   error: invoiceSelector.error(state),
@@ -47,9 +44,18 @@ const isInvoiceSelected = (itemUuid, activeUuid) => {
 }), {
   getInvoices: invoiceActions.getInvoices,
   getInvoice: invoiceActions.getInvoice,
+  startNewInvoice: invoiceActions.startNewInvoice,
 })
 
 class StoredInvoicesList extends PureComponent {
+  static propTypes = {
+    isLoading: PropTypes.bool,
+    getInvoices: PropTypes.func,
+    getInvoice: PropTypes.func,
+    startNewInvoice: PropTypes.func,
+    invoices: PropTypes.array
+  }
+
   componentDidMount() {
     this.props.getInvoices()
   }
@@ -58,11 +64,8 @@ class StoredInvoicesList extends PureComponent {
     this.props.getInvoice(uuid)
   }
 
-  handleNewInvoice = (event) => {
-    event.preventDefault()
-
-    // call to clear all fields to default state
-    // unset uuid
+  handleNewInvoice = () => {
+    this.props.startNewInvoice()
   }
 
   render = () => {
@@ -70,46 +73,35 @@ class StoredInvoicesList extends PureComponent {
 
     return (
       <Fragment>
-        {isLoading && <Skeleton width="100%" height="30" variant="wave" />}
-        {!isLoading &&
-          <StyledList className="App-invoice-list-items">
-            <ListItem component="div" disablePadding>
-              <ListItemButton sx={{ height: 56 }} onClick={this.handleNewInvoice}>
+        <StyledList className="App-invoice-list-items">
+          <ListItem component="div" disablePadding>
+            <ListItemButton sx={{ height: 56 }} onClick={this.handleNewInvoice}>
+              <ListItemIcon>
+                <AddBoxIcon />
+              </ListItemIcon>
+              <ListItemText>
+                <Typography variant="body2">Create new invoice</Typography>
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+          {invoices.map((invoice, index) => (
+            <ListItem  component="div" disablePadding key={`invoice_${invoice.uuid}_${index}`}>
+              <ListItemButton disabled={isLoading} sx={{ height: 56 }} onClick={this.handleInvoicePick(invoice.uuid)} style={invoice.uuid === uuid ? {backgroundColor: 'rgba(0,0,0,0.1)'}:{}}>
                 <ListItemIcon>
-                  <AddBoxIcon />
+                  <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText>
-                  <Typography variant="body2">Create new invoice</Typography>
+                  <Typography variant="body2" component="div">{invoice.invoiceMeta.invoiceSeries}{invoice.invoiceMeta.invoiceNo}</Typography>
+                  <Typography variant="body2" component="div" style={{fontSize: '11px'}}>{invoice.invoiceMeta.invoiceDate} - {invoice.customer.companyName}</Typography>
                 </ListItemText>
               </ListItemButton>
             </ListItem>
-            <Divider />
-            {invoices?.length && invoices.map((invoice, index) => (
-              <ListItem  component="div" disablePadding key={`invoice_${invoice.invoiceMeta.invoiceSeries}${invoice.invoiceMeta.invoiceNo}_${index}`}>
-                <ListItemButton sx={{ height: 56 }} onClick={this.handleInvoicePick(invoice.uuid)} style={isInvoiceSelected(invoice.uuid, uuid) ? {backgroundColor: 'rgba(0,0,0,0.1)'}:{}}>
-                  <ListItemIcon>
-                    <ReceiptIcon />
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography variant="body2" component="div">{invoice.invoiceMeta.invoiceSeries}{invoice.invoiceMeta.invoiceNo}</Typography>
-                    <Typography variant="body2" component="div" style={{fontSize: '11px'}}>{invoice.invoiceMeta.invoiceDate} - {invoice.customer.companyName}</Typography>
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
-            ))}
-
-          </StyledList>
-        }
+          ))}
+        </StyledList>
       </Fragment>
     )
   }
-}
-
-StoredInvoicesList.propTypes = {
-  isLoading: PropTypes.bool,
-  getInvoices: PropTypes.func,
-  getInvoice: PropTypes.func,
-  invoices: PropTypes.array
 }
 
 export default StoredInvoicesList

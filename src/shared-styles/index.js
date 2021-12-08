@@ -17,6 +17,25 @@ export const inputStyle = {
   },
 }
 
+export const datePickerStyle = {
+  style: {
+
+  },
+  inputProps: {
+    style: {
+      fontSize: '14px',
+      fontWeight: 400,
+      padding: '6px 8px 5px 8px',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    }
+  },
+  InputLabelProps: {
+    style: {
+      fontSize: '14px',
+    }
+  },
+}
+
 export const subtitleStyle = {
   style: {
     fontSize: '11px',
@@ -28,5 +47,6 @@ export const subtitleStyle = {
 
 export default {
   inputStyle,
-  subtitleStyle
+  subtitleStyle,
+  datePickerStyle
 }
