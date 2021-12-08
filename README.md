@@ -4,11 +4,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 I've built this app for in-browser quick invoice creation.
 
 ```
-npm i && npm start 
+nvm use
+yarn install
+yarn start
 ```
 
-Once installed and opened in browser, click LOGO and you'll be able to edit all fields.
-After you've filled out the necessary information, click logo again to preview and print to pdf if satisfied. Done! 
-
 Note: all information is stored in your Browser's LocalStorage. You may access that via Developer Tools / Application / LocalStorage.
-This means no information is sent anywhere, just exists and is stored on your web browser.
+This means no information is sent anywhere, just exists and is stored on your web browser. If you update your browser or clear all history / cache, you're likely to lose all stored invoices.
+
+### default config
+
+Default configuration is stored in `.env` file. In order to define your default invoice values clone `.env` into `.env.local` and modify default config values accordingly.
