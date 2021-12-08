@@ -1,6 +1,7 @@
 {
-  "name": "react-your-business-account",
-  "version": "0.1.0",
+  "name": "react-invoice",
+  "version": "2.0.1",
+  "author": "Gediminas Ginkevicius",
   "description": "Use YARN for running the commands!",
   "private": true,
   "dependencies": {
