@@ -140,9 +140,9 @@ class StoredInvoicesList extends PureComponent {
           <Grid item xs={12}>
             <Grid container justifyContent="center" spacing={1} sx={{p: 1}}>
               <Grid item sx={{width: '50%', p: 1}}>
-                <Grid container justifyContent="left" alignItems="center" spacing={1} sx={{p: 1}}>
+                <Grid container justifyContent="left" alignItems="center">
                   <Grid item sx={{flexGrow: 1}}>
-                    <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px', fontWeight: 200}}>
+                    <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px'}}>
                       {labels.provider}
                     </Typography>
                   </Grid>
@@ -168,9 +168,9 @@ class StoredInvoicesList extends PureComponent {
                 }
               </Grid>
               <Grid item sx={{width: '50%', p: 1}}>
-                <Grid container justifyContent="left" alignItems="center" spacing={1} sx={{p: 1}}>
+                <Grid container justifyContent="left" alignItems="center">
                   <Grid item sx={{flexGrow: 1}}>
-                    <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px', fontWeight: 200}}>
+                    <Typography variant="body2" style={{textTransform: 'uppercase', fontSize: '12px'}}>
                       {labels.customer}
                     </Typography>
                   </Grid>
