@@ -3,7 +3,6 @@
 * */
 
 export default {
-  editMode: process.env.REACT_APP__EDIT_MODE,
   lang: process.env.REACT_APP__LANG,
   history: [],
   provider: {
