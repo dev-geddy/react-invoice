@@ -12,6 +12,10 @@ yarn start
 Note: all information is stored in your Browser's LocalStorage. You may access that via Developer Tools / Application / LocalStorage.
 This means no information is sent anywhere, just exists and is stored on your web browser. If you update your browser or clear all history / cache, you're likely to lose all stored invoices.
 
+### screenshot
+
+![Preview Image](docs/preview.png?raw=true "React Invoice Screenshot")
+
 ### printing
 
 Use in-browser print functionality to print to PDF or send to your printer. Print view includes only active invoice. 
