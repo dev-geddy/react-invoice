@@ -16,9 +16,11 @@ export const types = actionTypes('invoice')({
   SET_ERROR: 'SET_ERROR',
   LOCK_INVOICE: 'LOCK_INVOICE',
   DELETE_INVOICE: 'DELETE_INVOICE',
+  DISPLAY_SECTION_SWITCH: 'DISPLAY_SECTION_SWITCH',
 })
 
 export const invoiceActions = {
+  displaySectionSwitch: (section, display) => ({type: types.DISPLAY_SECTION_SWITCH, payload: {section, display}}),
   updateInvoiceSection: (section, sectionData) => ({type: types.UPDATE_INVOICE_SECTION, payload: {section, sectionData}}),
   updateInvoiceEntry: (entryIndex, entryData) => ({type: types.UPDATE_INVOICE_ENTRY, payload: {entryIndex, entryData}}),
   removeInvoiceEntry: (entryIndex) => ({type: types.REMOVE_INVOICE_ENTRY, payload: {entryIndex}}),
