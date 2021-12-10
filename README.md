@@ -1,7 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 ## react-invoice
-I've built this app for in-browser quick invoice creation.
+I've built this app for in-browser quick invoice creation. You'll need NVM to run this JS app, more info: [Node Version Manager](https://github.com/nvm-sh/nvm).
+
+Install relevant Node version by running `nvm install 16`. Once Node is installed run below commands within the project directory. 
 
 ```
 nvm use
