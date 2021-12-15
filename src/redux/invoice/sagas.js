@@ -1,14 +1,6 @@
-import {put, call, delay, takeLatest} from 'redux-saga/effects'
+import {put, delay, takeLatest} from 'redux-saga/effects'
 import { v4 as uuidv4 } from 'uuid'
 import actions, {types} from './actions'
-// import api from '../../utils/api';
-
-/*
-  TODO
-  First function name (i.e. setMessage): getStoredInvoices
-  First action name (i.e. SET_MESSAGE): GET_STORED_INVOICES
-  First action payload param (i.e. guid): query
-*/
 
 export const getStoredInvoices = function *({payload: {}}) {
   yield put(actions.setLoading(true))

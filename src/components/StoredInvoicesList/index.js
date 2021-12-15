@@ -85,7 +85,7 @@ class StoredInvoicesList extends PureComponent {
             </ListItemButton>
           </ListItem>
           <Divider />
-          {invoices.map((invoice, index) => (
+          {invoices?.map((invoice, index) => (
             <ListItem  component="div" disablePadding key={`invoice_${invoice.uuid}_${index}`}>
               <ListItemButton disabled={isLoading} sx={{ height: 56 }} onClick={this.handleInvoicePick(invoice.uuid)} style={invoice.uuid === uuid ? {backgroundColor: 'rgba(0,0,0,0.1)'}:{}}>
                 <ListItemIcon>

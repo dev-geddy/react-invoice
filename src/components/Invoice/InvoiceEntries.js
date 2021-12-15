@@ -19,7 +19,7 @@ export class InvoiceEntries extends PureComponent {
         </tr>
         </thead>
         <tbody>
-        {entries.map((entry, index) => {
+        {entries?.map((entry, index) => {
           return (
             <tr key={`entry_${index}`}>
               <td className="Col-date">{entry.dateProvided}</td>
