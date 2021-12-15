@@ -1,5 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
+Project [LiVE](https://react-invoice-3pzb5n2ia-dev-geddy.vercel.app/) demo on [Vercel](https://react-invoice-3pzb5n2ia-dev-geddy.vercel.app/)
+
 ## react-invoice
 I've built this app for in-browser quick invoice creation. You'll need NVM to run this JS app, more info: [Node Version Manager](https://github.com/nvm-sh/nvm).
 
@@ -17,6 +19,7 @@ This means no information is sent anywhere, just exists and is stored on your we
 ### screenshot
 
 ![Preview Image](docs/preview.png?raw=true "React Invoice Screenshot")
+Check [React Invoice LIVE Demo](https://react-invoice-3pzb5n2ia-dev-geddy.vercel.app/) on Vercel.
 
 ### printing
 
