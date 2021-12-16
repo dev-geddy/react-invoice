@@ -60,5 +60,6 @@ export const labels = {
   companyAddress: 'Company address',
   billingInfo: 'Billing info',
   isClientVatRegistered: 'Is client VAT registered?',
-  prefillCustomer: 'Prefill'
+  prefillCustomer: 'Prefill',
+  selectExistingCustomer: 'Select from existing customers',
 }

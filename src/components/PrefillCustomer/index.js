@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import invoiceActions from '../../redux/invoice/actions'
 import {selectors as invoiceSelector} from '../../redux/invoice/reducer'
+import labels from '../../translations'
 
 const boxStyle = {
   position: 'absolute',
@@ -26,8 +27,6 @@ const boxStyle = {
 }
 
 const mapStateToProps = (state) => ({
-  isLoading: invoiceSelector.isLoading(state),
-  error: invoiceSelector.error(state),
   displaySection: invoiceSelector.displaySection(state),
   allCustomers: invoiceSelector.allCustomers(state),
 })
@@ -58,7 +57,7 @@ export class PrefillCustomer extends PureComponent {
   }
 
   render = () => {
-    const {isLoading, error, displaySection, allCustomers} = this.props
+    const {displaySection, allCustomers} = this.props
 
     return (
       <Fragment>
@@ -76,7 +75,7 @@ export class PrefillCustomer extends PureComponent {
           <Fade in={displaySection.customerPrefill}>
             <Box sx={boxStyle}>
               <Typography id="transition-modal-title" variant="h6" component="h2">
-                Select from existing customers
+                {labels.selectExistingCustomer}
               </Typography>
               <Typography id="transition-modal-description" sx={{ mt: 2 }}>
                 <Stack direction="row" spacing={1}>
