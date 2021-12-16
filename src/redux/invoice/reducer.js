@@ -35,6 +35,10 @@ const defaultInvoiceState = {
     addressLine4: '',
     companyRegNo: '',
     companyVatNo: '',
+    billingBankAccountIban: '',
+    billingBankAccountBic: '',
+    billingBankAccountNo: '',
+    billingBankAccountSortCode: '',
     // ...invoiceConfig.customer
   },
   invoiceMeta: {
