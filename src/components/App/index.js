@@ -22,7 +22,7 @@ class App extends PureComponent {
         <CssBaseline />
         <div className="App">
           <header className="App-header">
-            <h1>REACTIVE<strong>LABS</strong></h1>
+            <h1>REACT<strong>INVOICE</strong></h1>
           </header>
           <div className="App-content App-content-columns">
             <div className="App-invoice-list">
@@ -38,7 +38,7 @@ class App extends PureComponent {
             </div>
           </div>
           <footer className="App-footer">
-            &copy;2021
+            <a href="https://github.com/dev-geddy/react-invoice" target="_blank">react invoice</a> by <a href="https://github.com/dev-geddy" target="_blank">dev-geddy</a>
           </footer>
         </div>
       </ThemeProvider>
