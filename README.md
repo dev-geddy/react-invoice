@@ -1,7 +1,7 @@
 ## [react-invoice](https://react-invoice-nu.vercel.app/)
 I've built this app for in-browser quick invoice creation. You can start using it here: [https://react-invoice-nu.vercel.app/](https://react-invoice-nu.vercel.app/).
 
-You'll need [NVM](https://github.com/nvm-sh/nvm) to run this JS app (or [Node](https://nodejs.org/) v16).
+To run it on your machine you'll need [NVM](https://github.com/nvm-sh/nvm) to run this JS app (or simply [Node](https://nodejs.org/) v16).
 
 Install relevant Node version by running `nvm install 16`. Once Node is installed run below commands within the project directory. 
 
