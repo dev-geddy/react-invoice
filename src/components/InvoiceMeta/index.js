@@ -5,13 +5,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import dayJs from 'dayjs'
-import AdapterDateFns from '@mui/lab/AdapterDateFns'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import DatePicker from '@mui/lab/DesktopDatePicker'
 import InfoIcon from '@mui/icons-material/Info';
-import {labels} from '../Invoice/en-UK'
-import {inputStyle, subtitleStyle, datePickerStyle} from '../../shared-styles'
+import labels from '../../translations'
+import {inputStyle, subtitleStyle} from '../../shared-styles'
 
 export class InvoiceParty extends PureComponent {
 
@@ -20,15 +16,6 @@ export class InvoiceParty extends PureComponent {
 
     this.props.onUpdate(name, value)
   }
-
-  // handleDateChange = (date) => {
-  //   const formattedDate = dayJs(date).format('DD/MM/YYYY')
-  //
-  //   console.log('handleDateChange/date:', date)
-  //   console.log('handleDateChange/formattedDate:', formattedDate)
-  //
-  //   this.props.onUpdate('invoiceDate', formattedDate)
-  // }
 
   handleChangeProvider = (event) => {
     const {name, value} = event.target
@@ -45,23 +32,6 @@ export class InvoiceParty extends PureComponent {
         <Grid container justifyContent="left" spacing={1} sx={{p: 0}}>
           <Grid item sx={{width: 160, p: 1}}>
             <TextField disabled={locked} label={labels.invoiceDate} name="invoiceDate" value={meta.invoiceDate} onChange={this.handleChange} fullWidth size="small" margin="dense" {...inputStyle} />
-            {/*<LocalizationProvider dateAdapter={AdapterDateFns}>*/}
-            {/*  <DatePicker*/}
-            {/*    disabled={locked}*/}
-            {/*    inputFormat={'dd/mm/yyyy'}*/}
-            {/*    mask={'__/__/____'}*/}
-            {/*    // views={['month', 'day']}*/}
-            {/*    label={labels.invoiceDate}*/}
-            {/*    name="invoiceDate"*/}
-            {/*    value={meta.invoiceDate}*/}
-            {/*    onChange={this.handleDateChange}*/}
-            {/*    fullWidth*/}
-            {/*    size="small"*/}
-            {/*    margin="dense"*/}
-            {/*    //{...datePickerStyle}*/}
-            {/*    renderInput={(inputProps) => <TextField {...inputProps} {...inputStyle} />}*/}
-            {/*  />*/}
-            {/*</LocalizationProvider>*/}
           </Grid>
           <Grid item sx={{width: 120, p: 1}}>
             <TextField disabled={locked} label={labels.invoiceSeries} name="invoiceSeries" value={meta.invoiceSeries} onChange={this.handleChange} fullWidth size="small" margin="dense" {...inputStyle} />
@@ -79,7 +49,7 @@ export class InvoiceParty extends PureComponent {
             <TextField disabled={locked} label={labels.vatRatePct} name="vatRate" value={meta.vatRate} onChange={this.handleChange} fullWidth size="small" margin="dense" {...inputStyle} type="number" />
           </Grid>
           <Grid item sx={{width: 'auto', p: 1}}>
-            <Typography disabled={locked} variant="body2" style={{fontSize: '12px', paddingTop: '14px'}}><InfoIcon sx={{fontSize: '14px', position: 'relative', top: '2px', marginRight: '4px'}} />Is client VAT registered?</Typography>
+            <Typography disabled={locked} variant="body2" style={{fontSize: '12px', paddingTop: '14px'}}><InfoIcon sx={{fontSize: '14px', position: 'relative', top: '2px', marginRight: '4px'}} />{labels.isClientVatRegistered}</Typography>
           </Grid>
         </Grid>
 

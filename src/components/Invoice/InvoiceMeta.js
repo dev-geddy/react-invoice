@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {labels} from './en-UK'
+import labels from './../../translations'
 
 export class InvoiceMeta extends Component {
 

@@ -20,11 +20,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import LockIcon from '@mui/icons-material/Lock';
 import LockResetIcon from '@mui/icons-material/LockReset';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import {labels} from "../Invoice/en-UK";
+import labels from "../../translations";
 
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.isLoading(state),
@@ -126,13 +124,13 @@ class StoredInvoicesList extends PureComponent {
       <Fragment>
         {uuid &&
           <Fragment>
-            <Alert severity="info"><strong>Note:</strong> Editing existing invoice ${uuid}</Alert>
+            <Alert severity="info"><strong>{labels.note}:</strong> {labels.editingExistingInvoice} ${uuid}</Alert>
             <Divider />
           </Fragment>
         }
         {!uuid &&
           <Fragment>
-            <Alert severity="success"><strong>Note:</strong> Creating new invoice</Alert>
+            <Alert severity="success"><strong>{labels.note}:</strong> {labels.creatingNewInvoice}</Alert>
             <Divider />
           </Fragment>
         }
@@ -153,7 +151,7 @@ class StoredInvoicesList extends PureComponent {
                       endIcon={displaySection.provider ? <VisibilityOffIcon />:<VisibilityIcon />}
                       onClick={this.handleSectionVisibility('provider')}
                     >
-                      {displaySection.provider ? 'Hide' : 'Show'} Form
+                      {displaySection.provider ? labels.hideForm : labels.showForm}
                     </Button>
                   </Grid>
                 </Grid>
@@ -181,7 +179,7 @@ class StoredInvoicesList extends PureComponent {
                       endIcon={displaySection.customer ? <VisibilityOffIcon />:<VisibilityIcon />}
                       onClick={this.handleSectionVisibility('customer')}
                     >
-                      {displaySection.customer ? 'Hide' : 'Show'} Form
+                      {displaySection.customer ? labels.hideForm : labels.showForm}
                     </Button>
                   </Grid>
                 </Grid>
@@ -224,14 +222,14 @@ class StoredInvoicesList extends PureComponent {
             {uuid &&
               <Box sx={{p: 1}}>
                 <Typography variant="body2" component="div" style={{fontSize: '12px'}}>
-                  <strong>Note:</strong> Editing existing invoice ${uuid}
+                  <strong>{labels.note}:</strong> {labels.editingExistingInvoice} ${uuid}
                 </Typography>
               </Box>
             }
             {!uuid &&
               <Box sx={{p: 1}}>
                 <Typography variant="body2" component="div" style={{fontSize: '12px'}}>
-                  <strong>Note:</strong> Creating new invoice
+                  <strong>{labels.note}:</strong> {labels.creatingNewInvoice}
                 </Typography>
               </Box>
             }
@@ -239,7 +237,7 @@ class StoredInvoicesList extends PureComponent {
               {!locked &&
                 <Grid item sx={{width: 'auto'}}>
                   <Button disabled={isLoading} variant="contained" color="primary" size="small" startIcon={<SaveIcon />} onClick={this.handleInvoiceSave}>
-                    Save invoice
+                    {labels.saveInvoice}
                   </Button>
                 </Grid>
               }
@@ -247,7 +245,7 @@ class StoredInvoicesList extends PureComponent {
                 <Grid item sx={{width: 'auto'}}>
                   <Button disabled={isLoading} variant="contained" color="secondary" size="small"
                           startIcon={locked ? <LockResetIcon/> : <LockIcon/>} onClick={this.handleInvoiceLock(uuid)}>
-                    {locked ? 'Unlock' : 'Lock'}
+                    {locked ? labels.unlock : labels.lock}
                   </Button>
                 </Grid>
               }
@@ -255,7 +253,7 @@ class StoredInvoicesList extends PureComponent {
                 <Grid item sx={{width: 'auto'}}>
                   <Button disabled={isLoading} variant="contained" color="error" size="small" startIcon={<DeleteForeverIcon/>}
                           onClick={this.handleInvoiceDelete(uuid)}>
-                    Delete invoice
+                    {labels.deleteInvoice}
                   </Button>
                 </Grid>
               }

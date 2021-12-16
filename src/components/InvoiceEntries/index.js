@@ -3,7 +3,7 @@ import {Box, Grid, Button, IconButton, TextField, Typography} from "@mui/materia
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AddBoxIcon from '@mui/icons-material/AddBox'
 import {inputStyle, subtitleStyle} from '../../shared-styles'
-import {labels} from '../Invoice/en-UK'
+import labels from '../../translations'
 import {recalcEntry} from "../../utils/invoice";
 
 export class InvoiceEntries extends PureComponent {
@@ -52,7 +52,7 @@ export class InvoiceEntries extends PureComponent {
             <Fragment key={`entry_edit_${index}`}>
               <Grid container justifyContent="left" spacing={1} sx={{p: 0}} sx={{width: '100%'}}>
                 <Grid item sx={{width: '100px', p: 0}}>
-                  <TextField disabled={locked} placeholder="DD/MM/YYYY" label={labels.date} name="dateProvided" value={entry.dateProvided} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
+                  <TextField disabled={locked} placeholder={labels.dateFormat} label={labels.date} name="dateProvided" value={entry.dateProvided} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
                 </Grid>
                 <Grid item sx={{width: 'auto', p: 0, flexGrow: 1}}>
                   <TextField disabled={locked} label={labels.description} name="description" value={entry.description} onChange={this.handleChange(index, entry)} fullWidth size="small" margin="dense" {...inputStyle} />
