@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react'
 import CssBaseline from "@mui/material/CssBaseline"
 import {createTheme, ThemeProvider} from "@mui/material/styles"
+import {Grid, Link} from "@mui/material"
 import './App.css'
 import Invoice from '../Invoice'
 import StoredInvoicesList from "../StoredInvoicesList"
 import InvoiceForm from "../InvoiceForm"
-import {Grid, Link} from "@mui/material";
+import PrefillCustomer from "../PrefillCustomer"
 
 const theme = createTheme({
   typography: {
@@ -40,6 +41,7 @@ class App extends PureComponent {
 
             <div className="App-invoice-form">
               <InvoiceForm />
+              <PrefillCustomer isOpen={true} />
             </div>
 
             <div className="App-invoice-preview">
