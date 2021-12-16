@@ -69,8 +69,17 @@ const defaultState = {
   displaySection: {
     provider: true,
     customer: true,
+    customerPrefill: false,
   },
   ...defaultInvoiceState
+}
+
+const selectAllCustomers = (invoices) => {
+  const customers = invoices.map((invoice) => {
+    return invoice.customer
+  }).filter((customer) => customer.companyName !== '' && customer.addressLine1 !== '')
+
+  return customers
 }
 
 export const selectors = {
@@ -90,6 +99,7 @@ export const selectors = {
     customer: selectors.state(state).customer,
   }),
   invoices: (state) => selectors.state(state).invoices,
+  allCustomers: (state) => selectAllCustomers(selectors.state(state).invoices)
 }
 
 const setInvoice = (state, {invoice}) => ({

@@ -22,8 +22,8 @@ import LockIcon from '@mui/icons-material/Lock'
 import LockResetIcon from '@mui/icons-material/LockReset'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import labels from "../../translations"
-import {constructTitle} from "../../utils/invoice"
 
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.isLoading(state),
@@ -173,6 +173,14 @@ class StoredInvoicesList extends PureComponent {
                     </Typography>
                   </Grid>
                   <Grid item>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      endIcon={<AutoAwesomeIcon />}
+                      onClick={this.handleSectionVisibility('customerPrefill')}
+                    >
+                      {labels.prefillCustomer}
+                    </Button>
                     <Button
                       size="small"
                       color="secondary"

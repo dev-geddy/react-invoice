@@ -60,4 +60,6 @@ export const labels = {
   companyAddress: 'Įmonės adresas',
   billingInfo: 'Atsiskaitymo info',
   isClientVatRegistered: 'Ar klientas yra PVM mokėtojas?',
+  prefillCustomer: 'Pildyti',
+  selectExistingCustomer: 'Parinkti iš esamų klientų',
 }
