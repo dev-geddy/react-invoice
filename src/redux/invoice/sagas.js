@@ -1,6 +1,7 @@
 import {put, delay, takeLatest} from 'redux-saga/effects'
 import { v4 as uuidv4 } from 'uuid'
 import actions, {types} from './actions'
+import {constructTitle} from "../../utils/invoice";
 
 export const getStoredInvoices = function *({payload: {}}) {
   yield put(actions.setLoading(true))
@@ -23,6 +24,8 @@ export const getStoredInvoice = function *({payload: {uuid}}) {
   try {
     const invoices = JSON.parse(localStorage.getItem('invoicesHistory'))
     const invoice = invoices.find((invoice, index) => (String(invoice.uuid) === String(uuid) || Number(uuid) === index))
+
+    document.title = constructTitle(invoice)
 
     yield put(actions.setInvoice(invoice))
   } catch (error) {

@@ -13,16 +13,17 @@ import {
 import connectWithRedux from '../../decorators/connectWithRedux'
 import invoiceActions from '../../redux/invoice/actions'
 import {selectors as invoiceSelector} from '../../redux/invoice/reducer'
-import InvoiceParty from "../InvoiceParty";
-import InvoiceMeta from "../InvoiceMeta";
-import InvoiceEntries from "../InvoiceEntries";
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import LockIcon from '@mui/icons-material/Lock';
-import LockResetIcon from '@mui/icons-material/LockReset';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import labels from "../../translations";
+import InvoiceParty from "../InvoiceParty"
+import InvoiceMeta from "../InvoiceMeta"
+import InvoiceEntries from "../InvoiceEntries"
+import SaveIcon from '@mui/icons-material/Save'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import LockIcon from '@mui/icons-material/Lock'
+import LockResetIcon from '@mui/icons-material/LockReset'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import labels from "../../translations"
+import {constructTitle} from "../../utils/invoice"
 
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.isLoading(state),

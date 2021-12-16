@@ -1,11 +1,12 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import './Invoice.css'
 import InvoiceSubject from './InvoiceSubject'
 import InvoiceEntries from './InvoiceEntries'
 import InvoiceMeta from './InvoiceMeta'
 import labels from './../../translations'
-import connectWithRedux from "../../decorators/connectWithRedux";
-import {selectors as invoiceSelector} from "../../redux/invoice/reducer";
+import connectWithRedux from "../../decorators/connectWithRedux"
+import {selectors as invoiceSelector} from "../../redux/invoice/reducer"
+import {getTotalsAndVat} from '../../utils/invoice'
 
 @connectWithRedux((state) => ({
   isLoading: invoiceSelector.isLoading(state),
@@ -18,101 +19,11 @@ import {selectors as invoiceSelector} from "../../redux/invoice/reducer";
 
 })
 
-class Invoice extends Component {
-  qtyTypes = [
-    {
-      name: '',
-      description: 'none'
-    },
-    {
-      name: 'h',
-      description: 'hours'
-    },
-    {
-      name: 'd',
-      description: 'days'
-    },
-    {
-      name: 'units',
-      description: 'number of goods'
-    }
-  ]
-
-  currencyTypes = [
-    {
-      symbol: '£',
-      name: 'British Pound',
-      iso: 'GBP',
-    },
-    {
-      symbol: '€',
-      name: 'Euro',
-      iso: 'EUR',
-    },
-    {
-      symbol: '$',
-      name: 'US Dollar',
-      iso: 'USD',
-    },
-    {
-      symbol: 'Fr.',
-      name: 'Swiss Frank',
-      iso: 'CHF',
-    }
-  ]
-
-  getInvoiceTotalPayable = ({invoiceEntries, invoiceMeta}) => {
-    const total = invoiceEntries?.reduce((grandTotal, entry) => {
-      return grandTotal + parseFloat(entry.total)
-    }, 0)
-
-    const multiplier = this.getVatMultiplier(invoiceMeta.vatRate)
-
-    return total * multiplier
-  }
-
-  constructTitle = ({provider, customer, invoiceEntries, invoiceMeta, uuid}) => {
-    try {
-      const invoiceDateISO = String(invoiceMeta.invoiceDate).split('/').reverse().join('_')
-      const invoiceCurrency = invoiceMeta.currency
-      const invoiceCurrencyISO = invoiceCurrency === '£' ? 'GBP' : invoiceCurrency === '€' ? 'EUR' : invoiceCurrency
-      const invoiceTotal = Number(this.getInvoiceTotalPayable({invoiceEntries, invoiceMeta})).toFixed(2);
-      const vatInclusive = Number(invoiceMeta.vatRate) > 0 ? ' VAT incl. ' : ' NON-VAT '
-      const nameOnFile = `${customer.companyName}, ${customer.name}`
-
-      return `${invoiceDateISO} - ${invoice.invoiceMeta.invoiceSeries}${invoice.invoiceMeta.invoiceNo} - ${invoiceCurrencyISO}${invoiceTotal}${vatInclusive} - (PENDING) - ${nameOnFile}`
-    } catch (error) {
-      return '- INVOICE INFORMATION INCOMPLETE -';
-    }
-  }
-
-  componentDidMount() {
-    const {provider, customer, invoiceEntries, invoiceMeta, uuid} = this.props
-    document.title = this.constructTitle({provider, customer, invoiceEntries, invoiceMeta, uuid})
-  }
-
-  getVatMultiplier = (vat) => {
-    return parseFloat(100 + parseFloat(vat)) / 100
-  }
-
-  getTotalsAndVat = (entries, invoiceMeta) => {
-    const total = entries?.reduce((grandTotal, entry) => {
-      return grandTotal + parseFloat(entry.total)
-    }, 0)
-
-    const multiplier = this.getVatMultiplier(invoiceMeta?.vatRate)
-
-    return {
-      total: total,
-      vatAmount: (total * multiplier) - total,
-      vatBasis: total,
-      totalVat: total * multiplier
-    }
-  }
+class Invoice extends PureComponent {
 
   render() {
     const {provider, customer, invoiceEntries, invoiceMeta} = this.props
-    const {total, totalVat, vatAmount, vatBasis} = this.getTotalsAndVat(invoiceEntries, invoiceMeta)
+    const {total, totalVat, vatAmount, vatBasis} = getTotalsAndVat(invoiceEntries, invoiceMeta)
 
     return (
       <div className="Invoice">

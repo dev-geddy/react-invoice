@@ -90,7 +90,6 @@ export const selectors = {
 
 const setInvoice = (state, {invoice}) => ({
   ...state,
-  // invoice, // deprecate
   ...invoice, // rewrite the state values
 })
 
