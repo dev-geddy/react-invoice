@@ -5,6 +5,7 @@ import './App.css'
 import Invoice from '../Invoice'
 import StoredInvoicesList from "../StoredInvoicesList"
 import InvoiceForm from "../InvoiceForm"
+import {Grid, Link} from "@mui/material";
 
 const theme = createTheme({
   typography: {
@@ -22,7 +23,15 @@ class App extends PureComponent {
         <CssBaseline />
         <div className="App">
           <header className="App-header">
-            <h1>REACT<strong>INVOICE</strong></h1>
+            <Grid container alignContent="justify" justifyContent="justify" alignItems="center">
+              <Grid item sx={{flexGrow: 1}}>
+                <h1>REACT<strong>INVOICE</strong></h1>
+              </Grid>
+              <Grid item sx={{flexGrow: 0, pr: 2}}>
+                <Link href="/?lang=lt" sx={{mr: 1}}>LT</Link>
+                <Link href="/?lang=en">EN</Link>
+              </Grid>
+            </Grid>
           </header>
           <div className="App-content App-content-columns">
             <div className="App-invoice-list">

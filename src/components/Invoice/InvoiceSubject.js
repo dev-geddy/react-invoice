@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {labels} from './en-UK'
+import labels from './../../translations'
 
 export class InvoiceSubject extends Component {
 
@@ -33,7 +33,7 @@ export class InvoiceSubject extends Component {
           {subject.addressLine4}
         </p>
 
-        {(subject.billingBankAccountBic || subject.billingBankAccountNo) && <small><br />Billing info</small>}
+        {(subject.billingBankAccountBic || subject.billingBankAccountNo) && <small><br />{labels.billingInformation}</small>}
         <p>
           {subject.billingBankAccountBic && `${labels.billingBankAccountBic} ${subject.billingBankAccountBic}`}
           {subject.billingBankAccountBic && <br/>}

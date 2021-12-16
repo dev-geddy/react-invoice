@@ -3,7 +3,7 @@ import './Invoice.css'
 import InvoiceSubject from './InvoiceSubject'
 import InvoiceEntries from './InvoiceEntries'
 import InvoiceMeta from './InvoiceMeta'
-import {labels} from './en-UK'
+import labels from './../../translations'
 import connectWithRedux from "../../decorators/connectWithRedux";
 import {selectors as invoiceSelector} from "../../redux/invoice/reducer";
 
@@ -148,7 +148,7 @@ class Invoice extends Component {
               <tbody>
               <tr>
                 {provider.companyVatNo && <th>{labels.vatBasis}</th> || <th></th>}
-                {provider.companyVatNo && <th>{labels.rate}</th> || <th></th>}
+                {provider.companyVatNo && <th>{labels.vatRate}</th> || <th></th>}
                 {provider.companyVatNo && <th>{labels.vatAmount}</th> || <th></th>}
                 <td rowSpan={2} className="Table-totals">
                   <table className="Totals-table">

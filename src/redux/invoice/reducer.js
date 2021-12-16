@@ -1,5 +1,6 @@
 import {types} from './actions'
 import invoiceConfig from '../../invoiceConfig'
+import {getActiveLang} from '../../translations'
 
 const date = new Date()
 const day = date.getDate()
@@ -8,7 +9,7 @@ const year = date.getFullYear()
 const today = `${day}/${month}/${year}`
 const defaultInvoiceState = {
   uuid: '',
-  lang: 'en',
+  lang: getActiveLang() || 'en',
   provider: {
     companyName: invoiceConfig.provider.companyName,
     name: invoiceConfig.provider.name,

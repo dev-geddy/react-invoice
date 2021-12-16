@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react'
-import {labels} from './en-UK'
+import labels from './../../translations'
 
 export class InvoiceEntries extends PureComponent {
 

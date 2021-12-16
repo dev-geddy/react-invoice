@@ -13,13 +13,13 @@ html, body, #root, .App {
   background-color: rgba(0, 0, 0, 0.11);
 }
 
-.App-header > h1 {
+.App-header h1 {
   font-size: 17px;
   margin: 7px 15px;
   font-weight: normal;
 }
 
-.App-header > h1 > strong {
+.App-header h1 > strong {
   font-weight: bold;
 }
 

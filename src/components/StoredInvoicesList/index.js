@@ -18,6 +18,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt'
 import connectWithRedux from '../../decorators/connectWithRedux'
 import invoiceActions from '../../redux/invoice/actions'
 import {selectors as invoiceSelector} from '../../redux/invoice/reducer'
+import labels from '../../translations'
 
 const StyledList = styled(List)({
   paddingTop: 0,
@@ -80,7 +81,7 @@ class StoredInvoicesList extends PureComponent {
                 <AddBoxIcon />
               </ListItemIcon>
               <ListItemText>
-                <Typography variant="body2">Create new invoice</Typography>
+                <Typography variant="body2">{labels.createNewInvoice}</Typography>
               </ListItemText>
             </ListItemButton>
           </ListItem>
