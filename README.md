@@ -1,6 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
-Project [LiVE](https://react-invoice-3pzb5n2ia-dev-geddy.vercel.app/) demo on [Vercel](https://react-invoice-3pzb5n2ia-dev-geddy.vercel.app/)
+Project [LiVE](https://react-invoice-nu.vercel.app/) demo on [Vercel](https://react-invoice-nu.vercel.app/)
 
 ## react-invoice
 I've built this app for in-browser quick invoice creation. You'll need NVM to run this JS app, more info: [Node Version Manager](https://github.com/nvm-sh/nvm).
@@ -16,10 +16,17 @@ yarn start
 Note: all information is stored in your Browser's LocalStorage. You may access that via Developer Tools / Application / LocalStorage.
 This means no information is sent anywhere, just exists and is stored on your web browser. If you update your browser or clear all history / cache, you're likely to lose all stored invoices.
 
-### screenshot
+### what it looks like
 
-![Preview Image](docs/preview.png?raw=true "React Invoice Screenshot")
-Check [React Invoice LIVE Demo](https://react-invoice-3pzb5n2ia-dev-geddy.vercel.app/) on Vercel.
+Demo is available [here](https://react-invoice-nu.vercel.app/).
+
+![React Invoice Screenshot](docs/react-invoice-window.png?raw=true "React Invoice Screenshot")
+
+![React Invoice Preview](docs/react-invoice-preview.png?raw=true "React Invoice Screenshot")
+
+![React Invoice Print Preview](docs/react-invoice-print-preview.png?raw=true "React Invoice Screenshot")
+
+Check [React Invoice LIVE Demo](https://react-invoice-nu.vercel.app/) on Vercel.
 
 ### printing
 
