@@ -48,7 +48,6 @@ export class InvoiceParty extends PureComponent {
 
 InvoiceParty.propTypes = {
   subject: PropTypes.object,
-  editMode: PropTypes.bool,
   onUpdate: PropTypes.func
 }
 

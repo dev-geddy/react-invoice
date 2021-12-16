@@ -160,7 +160,6 @@ class StoredInvoicesList extends PureComponent {
                   <InvoiceParty
                     locked={locked || isLoading}
                     subject={provider}
-                    editMode={true}
                     onUpdate={this.handleInvoiceUpdate('provider')}
                   />
                 }
@@ -188,7 +187,6 @@ class StoredInvoicesList extends PureComponent {
                   <InvoiceParty
                     locked={locked || isLoading}
                     subject={customer}
-                    editMode={true}
                     onUpdate={this.handleInvoiceUpdate('customer')}
                   />
                 }
