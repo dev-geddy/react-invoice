@@ -3,11 +3,15 @@ import { v4 as uuidv4 } from 'uuid'
 import actions, {types} from './actions'
 import {constructTitle} from "../../utils/invoice";
 
+const storageConfig = {
+  INVOICES: 'invoicesHistory'
+}
+
 export const getStoredInvoices = function *({payload: {}}) {
   yield put(actions.setLoading(true))
 
   try {
-    const invoices = JSON.parse(localStorage.getItem('invoicesHistory'))
+    const invoices = JSON.parse(localStorage.getItem(storageConfig.INVOICES))
 
     yield put(actions.setInvoices(invoices))
   } catch (error) {
@@ -22,7 +26,7 @@ export const getStoredInvoice = function *({payload: {uuid}}) {
   yield put(actions.setLoading(true))
 
   try {
-    const invoices = JSON.parse(localStorage.getItem('invoicesHistory'))
+    const invoices = JSON.parse(localStorage.getItem(storageConfig.INVOICES))
     const invoice = invoices.find((invoice, index) => (String(invoice.uuid) === String(uuid) || Number(uuid) === index))
 
     document.title = constructTitle(invoice)
@@ -40,11 +44,11 @@ export const lockInvoice = function *({payload: {uuid}}) {
   yield put(actions.setLoading(true))
 
   try {
-    const invoices = JSON.parse(localStorage.getItem('invoicesHistory'))
+    const invoices = JSON.parse(localStorage.getItem(storageConfig.INVOICES))
     const invoiceIndex = invoices.findIndex((invoice, index) => (String(invoice.uuid) === String(uuid)))
     invoices[invoiceIndex].invoiceMeta.locked = true
 
-    localStorage.setItem('invoicesHistory', JSON.stringify(invoices))
+    localStorage.setItem(storageConfig.INVOICES, JSON.stringify(invoices))
     yield put(actions.setInvoices(invoices))
 
   } catch (error) {
@@ -59,11 +63,11 @@ export const deleteInvoice = function *({payload: {uuid}}) {
   yield put(actions.setLoading(true))
 
   try {
-    const invoices = JSON.parse(localStorage.getItem('invoicesHistory'))
+    const invoices = JSON.parse(localStorage.getItem(storageConfig.INVOICES))
     const invoiceIndex = invoices.findIndex((invoice, index) => (String(invoice.uuid) === String(uuid)))
     invoices.splice(invoiceIndex, 1)
 
-    localStorage.setItem('invoicesHistory', JSON.stringify(invoices))
+    localStorage.setItem(storageConfig.INVOICES, JSON.stringify(invoices))
     yield put(actions.setInvoices(invoices))
 
   } catch (error) {
@@ -82,7 +86,7 @@ export const storeNewInvoice = function *({payload: {invoice}}) {
   const newUuid = uuidv4()
 
   try {
-    const invoices = localStorage.getItem('invoicesHistory') ? JSON.parse(localStorage.getItem('invoicesHistory')) : []
+    const invoices = localStorage.getItem(storageConfig.INVOICES) ? JSON.parse(localStorage.getItem(storageConfig.INVOICES)) : []
 
     if (invoice.uuid) {
       const invoiceIndex = invoices.findIndex((item, index) => (String(invoice.uuid) === String(item.uuid)))
@@ -96,7 +100,7 @@ export const storeNewInvoice = function *({payload: {invoice}}) {
       invoices.push(uniqueInvoice)
     }
 
-    localStorage.setItem('invoicesHistory', JSON.stringify(invoices))
+    localStorage.setItem(storageConfig.INVOICES, JSON.stringify(invoices))
 
     yield put(actions.setInvoices(invoices))
     yield put(actions.getInvoice(newUuid))
