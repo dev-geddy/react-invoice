@@ -114,19 +114,26 @@ export const storeNewInvoice = function *({payload: {invoice}}) {
 }
 
 export const generateInvoiceNumber = function *({payload: {}}) {
-  const invoiceMeta = (yield select(invoiceSelector.invoiceMeta))
-  const invoices = (yield select(invoiceSelector.invoices))
-  const invoiceNums = invoices.filter(invoice => invoice.invoiceMeta.invoiceSeries === invoiceMeta.invoiceSeries).map(invoice => invoice.invoiceMeta.invoiceNo)
-  const maxLength = Math.max(...invoiceNums.map(num => num.length))
-  const maxNum = Math.max(...invoiceNums.map(num => Number(num)))
-  const zeroCount = Number(maxLength) - Number(String(maxNum).length)
-  let zeroFill = ''
+  try {
+    const invoiceMeta = (yield select(invoiceSelector.invoiceMeta))
+    const invoices = (yield select(invoiceSelector.invoices))
+    const invoiceNums = invoices.filter(invoice => invoice.invoiceMeta.invoiceSeries === invoiceMeta.invoiceSeries).map(invoice => invoice.invoiceMeta.invoiceNo)
+    const maxLength = Math.max(...invoiceNums.map(num => num.length))
+    const maxNum = Math.max(...invoiceNums.map(num => Number(num)))
+    const zeroCount = Number(maxLength) - Number(String(maxNum).length)
+    let zeroFill = ''
 
-  for (let i=0; i<zeroCount; i++) {
-    zeroFill = `0${zeroFill}`
+    for (let i=0; i<zeroCount; i++) {
+      zeroFill = `0${zeroFill}`
+    }
+    if (maxNum > 0) {
+      yield put(actions.setInvoiceNo(`${zeroFill}${Number(maxNum)+1}`))
+    } else {
+      yield put(actions.setInvoiceNo('0001'))
+    }
+  } catch (error) {
+    yield put(actions.setInvoiceNo('0000'))
   }
-
-  yield put(actions.setInvoiceNo(`${zeroFill}${Number(maxNum)+1}`))
 }
 
 export const startNewInvoice = function *({payload: {}}) {
