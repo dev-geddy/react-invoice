@@ -132,7 +132,7 @@ export const generateInvoiceNumber = function *({payload: {}}) {
       yield put(actions.setInvoiceNo('0001'))
     }
   } catch (error) {
-    yield put(actions.setInvoiceNo('0000'))
+    yield put(actions.setInvoiceNo('0001'))
   }
 }
 
