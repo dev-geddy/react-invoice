@@ -1,12 +1,17 @@
 import {types} from './actions'
 import invoiceConfig from '../../invoiceConfig'
 import {getActiveLang} from '../../translations'
+import {today} from '../../utils/invoice'
 
-const date = new Date()
-const day = date.getDate()
-const month = date.getMonth()
-const year = date.getFullYear()
-const today = `${day}/${month}/${year}`
+export const defaultInvoiceEntry = {
+  dateProvided: today(),
+  description: '',
+  qty: '1',
+  qtyType: 'h',
+  rate: '0',
+  total: '0',
+}
+
 const defaultInvoiceState = {
   uuid: '',
   lang: getActiveLang() || 'en',
@@ -42,7 +47,7 @@ const defaultInvoiceState = {
     // ...invoiceConfig.customer
   },
   invoiceMeta: {
-    invoiceDate: today || '',
+    invoiceDate: today(),
     invoiceSeries: invoiceConfig.invoiceMeta.invoiceSeries || '',
     invoiceNo: 0,
     currency: invoiceConfig.invoiceMeta.currency,
@@ -53,7 +58,7 @@ const defaultInvoiceState = {
   },
   invoiceEntries: [
     {
-      dateProvided: today || '',
+      dateProvided: today(),
       description: '',
       qty: '1',
       qtyType: 'days',
@@ -104,7 +109,7 @@ export const selectors = {
 
 const setInvoice = (state, {invoice}) => ({
   ...state,
-  ...invoice, // rewrite the state values
+  ...invoice, // rewrite the state values with sections of invoice
 })
 
 const setLoading = (state, {isLoading}) => ({
@@ -125,11 +130,19 @@ const setInvoices = (state, {invoices}) => ({
   invoices
 })
 
-const lockInvoice = (state, {uuid}) => ({
+const lockInvoice = (state, {}) => ({
   ...state,
   invoiceMeta: {
     ...state.invoiceMeta,
     locked: !state.invoiceMeta.locked
+  }
+})
+
+const setInvoiceNo = (state, {invoiceNo}) => ({
+  ...state,
+  invoiceMeta: {
+    ...state.invoiceMeta,
+    invoiceNo
   }
 })
 
@@ -192,6 +205,7 @@ export default (state = defaultState, {type, payload}) => {
     case types.LOCK_INVOICE: return lockInvoice(state, payload)
     case types.START_NEW_INVOICE: return startNewInvoice(state, payload)
     case types.DISPLAY_SECTION_SWITCH: return displaySectionSwitch(state, payload)
+    case types.SET_INVOICE_NUMBER: return setInvoiceNo(state, payload)
     default: return state
   }
 }

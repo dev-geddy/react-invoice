@@ -63,6 +63,15 @@ export const constructTitle = ({provider, customer, invoiceEntries, invoiceMeta,
   }
 }
 
+export const today = () => {
+  const date = new Date()
+  const day = date.getDate()
+  const month = date.getMonth()
+  const year = date.getFullYear()
+
+  return `${day}/${month}/${year}`
+}
+
 // const qtyTypes = [
 //   {
 //     name: '',
@@ -108,4 +117,5 @@ export const constructTitle = ({provider, customer, invoiceEntries, invoiceMeta,
 export default {
   recalcEntry,
   constructTitle,
+  today,
 }
