@@ -129,6 +129,10 @@ export const generateInvoiceNumber = function *({payload: {}}) {
   yield put(actions.setInvoiceNo(`${zeroFill}${Number(maxNum)+1}`))
 }
 
+export const startNewInvoice = function *({payload: {}}) {
+  yield put(actions.generateInvoiceNumber())
+}
+
 export const newInvoiceEntry = function *({payload: {}}) {
   // TODO: copy units from previous entry
 
@@ -148,4 +152,5 @@ export default [
   takeLatest(types.DELETE_INVOICE, deleteInvoice),
   takeLatest(types.GENERATE_INVOICE_NUMBER, generateInvoiceNumber),
   takeLatest(types.NEW_INVOICE_ENTRY, newInvoiceEntry),
+  takeLatest(types.START_NEW_INVOICE, startNewInvoice),
 ]
