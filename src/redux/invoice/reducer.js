@@ -75,7 +75,7 @@ const defaultState = {
 }
 
 const selectAllCustomers = (invoices) => {
-  const customers = invoices.map((invoice) => {
+  const customers = invoices?.map((invoice) => {
     return invoice.customer
   }).filter((customer) => customer.companyName !== '' && customer.addressLine1 !== '')
 
