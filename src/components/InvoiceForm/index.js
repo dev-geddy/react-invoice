@@ -5,7 +5,6 @@ import {
   Box,
   Divider,
   Grid,
-  Skeleton,
   Button,
   Typography,
 } from '@mui/material'
@@ -35,7 +34,7 @@ import labels from "../../translations"
   invoiceEntries: invoiceSelector.invoiceEntries(state),
   displaySection: invoiceSelector.displaySection(state),
 }), {
-  addInvoiceEntry: invoiceActions.addInvoiceEntry,
+  newInvoiceEntry: invoiceActions.newInvoiceEntry,
   removeInvoiceEntry: invoiceActions.removeInvoiceEntry,
   updateInvoiceEntry: invoiceActions.updateInvoiceEntry,
   updateInvoiceSection: invoiceActions.updateInvoiceSection,
@@ -43,6 +42,7 @@ import labels from "../../translations"
   lockInvoice: invoiceActions.lockInvoice,
   deleteInvoice: invoiceActions.deleteInvoice,
   displaySectionSwitch: invoiceActions.displaySectionSwitch,
+  generateInvoiceNumber: invoiceActions.generateInvoiceNumber,
 })
 
 class StoredInvoicesList extends PureComponent {
@@ -52,24 +52,14 @@ class StoredInvoicesList extends PureComponent {
     getInvoice: PropTypes.func,
     storeNewInvoice: PropTypes.func,
     updateInvoiceSection: PropTypes.func,
-    addInvoiceEntry: PropTypes.func,
+    displaySectionSwitch: PropTypes.func,
+    newInvoiceEntry: PropTypes.func,
     updateInvoiceEntry: PropTypes.func,
     removeInvoiceEntry: PropTypes.func,
+    generateInvoiceNumber: PropTypes.func,
+    deleteInvoice: PropTypes.func,
+    lockInvoice: PropTypes.func,
     invoices: PropTypes.array
-  }
-
-  handleAddEntry = () => {
-    const newInvoiceEntry = {
-      dateProvided: '',
-      description: '',
-      qty: '',
-      qtyType: '',
-      rate: '0',
-      total: '0',
-    }
-
-    // TODO: refactor to require no entry itself, implement it in the reducer to take defaultState
-    this.props.addInvoiceEntry(newInvoiceEntry)
   }
 
   handleInvoiceUpdate = (dataSection) => (subjectField, subjectValue) => {
@@ -207,7 +197,7 @@ class StoredInvoicesList extends PureComponent {
                 <InvoiceEntries
                   locked={locked || isLoading}
                   entries={invoiceEntries}
-                  onAdd={this.handleAddEntry}
+                  onAdd={this.props.newInvoiceEntry}
                   onUpdate={this.handleEntryUpdate}
                   onRemove={this.handleEntryRemove}
                 />
@@ -220,6 +210,7 @@ class StoredInvoicesList extends PureComponent {
                   meta={invoiceMeta}
                   provider={provider}
                   locked={locked || isLoading}
+                  onGenerateInvoiceNumber={this.props.generateInvoiceNumber}
                   onUpdate={this.handleInvoiceUpdate('invoiceMeta')}
                   onUpdateProvider={this.handleInvoiceUpdate('provider')}
                 />

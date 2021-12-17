@@ -17,14 +17,20 @@ export const types = actionTypes('invoice')({
   LOCK_INVOICE: 'LOCK_INVOICE',
   DELETE_INVOICE: 'DELETE_INVOICE',
   DISPLAY_SECTION_SWITCH: 'DISPLAY_SECTION_SWITCH',
+  GENERATE_INVOICE_NUMBER: 'GENERATE_INVOICE_NUMBER',
+  SET_INVOICE_NUMBER: 'SET_INVOICE_NUMBER',
+  NEW_INVOICE_ENTRY: 'NEW_INVOICE_ENTRY',
 })
 
 export const invoiceActions = {
+  setInvoiceNo: (invoiceNo) => ({type: types.SET_INVOICE_NUMBER, payload: {invoiceNo}}),
+  generateInvoiceNumber: () => ({type: types.GENERATE_INVOICE_NUMBER, payload: {}}),
   displaySectionSwitch: (section, display) => ({type: types.DISPLAY_SECTION_SWITCH, payload: {section, display}}),
   updateInvoiceSection: (section, sectionData) => ({type: types.UPDATE_INVOICE_SECTION, payload: {section, sectionData}}),
   updateInvoiceEntry: (entryIndex, entryData) => ({type: types.UPDATE_INVOICE_ENTRY, payload: {entryIndex, entryData}}),
   removeInvoiceEntry: (entryIndex) => ({type: types.REMOVE_INVOICE_ENTRY, payload: {entryIndex}}),
   addInvoiceEntry: (entryData) => ({type: types.ADD_INVOICE_ENTRY, payload: {entryData}}),
+  newInvoiceEntry: () => ({type: types.NEW_INVOICE_ENTRY, payload: {}}),
   lockInvoice: (uuid) => ({type: types.LOCK_INVOICE, payload: {uuid}}),
   deleteInvoice: (uuid) => ({type: types.DELETE_INVOICE, payload: {uuid}}),
 

@@ -2,12 +2,14 @@ import React, {PureComponent, Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {
   Grid,
+  IconButton,
   TextField,
   Typography,
 } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info';
 import labels from '../../translations'
 import {inputStyle, subtitleStyle} from '../../shared-styles'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 export class InvoiceParty extends PureComponent {
 
@@ -38,6 +40,11 @@ export class InvoiceParty extends PureComponent {
           </Grid>
           <Grid item sx={{width: 120, p: 1}}>
             <TextField disabled={locked} label={labels.invoiceNumber} name="invoiceNo" value={meta.invoiceNo} onChange={this.handleChange} fullWidth size="small" margin="dense" {...inputStyle} type="number" />
+          </Grid>
+          <Grid item sx={{width: 'auto'}}>
+            <IconButton disabled={locked} color="secondary" aria-label="Delete Entry" component="span" style={{position: 'relative', top: '3px', left: '-10px'}} onClick={this.props.onGenerateInvoiceNumber}>
+              <AutoAwesomeIcon />
+            </IconButton>
           </Grid>
         </Grid>
 
@@ -83,9 +90,9 @@ export class InvoiceParty extends PureComponent {
 InvoiceParty.propTypes = {
   subject: PropTypes.object,
   subjectType: PropTypes.string,
-  editMode: PropTypes.bool,
   onUpdate: PropTypes.func,
-  onUpdateProvider: PropTypes.func
+  onUpdateProvider: PropTypes.func,
+  onGenerateInvoiceNumber: PropTypes.func,
 }
 
 export default InvoiceParty

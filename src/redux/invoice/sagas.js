@@ -1,7 +1,8 @@
-import {put, delay, takeLatest} from 'redux-saga/effects'
+import {put, delay, takeLatest, select} from 'redux-saga/effects'
 import { v4 as uuidv4 } from 'uuid'
 import actions, {types} from './actions'
-import {constructTitle} from "../../utils/invoice";
+import {defaultInvoiceEntry, selectors as invoiceSelector} from './reducer'
+import {constructTitle, today} from "../../utils/invoice"
 
 const storageConfig = {
   INVOICES: 'invoicesHistory'
@@ -112,10 +113,51 @@ export const storeNewInvoice = function *({payload: {invoice}}) {
   }
 }
 
+export const generateInvoiceNumber = function *({payload: {}}) {
+  try {
+    const invoiceMeta = (yield select(invoiceSelector.invoiceMeta))
+    const invoices = (yield select(invoiceSelector.invoices))
+    const invoiceNums = invoices.filter(invoice => invoice.invoiceMeta.invoiceSeries === invoiceMeta.invoiceSeries).map(invoice => invoice.invoiceMeta.invoiceNo)
+    const maxLength = Math.max(...invoiceNums.map(num => num.length))
+    const maxNum = Math.max(...invoiceNums.map(num => Number(num)))
+    const zeroCount = Number(maxLength) - Number(String(maxNum).length)
+    let zeroFill = ''
+
+    for (let i=0; i<zeroCount; i++) {
+      zeroFill = `0${zeroFill}`
+    }
+    if (maxNum > 0) {
+      yield put(actions.setInvoiceNo(`${zeroFill}${Number(maxNum)+1}`))
+    } else {
+      yield put(actions.setInvoiceNo('0001'))
+    }
+  } catch (error) {
+    yield put(actions.setInvoiceNo('0000'))
+  }
+}
+
+export const startNewInvoice = function *({payload: {}}) {
+  yield put(actions.generateInvoiceNumber())
+}
+
+export const newInvoiceEntry = function *({payload: {}}) {
+  // TODO: copy units from previous entry
+
+  const newInvoiceEntry = {
+    ...defaultInvoiceEntry,
+    dateProvided: today(),
+  }
+
+  yield put(actions.addInvoiceEntry(newInvoiceEntry))
+}
+
 export default [
   takeLatest(types.GET_STORED_INVOICES, getStoredInvoices),
   takeLatest(types.GET_STORED_INVOICE, getStoredInvoice),
   takeLatest(types.STORE_NEW_INVOICE, storeNewInvoice),
   takeLatest(types.LOCK_INVOICE, lockInvoice),
   takeLatest(types.DELETE_INVOICE, deleteInvoice),
+  takeLatest(types.GENERATE_INVOICE_NUMBER, generateInvoiceNumber),
+  takeLatest(types.NEW_INVOICE_ENTRY, newInvoiceEntry),
+  takeLatest(types.START_NEW_INVOICE, startNewInvoice),
 ]
