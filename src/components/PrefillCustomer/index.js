@@ -33,7 +33,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getInvoices: invoiceActions.getInvoices,
-  displaySectionSwitch: invoiceActions.displaySectionSwitch,
+  toggleSectionVisibility: invoiceActions.toggleSectionVisibility,
   updateInvoiceSection: invoiceActions.updateInvoiceSection,
 }
 
@@ -42,18 +42,19 @@ export class PrefillCustomer extends PureComponent {
     isLoading: PropTypes.bool,
     getInvoices: PropTypes.func,
     updateInvoiceSection: PropTypes.func,
-    displaySectionSwitch: PropTypes.func,
+    toggleSectionVisibility: PropTypes.func,
     displaySection: PropTypes.object,
     allCustomers: PropTypes.array,
   }
 
   handlePrefillCustomer = (customer) => () => {
+    // TODO: copy VAT rate from invoice meta as well
     this.props.updateInvoiceSection('customer', customer)
-    this.props.displaySectionSwitch('customerPrefill', false)
+    this.props.toggleSectionVisibility('customerPrefill', false)
   }
 
   handleClose = () => {
-    this.props.displaySectionSwitch('customerPrefill', false)
+    this.props.toggleSectionVisibility('customerPrefill', false)
   }
 
   render = () => {

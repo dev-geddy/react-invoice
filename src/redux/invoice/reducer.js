@@ -117,7 +117,7 @@ const setLoading = (state, {isLoading}) => ({
   isLoading
 })
 
-const displaySectionSwitch = (state, {section, display}) => ({
+const toggleSectionVisibility = (state, {section, display}) => ({
   ...state,
   displaySection: {
     ...state.displaySection,
@@ -204,7 +204,7 @@ export default (state = defaultState, {type, payload}) => {
     case types.ADD_INVOICE_ENTRY: return addInvoiceEntry(state, payload)
     case types.LOCK_INVOICE: return lockInvoice(state, payload)
     case types.START_NEW_INVOICE: return startNewInvoice(state, payload)
-    case types.DISPLAY_SECTION_SWITCH: return displaySectionSwitch(state, payload)
+    case types.TOGGLE_SECTION_VISIBILITY: return toggleSectionVisibility(state, payload)
     case types.SET_INVOICE_NUMBER: return setInvoiceNo(state, payload)
     default: return state
   }

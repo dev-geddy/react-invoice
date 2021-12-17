@@ -41,7 +41,7 @@ import labels from "../../translations"
   storeNewInvoice: invoiceActions.storeNewInvoice,
   lockInvoice: invoiceActions.lockInvoice,
   deleteInvoice: invoiceActions.deleteInvoice,
-  displaySectionSwitch: invoiceActions.displaySectionSwitch,
+  toggleSectionVisibility: invoiceActions.toggleSectionVisibility,
   generateInvoiceNumber: invoiceActions.generateInvoiceNumber,
 })
 
@@ -52,7 +52,7 @@ class StoredInvoicesList extends PureComponent {
     getInvoice: PropTypes.func,
     storeNewInvoice: PropTypes.func,
     updateInvoiceSection: PropTypes.func,
-    displaySectionSwitch: PropTypes.func,
+    toggleSectionVisibility: PropTypes.func,
     newInvoiceEntry: PropTypes.func,
     updateInvoiceEntry: PropTypes.func,
     removeInvoiceEntry: PropTypes.func,
@@ -103,7 +103,7 @@ class StoredInvoicesList extends PureComponent {
   }
 
   handleSectionVisibility = (section) => () => {
-    this.props.displaySectionSwitch(section)
+    this.props.toggleSectionVisibility(section)
   }
 
   render = () => {
