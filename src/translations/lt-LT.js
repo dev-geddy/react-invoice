@@ -62,4 +62,5 @@ export const labels = {
   isClientVatRegistered: 'Ar klientas yra PVM mokėtojas?',
   prefillCustomer: 'Pildyti',
   selectExistingCustomer: 'Parinkti iš esamų klientų',
+  showingCustomersWithDetails: 'Rodomi klientai, kurių "Adreso eilutė 1" įvesta.',
 }

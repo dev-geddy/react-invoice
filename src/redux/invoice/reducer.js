@@ -84,7 +84,14 @@ const selectAllCustomers = (invoices) => {
     return invoice.customer
   }).filter((customer) => customer.companyName !== '' && customer.addressLine1 !== '')
 
-  return customers
+  customers?.reverse()
+
+  let seen = {}
+  const uniqueLatest = customers.filter((customer) => {
+    return seen[customer.companyName] ? false : (seen[customer.companyName] = true)
+  })
+
+  return uniqueLatest
 }
 
 export const selectors = {

@@ -62,4 +62,5 @@ export const labels = {
   isClientVatRegistered: 'Is client VAT registered?',
   prefillCustomer: 'Prefill',
   selectExistingCustomer: 'Select from existing customers',
+  showingCustomersWithDetails: 'Showing customers that have "Address Line 1" present.',
 }

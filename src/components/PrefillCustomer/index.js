@@ -7,8 +7,11 @@ import {
   Fade,
   Modal,
   Typography,
-  Chip,
-  Stack,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  Divider,
 } from '@mui/material'
 import invoiceActions from '../../redux/invoice/actions'
 import {selectors as invoiceSelector} from '../../redux/invoice/reducer'
@@ -78,13 +81,24 @@ export class PrefillCustomer extends PureComponent {
               <Typography id="transition-modal-title" variant="h6" component="h2">
                 {labels.selectExistingCustomer}
               </Typography>
-              <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-                <Stack direction="row" spacing={1} justifyContent="wrap">
-                  {allCustomers?.map((customer, index) => (
-                    <Chip key={`${customer.companyName}_${index}`} label={customer.companyName} variant="outlined" onClick={this.handlePrefillCustomer(customer)} />
-                  ))}
-                </Stack>
+              <Typography variant="body" component="p">
+                {labels.showingCustomersWithDetails}
               </Typography>
+
+              <List>
+                {allCustomers?.map((customer, index) => (
+                  <Fragment key={`${customer.companyName}_${index}`}>
+                    <ListItem alignItems="flexStart">
+                      <ListItemButton onClick={this.handlePrefillCustomer(customer)}>
+                        <ListItemText secondary={`${customer.addressLine1}, ${customer.addressLine2}`}>
+                          {customer.companyName}
+                        </ListItemText>
+                      </ListItemButton>
+                    </ListItem>
+                    <Divider inset component="li" />
+                  </Fragment>
+                ))}
+              </List>
             </Box>
           </Fade>
         </Modal>
