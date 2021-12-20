@@ -18,6 +18,7 @@ export const types = actionTypes('invoice')({
   DELETE_INVOICE: 'DELETE_INVOICE',
   TOGGLE_SECTION_VISIBILITY: 'TOGGLE_SECTION_VISIBILITY',
   GENERATE_INVOICE_NUMBER: 'GENERATE_INVOICE_NUMBER',
+  COPY_LATEST_SUPPLIER_DETAILS: 'COPY_LATEST_SUPPLIER_DETAILS',
   SET_INVOICE_NUMBER: 'SET_INVOICE_NUMBER',
   NEW_INVOICE_ENTRY: 'NEW_INVOICE_ENTRY',
 })
@@ -25,6 +26,7 @@ export const types = actionTypes('invoice')({
 export const invoiceActions = {
   setInvoiceNo: (invoiceNo) => ({type: types.SET_INVOICE_NUMBER, payload: {invoiceNo}}),
   generateInvoiceNumber: () => ({type: types.GENERATE_INVOICE_NUMBER, payload: {}}),
+  copyLatestSupplierDetails: () => ({type: types.COPY_LATEST_SUPPLIER_DETAILS, payload: {}}),
   toggleSectionVisibility: (section, display) => ({type: types.TOGGLE_SECTION_VISIBILITY, payload: {section, display}}),
   updateInvoiceSection: (section, sectionData) => ({type: types.UPDATE_INVOICE_SECTION, payload: {section, sectionData}}),
   updateInvoiceEntry: (entryIndex, entryData) => ({type: types.UPDATE_INVOICE_ENTRY, payload: {entryIndex, entryData}}),

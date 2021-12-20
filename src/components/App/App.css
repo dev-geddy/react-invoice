@@ -45,14 +45,16 @@ html, body, #root, .App {
   flex-grow: 0;
   width: 20%;
   max-width: 300px;
+  min-width: 240px;
   background-color: rgba(0, 0, 0, 0.08);
   border-right: 1px solid #cacaca;
 }
 
 .App-invoice-form {
   flex-grow: 0;
-  width: 40%;
-  max-width: 600px;
+  width: 50%;
+  max-width: 700px;
+  min-width: 600px;
   background-color: rgba(0, 0, 0, 0.05);
   border-right: 1px solid #cacaca;
 }

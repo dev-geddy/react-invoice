@@ -79,7 +79,7 @@ export class PrefillCustomer extends PureComponent {
                 {labels.selectExistingCustomer}
               </Typography>
               <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-                <Stack direction="row" spacing={1}>
+                <Stack direction="row" spacing={1} justifyContent="wrap">
                   {allCustomers?.map((customer, index) => (
                     <Chip key={`${customer.companyName}_${index}`} label={customer.companyName} variant="outlined" onClick={this.handlePrefillCustomer(customer)} />
                   ))}

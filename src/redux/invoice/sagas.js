@@ -136,8 +136,23 @@ export const generateInvoiceNumber = function *({payload: {}}) {
   }
 }
 
+export const copyLatestSupplierDetails = function *({payload: {}}) {
+  try {
+    const invoices = (yield select(invoiceSelector.invoices))
+    const lastInvoice = invoices[invoices.length -1]
+
+    const latestProviderDetails = {...lastInvoice.provider}
+    console.log({latestProviderDetails})
+
+    yield put(actions.updateInvoiceSection('provider', latestProviderDetails))
+  } catch (error) {
+    console.log('Could not get previous invoice...')
+  }
+}
+
 export const startNewInvoice = function *({payload: {}}) {
   yield put(actions.generateInvoiceNumber())
+  yield put(actions.copyLatestSupplierDetails())
 }
 
 export const newInvoiceEntry = function *({payload: {}}) {
@@ -158,6 +173,7 @@ export default [
   takeLatest(types.LOCK_INVOICE, lockInvoice),
   takeLatest(types.DELETE_INVOICE, deleteInvoice),
   takeLatest(types.GENERATE_INVOICE_NUMBER, generateInvoiceNumber),
+  takeLatest(types.COPY_LATEST_SUPPLIER_DETAILS, copyLatestSupplierDetails),
   takeLatest(types.NEW_INVOICE_ENTRY, newInvoiceEntry),
   takeLatest(types.START_NEW_INVOICE, startNewInvoice),
 ]
