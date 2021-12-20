@@ -8,7 +8,7 @@ I've built this app for in-browser quick invoice creation. You can start using i
 - Edit invoice branding
 - Edit supplier/provider details
 - Edit customer details
-- Autofill customer details
+- Select customer details from previous customers to auto-fill
 - Add, edit, remove invoice entries
 - Edit invoice number and series
 - Define currency
@@ -16,6 +16,7 @@ I've built this app for in-browser quick invoice creation. You can start using i
 - Lock invoice so you don't accidentally change it
 - Print layout. You may print invoice to a PDF or send to a printer.
 - Auto-generate invoice number based on existing invoices
+- Auto pre-fill provider details from latest invoice
 - Show/hide provider and customer forms
 - All data is stored in your browser's memory (localStorage). All data is yours.
 
