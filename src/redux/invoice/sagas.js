@@ -139,21 +139,34 @@ export const generateInvoiceNumber = function *({payload: {}}) {
 export const copyLatestSupplierDetails = function *({payload: {}}) {
   try {
     const invoices = (yield select(invoiceSelector.invoices))
+    const invoiceMeta = (yield select(invoiceSelector.invoiceMeta))
     const lastInvoice = invoices[invoices.length -1]
 
     const latestProviderDetails = {...lastInvoice.provider}
-    const latestInvoiceMeta = {...lastInvoice.invoiceMeta}
+    const lastInvoiceMeta = lastInvoice.invoiceMeta
+
+    const newInvoiceMeta = {
+      ...invoiceMeta,
+      invoiceDate: today(),
+      invoiceSeries: lastInvoiceMeta.invoiceSeries,
+      invoiceNo: 0,
+      currency: lastInvoiceMeta.currency,
+      brandName: lastInvoiceMeta.brandName,
+      brandSubName: lastInvoiceMeta.brandSubName,
+      vatRate: lastInvoiceMeta.vatRate,
+    }
 
     yield put(actions.updateInvoiceSection('provider', latestProviderDetails))
-    yield put(actions.updateInvoiceSection('invoiceMeta', latestInvoiceMeta))
+    yield put(actions.updateInvoiceSection('invoiceMeta', newInvoiceMeta))
   } catch (error) {
     console.log('Could not get previous invoice...')
   }
 }
 
 export const startNewInvoice = function *({payload: {}}) {
-  yield put(actions.generateInvoiceNumber())
   yield put(actions.copyLatestSupplierDetails())
+  yield delay(200)
+  yield put(actions.generateInvoiceNumber())
 }
 
 export const newInvoiceEntry = function *({payload: {}}) {
