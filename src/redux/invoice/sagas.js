@@ -142,9 +142,10 @@ export const copyLatestSupplierDetails = function *({payload: {}}) {
     const lastInvoice = invoices[invoices.length -1]
 
     const latestProviderDetails = {...lastInvoice.provider}
-    console.log({latestProviderDetails})
+    const latestInvoiceMeta = {...lastInvoice.invoiceMeta}
 
     yield put(actions.updateInvoiceSection('provider', latestProviderDetails))
+    yield put(actions.updateInvoiceSection('invoiceMeta', latestInvoiceMeta))
   } catch (error) {
     console.log('Could not get previous invoice...')
   }
