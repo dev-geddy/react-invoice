@@ -10,6 +10,7 @@ import {
   Divider,
   Skeleton, Typography,
 } from '@mui/material'
+import LockIcon from '@mui/icons-material/Lock';
 import { styled, ThemeProvider, createTheme } from '@mui/material/styles'
 
 import AddBoxIcon from '@mui/icons-material/AddBox'
@@ -86,14 +87,17 @@ class StoredInvoicesList extends PureComponent {
             </ListItemButton>
           </ListItem>
           <Divider />
-          {invoices?.map((invoice, index) => (
+          {invoices?.reverse().map((invoice, index) => (
             <ListItem  component="div" disablePadding key={`invoice_${invoice.uuid}_${index}`}>
               <ListItemButton disabled={isLoading} sx={{ height: 56 }} onClick={this.handleInvoicePick(invoice.uuid)} style={invoice.uuid === uuid ? {backgroundColor: 'rgba(0,0,0,0.1)'}:{}}>
                 <ListItemIcon>
                   <ReceiptIcon />
                 </ListItemIcon>
                 <ListItemText>
-                  <Typography variant="body2" component="div">{invoice.invoiceMeta.invoiceSeries}{invoice.invoiceMeta.invoiceNo}</Typography>
+                  <Typography variant="body2" component="div" sx={{position: 'relative'}}>
+                    {invoice.invoiceMeta.invoiceSeries}{invoice.invoiceMeta.invoiceNo}
+                    {invoice.invoiceMeta.locked && <LockIcon sx={{position: 'absolute', color: '#666', transform: 'scale(0.75)'}} />}
+                  </Typography>
                   <Typography variant="body2" component="div" style={{fontSize: '11px'}}>{invoice.invoiceMeta.invoiceDate} - {invoice.customer.companyName}</Typography>
                 </ListItemText>
               </ListItemButton>
