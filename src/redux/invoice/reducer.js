@@ -82,12 +82,12 @@ const defaultState = {
 const selectAllCustomers = (invoices) => {
   const customers = invoices?.map((invoice) => {
     return invoice.customer
-  }).filter((customer) => customer.companyName !== '' && customer.addressLine1 !== '')
+  })?.filter((customer) => customer.companyName !== '' && customer.addressLine1 !== '')
 
   customers?.reverse()
 
   let seen = {}
-  const uniqueLatest = customers.filter((customer) => {
+  const uniqueLatest = customers?.filter((customer) => {
     return seen[customer.companyName] ? false : (seen[customer.companyName] = true)
   })
 
