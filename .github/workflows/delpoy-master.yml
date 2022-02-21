@@ -27,6 +27,15 @@ jobs:
     - run: yarn install --frozen-lockfile
     - run: yarn build --if-present
 #    - run: yarn test
+    - name: Clear hosted static files before deployment
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{secrets.HOST}}
+        username: ${{secrets.USERNAME}}
+        key: ${{ secrets.KEY }}
+        port: ${{secrets.PORT}}
+        script: |
+          rm -rf /var/www/domains/invoice.reactivelabs.cloud/static
 
     - name: Deploy files to production
       uses: appleboy/scp-action@master
