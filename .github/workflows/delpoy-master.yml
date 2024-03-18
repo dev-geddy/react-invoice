@@ -35,7 +35,7 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{secrets.PORT}}
         script: |
-          rm -rf /var/www/domains/invoice.reactivelabs.cloud/static
+          rm -rf /var/www/domains/invoice.reactivelabs.cloud/public_html
 
     - name: Deploy files to production
       uses: appleboy/scp-action@master
@@ -46,5 +46,5 @@ jobs:
         port: ${{ secrets.PORT }}
         source: "./build/*"
         strip_components: 1
-        target: "/var/www/domains/invoice.reactivelabs.cloud"
+        target: "/var/www/domains/invoice.reactivelabs.cloud/public_html"
         overwrite: true
