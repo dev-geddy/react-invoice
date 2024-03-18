@@ -34,15 +34,14 @@ jobs:
         username: ${{secrets.DROPLET_USER}}
         key: ${{ secrets.DROPLET_PRIVATE_KEY }}
         script: |
-          rm -rf /var/www/domains/invoice.reactivelabs.cloud/public_html
+          rm -rf /var/www/domains/invoice.reactivelabs.cloud/public_html/*
 
     - name: Deploy files to production
       uses: appleboy/scp-action@master
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
+        host: ${{ secrets.DROPLET_HOST }}
+        username: ${{ secrets.DROPLET_USER }}
+        key: ${{ secrets.DROPLET_PRIVATE_KEY }}
         source: "./build/*"
         strip_components: 1
         target: "/var/www/domains/invoice.reactivelabs.cloud/public_html"
