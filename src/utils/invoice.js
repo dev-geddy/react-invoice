@@ -66,7 +66,7 @@ export const constructTitle = ({provider, customer, invoiceEntries, invoiceMeta,
 export const today = () => {
   const date = new Date()
   const day = date.getDate()
-  const month = date.getMonth()
+  const month = date.getMonth() + 1
   const year = date.getFullYear()
 
   return `${day}/${month}/${year}`
