@@ -1,11 +1,18 @@
-import { accounts, aiConfig, db, emailConfig, users } from "@workspace/db"
+import {
+  accounts,
+  aiConfig,
+  db,
+  emailConfig,
+  invoices,
+  users,
+} from "@workspace/db"
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar"
 import { cn } from "@workspace/ui/lib/utils"
-import { desc, eq } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 import Link from "next/link"
 
 import { RiCheckLine } from "@remixicon/react"
@@ -73,10 +80,27 @@ export default async function OverviewPage() {
     .where(eq(emailConfig.provider, "resend"))
   const emailConfigured = Boolean(emailRow?.apiKeyEnc)
 
+  // Ledger headline: the invoice surface is the product, so it leads the
+  // stats even though the rest of this page reports platform setup.
+  const [invoiceStats] = await db
+    .select({
+      total: sql<number>`count(*)::int`,
+      locked: sql<number>`count(*) filter (where ${invoices.locked})::int`,
+    })
+    .from(invoices)
+  const invoiceTotal = invoiceStats?.total ?? 0
+  const invoicesLocked = invoiceStats?.locked ?? 0
+
   const recent = userRows.slice(0, 4)
   const firstName = sessionUser.name?.split(" ")[0] || "there"
 
   const steps = [
+    {
+      label: "Create your first invoice",
+      done: invoiceTotal > 0,
+      href: "/backflip/invoices",
+      cta: "Invoices",
+    },
     {
       label: "Set your display name",
       done: Boolean(sessionUser.name),
@@ -126,7 +150,12 @@ export default async function OverviewPage() {
           <OverviewJump />
 
           {/* Stat cards */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard label="Invoices" value={String(invoiceTotal)}>
+              <span className="text-muted-foreground">
+                {invoicesLocked} locked
+              </span>
+            </StatCard>
             <StatCard label="Members" value={String(total)}>
               <span className="text-muted-foreground">
                 {active} active · {pending} pending
