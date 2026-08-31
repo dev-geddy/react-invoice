@@ -32,10 +32,16 @@ async function createInvoice(page: Page, series: string, number: string) {
   await ensureSeries(page, series)
   await page.goto("/backflip/invoices")
 
-  await page.getByLabel("Company name").first().fill("Provider Co")
-  await page.getByLabel("VAT reg. no.").first().fill("GB123456789")
-  await page.getByLabel("Company name").last().fill("Customer Ltd")
-  await page.getByLabel("Address line 1").last().fill("1 Test Street")
+  // Party details live behind their summary cards (L2-INVOICE-28).
+  await page.getByRole("button", { name: "Edit provider details" }).click()
+  await page.getByLabel("Company name").fill("Provider Co")
+  await page.getByLabel("VAT reg. no.").fill("GB123456789")
+  await page.getByRole("button", { name: "Done" }).click()
+
+  await page.getByRole("button", { name: "Edit customer details" }).click()
+  await page.getByLabel("Company name").fill("Customer Ltd")
+  await page.getByLabel("Address line 1").fill("1 Test Street")
+  await page.getByRole("button", { name: "Done" }).click()
 
   await page.getByLabel("Description", { exact: true }).fill("Consulting")
   await page.getByLabel("Quantity").fill("2")

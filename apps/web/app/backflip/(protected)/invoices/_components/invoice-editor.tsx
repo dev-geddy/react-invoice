@@ -49,7 +49,8 @@ import type {
   InvoiceSeriesOption,
 } from "../_lib/types"
 import { EntryRows } from "./entry-rows"
-import { PartyFields } from "./party-fields"
+import { PartyCard } from "./party-card"
+import { PartyDialog } from "./party-dialog"
 
 /**
  * The invoice form: provider and customer side by side, then the lines, then
@@ -100,6 +101,9 @@ export function InvoiceEditor({
   onTogglePreview: () => void
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [openParty, setOpenParty] = useState<"provider" | "customer" | null>(
+    null
+  )
 
   const locked = invoice?.locked ?? false
   const readOnly = locked || (invoice != null && !invoice.canManage)
@@ -312,34 +316,27 @@ export function InvoiceEditor({
           VAT is charged only when the provider has a VAT registration number
           and the rate is above zero.
         </p>
-
       </section>
+
       <Separator className="my-6" />
 
-      {/* Provider and customer always sit side by side, the way the reference
-          app laid them out; the columns are capped narrow so the pair fits
-          even when the preview rail is open. */}
-      <div className="mt-5">
-        <div className="grid grid-cols-2 gap-4">
-        <section className="flex min-w-0 max-w-[14rem] flex-col gap-3">
-          {/* Both headers are one fixed-height row — the customer side carries
-              a button, and without a matching row the two field columns would
-              start at different heights. */}
-          <div className="sticky top-0 z-10 flex h-9 items-center justify-between gap-2 bg-card">
+      {/* Provider and customer are summary cards side by side; the 13 fields
+          each open in a dialog, so the narrow form column stays readable. */}
+      <div className="mt-5 grid grid-cols-2 gap-4">
+        <section className="flex min-w-0 flex-col gap-2">
+          <div className="flex h-9 items-center justify-between gap-2">
             <SectionLabel>Provider</SectionLabel>
           </div>
-          <PartyFields
+          <PartyCard
             party={draft.provider}
-            idPrefix="provider"
-            disabled={disabled}
-            onChange={(field, value) =>
-              onPartyChange("provider", field, value)
-            }
+            label="Provider"
+            readOnly={readOnly}
+            onOpen={() => setOpenParty("provider")}
           />
         </section>
 
-        <section className="flex min-w-0 max-w-[14rem] flex-col gap-3">
-          <div className="sticky top-0 z-10 flex h-9 items-center justify-between gap-2 bg-card">
+        <section className="flex min-w-0 flex-col gap-2">
+          <div className="flex h-9 items-center justify-between gap-2">
             <SectionLabel>Customer</SectionLabel>
             <Button
               variant="ghost"
@@ -351,17 +348,34 @@ export function InvoiceEditor({
               Prefill
             </Button>
           </div>
-          <PartyFields
+          <PartyCard
             party={draft.customer}
-            idPrefix="customer"
-            disabled={disabled}
-            onChange={(field, value) =>
-              onPartyChange("customer", field, value)
-            }
+            label="Customer"
+            readOnly={readOnly}
+            onOpen={() => setOpenParty("customer")}
           />
         </section>
-        </div>
       </div>
+
+      <PartyDialog
+        open={openParty === "provider"}
+        party={draft.provider}
+        label="Provider"
+        idPrefix="provider"
+        disabled={disabled}
+        onOpenChange={(next) => setOpenParty(next ? "provider" : null)}
+        onChange={(field, value) => onPartyChange("provider", field, value)}
+      />
+      <PartyDialog
+        open={openParty === "customer"}
+        party={draft.customer}
+        label="Customer"
+        idPrefix="customer"
+        disabled={disabled}
+        onOpenChange={(next) => setOpenParty(next ? "customer" : null)}
+        onChange={(field, value) => onPartyChange("customer", field, value)}
+        onPrefill={onPrefillCustomer}
+      />
 
       <Separator className="my-6" />
 

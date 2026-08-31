@@ -11,7 +11,8 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 - `_lib/validation.ts` — `invoiceDraftSchema`, `L2-INVOICE-06`.
 - `_lib/types.ts` — `Invoice`, `InvoiceDraft`, `InvoiceParty`, `InvoiceEntry`, `EMPTY_PARTY`.
 - `_components/invoices-view.tsx` — shell. `InvoicesView` holds selection + search; `InvoiceWorkspace` (keyed on the selected id, so switching rows remounts rather than patching state in an effect) holds the draft, the save/lock/delete transitions and the prefill dialog.
-- `_components/invoice-editor.tsx`, `party-fields.tsx`, `entry-rows.tsx` — the form, `L2-INVOICE-09/10`.
+- `_components/invoice-editor.tsx`, `entry-rows.tsx` — the form, `L2-INVOICE-09/10`.
+- `_components/party-card.tsx` + `party-dialog.tsx` + `party-fields.tsx` — provider/customer as a summary card opening a dialog over the same field set (`L2-INVOICE-28`). Both dialogs mount only while open, so the shared field ids/labels never collide.
 - `_components/invoice-preview.tsx` — the printed document + its print stylesheet, `L2-INVOICE-11`.
 - `_components/invoice-list.tsx`, `prefill-customer-dialog.tsx` — ledger column and customer prefill, `L2-INVOICE-12`.
 
@@ -38,10 +39,11 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 - The admin shell does not bound its children's height, so `invoices-view` sets `h-[calc(100svh-var(--header-height))]` itself; without it the whole page scrolls and the preview cannot centre in its rail.
 - The form scroll container carries `px-5 pb-5` only — a padded scrollport leaves a transparent strip that `sticky top-0` column headers cannot cover, so the top padding lives on a spacer inside instead.
 - A new draft shows an amber "not saved" banner above the title (`L2-INVOICE-27`); the ledger list carries stored invoices only.
-- Provider/customer columns are capped at 14rem and always side by side; the form column is capped at 500px while the preview is open.
+- Provider/customer cards sit side by side; their fields moved into dialogs when the form column was capped at 500px — 13 inputs per side did not survive that width.
 
 ## Gotchas
 - `getByLabel("Rate")` matches "VAT rate %" too; the e2e suite uses `{ exact: true }` for the short numeric labels.
+- e2e fills party details through the cards: `getByRole("button", { name: "Edit customer details" })` → fields → "Done".
 - base-ui's `Select` puts the `id` on its hidden native input, so `getByLabel("Series")` finds that input, not the control. Target the trigger with `getByRole("combobox", { name: "Series" })`.
 - e2e `global-setup` truncates `invoice_series` alongside the auth tables — series survive the user truncate otherwise (no FK to `user`) and leak between runs.
 - Deleting a user with invoices is refused by the FK (`on delete restrict`) — intentional, an invoice is a financial record. Reassign or delete their invoices first.
