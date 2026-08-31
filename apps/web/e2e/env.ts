@@ -5,7 +5,7 @@
 
 const HOST = process.env.E2E_PG_HOST ?? "localhost"
 const PORT = process.env.E2E_PG_PORT ?? "5545"
-const USER = process.env.E2E_PG_USER ?? "react-invoice"
+const USER = process.env.E2E_PG_USER ?? "react_invoice"
 const PASSWORD = process.env.E2E_PG_PASSWORD ?? "react_invoice_local_dev"
 
 export const TEST_DB_NAME = "react_invoice_test"
