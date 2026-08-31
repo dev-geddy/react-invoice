@@ -18,6 +18,7 @@ export default async function InvoiceSettingsPage() {
     .select({
       id: invoiceSeries.id,
       code: invoiceSeries.code,
+      currency: invoiceSeries.currency,
       brandName: invoiceSeries.brandName,
       brandSubName: invoiceSeries.brandSubName,
     })

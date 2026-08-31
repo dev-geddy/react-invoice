@@ -17,12 +17,13 @@ import { deleteInvoiceSeries, saveInvoiceSeries } from "../_actions"
 export type SeriesRow = {
   id: string
   code: string
+  currency: string
   brandName: string
   brandSubName: string
   invoiceCount: number
 }
 
-const EMPTY = { code: "", brandName: "", brandSubName: "" }
+const EMPTY = { code: "", currency: "€", brandName: "", brandSubName: "" }
 
 /**
  * Series list + editor. Each series owns the numbering prefix and the two-part
@@ -87,8 +88,8 @@ export function SeriesSettings({
       </Button>
 
       <PageHeading
-        title="Invoice settings"
-        description="Series decide the numbering prefix and the branding printed on the invoices raised under them."
+        title="Series & currency"
+        description="A series decides the numbering prefix, the default currency and the branding printed on the invoices raised under it."
       />
 
       <section className="mt-6 flex flex-col gap-3">
@@ -110,7 +111,7 @@ export function SeriesSettings({
                   <div className="truncate text-xs text-muted-foreground">
                     {[row.brandName, row.brandSubName].filter(Boolean).join("") ||
                       "No branding"}{" "}
-                    · {row.invoiceCount}{" "}
+                    · {row.currency} · {row.invoiceCount}{" "}
                     {row.invoiceCount === 1 ? "invoice" : "invoices"}
                   </div>
                 </div>
@@ -122,6 +123,7 @@ export function SeriesSettings({
                     setEditingId(row.id)
                     setDraft({
                       code: row.code,
+                      currency: row.currency,
                       brandName: row.brandName,
                       brandSubName: row.brandSubName,
                     })
@@ -164,6 +166,7 @@ export function SeriesSettings({
                     start(async () => {
                       const res = await saveInvoiceSeries({
                         code: row.code,
+                        currency: "€",
                         brandName: "",
                         brandSubName: "",
                       })
@@ -201,6 +204,21 @@ export function SeriesSettings({
               onChange={(e) => setDraft({ ...draft, code: e.target.value })}
             />
           </Field>
+          <Field className="w-[110px]">
+            <FieldLabel
+              htmlFor="currency"
+              className="text-xs text-muted-foreground"
+            >
+              Currency
+            </FieldLabel>
+            <Input
+              id="currency"
+              value={draft.currency}
+              placeholder="€"
+              disabled={pending}
+              onChange={(e) => setDraft({ ...draft, currency: e.target.value })}
+            />
+          </Field>
           <Field className="w-[200px]">
             <FieldLabel
               htmlFor="brandName"
@@ -234,7 +252,8 @@ export function SeriesSettings({
         </div>
         <p className="text-xs text-muted-foreground">
           The two brand parts print side by side on the invoice header — the
-          second is shown in bold.
+          second is shown in bold. Currency is the default for invoices raised
+          under this series; each invoice keeps its own and can override it.
         </p>
         <div className="flex gap-2">
           <Button size="sm" disabled={pending} onClick={save}>

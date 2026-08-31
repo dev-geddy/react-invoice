@@ -19,9 +19,9 @@ export const JUMP_GROUPS: {
         keywords: "customer client address book company",
       },
       {
-        label: "Invoice settings",
+        label: "Series & currency",
         href: "/backflip/invoicing/settings",
-        keywords: "series numbering brand branding invoice config",
+        keywords: "series numbering brand branding currency invoice settings",
       },
       {
         label: "Members",

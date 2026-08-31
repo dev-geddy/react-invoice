@@ -93,6 +93,7 @@ export const PARTY_FIELDS = Object.keys(EMPTY_PARTY) as (keyof InvoiceParty)[]
 /** A series definition as offered to the invoice form. */
 export type InvoiceSeriesOption = {
   code: string
+  currency: string
   brandName: string
   brandSubName: string
 }

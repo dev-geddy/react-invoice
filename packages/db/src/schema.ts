@@ -467,9 +467,9 @@ export const invoiceEntries = pgTable(
 
 /**
  * Invoice series — the numbering prefixes an operator issues under (`INV`,
- * `2026-`, …) plus the branding printed on invoices of that series. Invoices
- * snapshot the code and the brand at save time, so renaming or deleting a
- * series never rewrites what an issued invoice says.
+ * `2026-`, …) plus the branding and default currency for invoices of that
+ * series. Invoices snapshot code, brand and currency at save time, so renaming
+ * or deleting a series never rewrites what an issued invoice says.
  *
  * @spec L2-INVOICE-22, L2-DB-33
  */
@@ -478,6 +478,9 @@ export const invoiceSeries = pgTable("invoice_series", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   code: text("code").notNull().unique(),
+  /** Default currency for invoices raised under this series — a default, not
+   *  a lock: the invoice keeps its own copy and stays editable. */
+  currency: text("currency").notNull().default("€"),
   brandName: text("brandName").notNull().default(""),
   brandSubName: text("brandSubName").notNull().default(""),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),

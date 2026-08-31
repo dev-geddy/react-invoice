@@ -38,7 +38,8 @@ Invoice surface:
 - `settings/page.tsx` + `_components/series-settings.tsx` + `settings/_actions.ts` — the series list, its inline editor and the two brand-name parts. Reached from the "Invoice settings" button in the editor toolbar (owner/admin only); no sidebar entry of its own.
 - Codes that invoices already carry but that nobody configured (invoices raised before series existed) are listed as one-click "add" chips with their invoice count.
 - Deletion is refused while any invoice carries the code, and the settings page shows the per-series invoice count so the disabled remove button explains itself.
-- The invoice keeps its own `series`/`brandName`/`brandSubName` columns. Renaming a series therefore leaves existing invoices printing what they were issued under — deliberate, and the reason there is no FK between `invoice` and `invoice_series`.
+- Currency is a series **default**, stamped onto the draft on selection and still editable on the invoice (`L2-INVOICE-31`) — locking it would break mixed-currency ledgers, while per-currency numbering is expressible as one series per currency.
+- The invoice keeps its own `series`/`currency`/`brandName`/`brandSubName` columns. Renaming a series therefore leaves existing invoices printing what they were issued under — deliberate, and the reason there is no FK between `invoice` and `invoice_series`.
 
 ## Print
 `window.print()` on the detail view. The stylesheet hides every element (`visibility: hidden`) and re-shows `#invoice-print-root` and its subtree, absolutely positioned at the page origin, with nested `overflow` forced visible — the admin shell scrolls in nested containers that would otherwise clip the document to one viewport. `document.title` is swapped to `invoiceTitle(draft)` while the workspace is mounted, so "save as PDF" proposes the invoice's own name.

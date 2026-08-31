@@ -184,9 +184,10 @@ function InvoiceWorkspace({
   }
 
   /**
-   * Picking a series also stamps its branding onto the draft: the invoice keeps
-   * its own copy (`L2-INVOICE-22`), so later edits to the series definition
-   * leave issued invoices untouched.
+   * Picking a series stamps its branding and default currency onto the draft:
+   * the invoice keeps its own copy (`L2-INVOICE-22`), so later edits to the
+   * series definition leave issued invoices untouched — and the currency stays
+   * editable per invoice.
    */
   function selectSeries(code: string) {
     const picked = series.find((s) => s.code === code)
@@ -195,6 +196,7 @@ function InvoiceWorkspace({
       meta: {
         ...d.meta,
         series: code,
+        currency: picked?.currency ?? d.meta.currency,
         brandName: picked?.brandName ?? d.meta.brandName,
         brandSubName: picked?.brandSubName ?? d.meta.brandSubName,
       },
@@ -352,7 +354,7 @@ function blankDraft(
       invoiceDate: today(),
       series: code,
       number: nextNumber(used),
-      currency: last?.meta.currency ?? "€",
+      currency: picked?.currency ?? last?.meta.currency ?? "€",
       vatRate: last?.meta.vatRate ?? "0",
       brandName: picked?.brandName ?? last?.meta.brandName ?? "",
       brandSubName: picked?.brandSubName ?? last?.meta.brandSubName ?? "",

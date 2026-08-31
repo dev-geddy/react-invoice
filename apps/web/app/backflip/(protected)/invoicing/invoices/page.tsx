@@ -65,6 +65,7 @@ export default async function InvoicesPage() {
     db
       .select({
         code: invoiceSeries.code,
+        currency: invoiceSeries.currency,
         brandName: invoiceSeries.brandName,
         brandSubName: invoiceSeries.brandSubName,
       })

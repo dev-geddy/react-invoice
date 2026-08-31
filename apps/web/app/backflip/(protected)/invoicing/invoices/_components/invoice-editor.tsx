@@ -178,7 +178,7 @@ export function InvoiceEditor({
               render={<Link href="/backflip/invoicing/settings" />}
             >
               <RiSettings3Line className="size-4" />
-              Invoice settings
+              Series & currency
             </Button>
           ) : null}
           <Button variant="outline" size="sm" onClick={onPrint}>
@@ -313,8 +313,9 @@ export function InvoiceEditor({
           </Field>
         </div>
         <p className="text-xs text-muted-foreground">
-          VAT is charged only when the provider has a VAT registration number
-          and the rate is above zero.
+          Currency comes from the series and can be changed per invoice. VAT is
+          charged only when the provider has a VAT registration number and the
+          rate is above zero.
         </p>
       </section>
 

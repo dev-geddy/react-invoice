@@ -75,7 +75,7 @@ const NAV_GROUPS: { label: string; pinBottom?: boolean; items: NavItem[] }[] = [
         capability: "invoices",
       },
       {
-        title: "Settings",
+        title: "Series & currency",
         url: "/backflip/invoicing/settings",
         icon: RiFileSettingsLine,
         capability: "invoices.settings",

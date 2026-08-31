@@ -76,6 +76,7 @@ export type InvoiceDraftInput = z.infer<typeof invoiceDraftSchema>
  */
 export const invoiceSeriesSchema = z.object({
   id: z.string().trim().optional(),
+  currency: text(8).refine((v) => v.length > 0, "Enter a currency symbol."),
   code: z
     .string()
     .trim()

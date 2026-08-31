@@ -1,0 +1,1 @@
+ALTER TABLE "invoice_series" ADD COLUMN "currency" text DEFAULT '€' NOT NULL;

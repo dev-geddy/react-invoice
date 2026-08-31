@@ -34,6 +34,7 @@ const SETTINGS_PATH = "/backflip/invoicing/settings"
 export async function saveInvoiceSeries(input: {
   id?: string
   code: string
+  currency: string
   brandName: string
   brandSubName: string
 }): Promise<SeriesActionState> {
@@ -44,16 +45,18 @@ export async function saveInvoiceSeries(input: {
 
   const parsed = invoiceSeriesSchema.safeParse(input)
   if (!parsed.success) return { ok: false, message: firstError(parsed.error) }
-  const { id, code, brandName, brandSubName } = parsed.data
+  const { id, code, currency, brandName, brandSubName } = parsed.data
 
   try {
     if (id) {
       await db
         .update(invoiceSeries)
-        .set({ code, brandName, brandSubName, updatedAt: new Date() })
+        .set({ code, currency, brandName, brandSubName, updatedAt: new Date() })
         .where(eq(invoiceSeries.id, id))
     } else {
-      await db.insert(invoiceSeries).values({ code, brandName, brandSubName })
+      await db
+        .insert(invoiceSeries)
+        .values({ code, currency, brandName, brandSubName })
     }
   } catch (e) {
     if (isUniqueViolation(e)) {
