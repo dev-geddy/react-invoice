@@ -30,6 +30,13 @@ import { PrefillCustomerDialog } from "./prefill-customer-dialog"
 export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [query, setQuery] = useState("")
+  // A just-saved invoice is selected before `router.refresh()` has delivered
+  // it, so the remounted workspace would find no row to seed from. Carry the
+  // submitted draft across that gap.
+  const [saved, setSaved] = useState<{
+    id: string
+    draft: InvoiceDraft
+  } | null>(null)
 
   const selected = invoices.find((i) => i.id === selectedId) ?? null
 
@@ -71,6 +78,11 @@ export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
         key={selectedId ?? "new"}
         invoices={invoices}
         selected={selected}
+        seedDraft={saved?.id === selectedId ? saved.draft : null}
+        onSaved={(id, draft) => {
+          setSaved({ id, draft })
+          setSelectedId(id)
+        }}
         onSelect={setSelectedId}
       />
     </div>
@@ -81,24 +93,29 @@ export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
 function InvoiceWorkspace({
   invoices,
   selected,
+  seedDraft,
+  onSaved,
   onSelect,
 }: {
   invoices: Invoice[]
   selected: Invoice | null
+  seedDraft: InvoiceDraft | null
+  onSaved: (id: string, draft: InvoiceDraft) => void
   onSelect: (id: string | null) => void
 }) {
   const router = useRouter()
   const [prefillOpen, setPrefillOpen] = useState(false)
   const [saving, startSave] = useTransition()
-  const [draft, setDraft] = useState<InvoiceDraft>(() =>
-    selected
-      ? {
-          meta: selected.meta,
-          provider: selected.provider,
-          customer: selected.customer,
-          entries: selected.entries,
-        }
-      : blankDraft(invoices)
+  const [draft, setDraft] = useState<InvoiceDraft>(
+    () =>
+      (selected
+        ? {
+            meta: selected.meta,
+            provider: selected.provider,
+            customer: selected.customer,
+            entries: selected.entries,
+          }
+        : seedDraft) ?? blankDraft(invoices)
   )
 
   // Browsers name a printed PDF after the document title (L2-INVOICE-11).
@@ -154,7 +171,7 @@ function InvoiceWorkspace({
       if (res.ok) {
         toast.success(res.message)
         router.refresh()
-        onSelect(res.id)
+        onSaved(res.id, draft)
       } else {
         toast.error(res.message)
       }
@@ -204,8 +221,13 @@ function InvoiceWorkspace({
         />
       </div>
 
-      <div className="hidden min-h-0 w-[460px] flex-none overflow-y-auto border-l bg-muted/50 p-4 xl:block">
-        <InvoicePreview draft={draft} />
+      {/* The document is laid out at its real width (820px) and zoomed down to
+          fit the rail; `zoom` reflows, so nothing is clipped. Print resets it
+          (see the preview's print stylesheet). */}
+      <div className="hidden min-h-0 w-[500px] flex-none overflow-y-auto border-l bg-muted/50 p-4 xl:block">
+        <div className="invoice-preview-scale" style={{ zoom: 0.56 }}>
+          <InvoicePreview draft={draft} />
+        </div>
       </div>
 
       <PrefillCustomerDialog

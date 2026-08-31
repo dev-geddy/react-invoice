@@ -1,5 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import { createPortal } from "react-dom"
+
 import {
   chargesVat,
   formatDate,
@@ -19,22 +22,17 @@ import type { InvoiceDraft, InvoiceParty } from "../_lib/types"
 
 const PRINT_CSS = `
 @media print {
-  /* Hand the printed page to the invoice alone: everything stays in the
-     layout (so the element keeps its box) but only this subtree paints. */
-  body * { visibility: hidden !important; }
-  #invoice-print-root, #invoice-print-root * { visibility: visible !important; }
+  /* The printed page is the invoice alone. The document is portalled to a
+     direct child of <body> so siblings can simply be switched off — hiding by
+     inherited \`visibility\` proved unreliable against the admin shell. */
+  body > *:not(.invoice-print-portal) { display: none !important; }
+  .invoice-print-portal { display: block !important; }
   html, body { height: auto !important; overflow: visible !important; background: #fff !important; }
-  /* The admin shell scrolls in nested overflow containers, which would clip
-     the invoice to one viewport-worth of paper. */
-  #invoice-print-root, #invoice-print-root * { overflow: visible !important; }
   #invoice-print-root {
-    position: absolute !important;
-    inset: 0 auto auto 0;
-    width: 100% !important;
+    width: auto !important;
     max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: 0 !important;
     box-shadow: none !important;
     background: #fff !important;
     color: #000 !important;
@@ -100,17 +98,25 @@ function PartyBlock({
   )
 }
 
-export function InvoicePreview({ draft }: { draft: InvoiceDraft }) {
+/**
+ * The invoice document itself. Rendered twice: once in the preview rail, and
+ * once into a body-level portal that only paper sees.
+ */
+function InvoiceDocument({
+  draft,
+  printable,
+}: {
+  draft: InvoiceDraft
+  printable?: boolean
+}) {
   const { meta, provider, customer, entries } = draft
   const { net, vatAmount, gross } = getTotals(entries, provider, meta.vatRate)
   const vatShown = chargesVat(provider, meta.vatRate)
   const cur = meta.currency
 
   return (
-    <>
-      <style>{PRINT_CSS}</style>
-      <div
-        id="invoice-print-root"
+    <div
+      {...(printable ? { id: "invoice-print-root" } : {})}
         className="mx-auto w-full max-w-[820px] bg-white p-8 text-neutral-900 shadow-sm ring-1 ring-black/5 print:ring-0"
       >
         <header className="flex items-start justify-between gap-6 border-b border-neutral-300 pb-4">
@@ -263,8 +269,31 @@ export function InvoicePreview({ draft }: { draft: InvoiceDraft }) {
           ]
             .filter(Boolean)
             .join(", ")}
-        </footer>
-      </div>
+      </footer>
+    </div>
+  )
+}
+
+/**
+ * Preview rail + the print copy. `document.body` only exists in the browser, so
+ * the portal mounts after hydration.
+ */
+export function InvoicePreview({ draft }: { draft: InvoiceDraft }) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  return (
+    <>
+      <style>{PRINT_CSS}</style>
+      <InvoiceDocument draft={draft} />
+      {mounted
+        ? createPortal(
+            <div className="invoice-print-portal hidden">
+              <InvoiceDocument draft={draft} printable />
+            </div>,
+            document.body
+          )
+        : null}
     </>
   )
 }
