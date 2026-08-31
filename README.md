@@ -12,13 +12,15 @@ Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres 
 
 ## Invoicing
 - **Shared ledger** — `/backflip/invoicing/invoices`. Per-series totals and a cumulative-sales chart for the tax year, then every invoice. Each one opens on its own page; the creator (or an owner/admin) may edit, lock or delete it.
-- **Editor + live preview** — provider and customer as cards opening a four-column detail dialog, line items whose qty/rate/total recompute each other, series-aware numbering, VAT.
-- **Print** — the preview *is* the document: print (or save to PDF) prints the invoice alone, named after it.
+- **Editor + live preview** — provider and customer as cards opening a four-column detail dialog, line items whose qty/rate/total recompute each other, hyphenated series numbering (`RIE-0010`), VAT charged only when the provider is registered for it.
+- **Print & PDF** — the preview *is* the document. Print it from the browser, or download a server-rendered A4 PDF; either way the file is named after the invoice (`2026_08_21 - RIE-0010 - EUR1031.25 VAT incl. - UAB Baltic Grid.pdf`).
 - **Customers** — `/backflip/invoicing/customers`. An address book that feeds the invoice form's prefill; companies invoiced but not saved are offered for one-click adoption.
 - **Series & currency** — `/backflip/invoicing/settings`. Each series owns its numbering prefix, default currency and branding, with a platform brand as fallback. Invoices snapshot all three, so editing a series never rewrites an issued invoice.
 
 Contract: [`docs/contracts/invoice.md`](./docs/contracts/invoice.md) · notes: [`docs/notes/invoice.md`](./docs/notes/invoice.md).
 The v2 CRA/MUI/localStorage app is kept for reference in `.legacy-ref-project/` — reference only, not built or deployed.
+
+![The invoice editor: form on the left, the printable document previewed on the right, with download and print actions beside the paper](./docs/assets/invoice-editor.png)
 
 ![React Invoice admin console — Integrations, with AI providers and email configured per workspace](./docs/assets/admin-integrations.png)
 
