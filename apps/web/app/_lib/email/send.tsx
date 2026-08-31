@@ -41,7 +41,7 @@ export function appUrl() {
 
 /** Resolved brand name for subjects/copy (Resend "from name" or default). */
 function appName(cfg: { fromName: string | null }) {
-  return cfg.fromName?.trim() || "React Invoice"
+  return cfg.fromName?.trim() || "Backflip Invoice"
 }
 
 /**

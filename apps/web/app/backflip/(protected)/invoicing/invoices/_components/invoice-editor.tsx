@@ -11,6 +11,7 @@ import {
   RiLayoutRightLine,
   RiLockLine,
   RiLockUnlockLine,
+  RiErrorWarningLine,
   RiMagicLine,
   RiSaveLine,
   RiDraftLine,
@@ -71,6 +72,7 @@ export function InvoiceEditor({
   series,
   canManageSettings,
   saving,
+  dirty,
   onMetaChange,
   onSeriesChange,
   onPartyChange,
@@ -90,6 +92,8 @@ export function InvoiceEditor({
   series: InvoiceSeriesOption[]
   canManageSettings: boolean
   saving: boolean
+  /** The draft differs from what the server last stored. */
+  dirty: boolean
   onMetaChange: (field: keyof InvoiceMeta, value: string) => void
   onSeriesChange: (code: string) => void
   onPartyChange: (
@@ -171,6 +175,19 @@ export function InvoiceEditor({
           <p className="text-xs text-amber-800 dark:text-amber-300">
             <strong className="font-semibold">New invoice — not saved.</strong>{" "}
             It joins the ledger once you create it.
+          </p>
+        </div>
+      ) : dirty ? (
+        /* A saved invoice whose form has moved on: the ledger, the PDF and the
+           print output still carry the stored version until Save runs. */
+        <div
+          role="status"
+          className="mb-4 flex items-start gap-2 rounded-lg border border-amber-400 bg-amber-50 px-3 py-2 dark:border-amber-700 dark:bg-amber-950/40"
+        >
+          <RiErrorWarningLine className="mt-0.5 size-4 flex-none text-amber-700 dark:text-amber-300" />
+          <p className="text-xs text-amber-800 dark:text-amber-300">
+            <strong className="font-semibold">Unsaved changes.</strong> This
+            invoice differs from the saved version — save to keep the edits.
           </p>
         </div>
       ) : null}

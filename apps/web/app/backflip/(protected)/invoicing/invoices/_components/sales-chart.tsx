@@ -67,12 +67,14 @@ export function SalesChart({
   stats: SeriesStat[]
   taxYear: string
 }) {
-  // Colour follows the series, never its position in a filtered list.
+  // Colour follows the series, never its position in a filtered list. The
+  // legend carries each series' tax-year total, so the chart reads without
+  // tracing a line back to its card — symbol included, since totals never mix.
   const config: ChartConfig = Object.fromEntries(
     stats.map((stat, index) => [
       stat.code,
       {
-        label: `${stat.code} · ${stat.currency}`,
+        label: `${stat.code} · ${stat.currency}${money(stat.taxYearTotal)}`,
         theme: HUES[index % HUES.length]!,
       },
     ])
@@ -122,7 +124,9 @@ export function SalesChart({
               />
             }
           />
-          <ChartLegend content={<ChartLegendContent />} />
+          <ChartLegend
+            content={<ChartLegendContent className="flex-wrap tabular-nums" />}
+          />
           {stats.map((stat) => (
             <Line
               key={stat.code}

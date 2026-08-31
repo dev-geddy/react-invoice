@@ -7,12 +7,28 @@ import { RiAddBoxLine, RiFileList3Line, RiLockLine } from "@remixicon/react"
 
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@workspace/ui/components/toggle-group"
 
 import { PageHeading, SectionLabel } from "../../../_components/page-heading"
 import { formatDate, invoiceRef, money } from "../../_lib/calc"
 import type { CumulativePoint, SeriesStat } from "../_lib/ledger-stats"
 import type { LedgerRow } from "../_lib/queries"
 import { SalesChart } from "./sales-chart"
+
+/** Sentinel for the unfiltered state — no series is ever called this. */
+const ALL_SERIES = "__all__"
+
+/**
+ * Segmented chip: the group joins its items (`spacing={0}`), and the selected
+ * one carries the primary fill rather than the toggle's default muted wash, so
+ * the active filter reads at a glance across the row. Default toggle size —
+ * h-7 and `text-xs`, matching the page's New invoice button (`size="sm"`).
+ */
+const CHIP =
+  "data-pressed:bg-primary data-pressed:text-primary-foreground data-pressed:hover:bg-primary"
 
 /**
  * The ledger: series headlines, the cumulative-sales chart, then every invoice.
@@ -32,17 +48,27 @@ export function LedgerView({
   taxYear: string
 }) {
   const [query, setQuery] = useState("")
+  // Base UI toggle groups carry an array. Deselecting the active chip empties
+  // it, so an empty selection falls back to All rather than to a filter that
+  // matches nothing.
+  const [series, setSeries] = useState<string[]>([ALL_SERIES])
+  const activeSeries = series[0] ?? ALL_SERIES
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return rows
-    return rows.filter((row) =>
-      [row.series + row.number, row.customerName, row.ownerLabel]
+    return rows.filter((row) => {
+      if (activeSeries !== ALL_SERIES && row.series !== activeSeries) {
+        return false
+      }
+      if (!q) return true
+      return [row.series + row.number, row.customerName, row.ownerLabel]
         .join(" ")
         .toLowerCase()
         .includes(q)
-    )
-  }, [rows, query])
+    })
+  }, [rows, query, activeSeries])
+
+  const narrowed = filtered.length !== rows.length
 
   return (
     <div className="mx-auto w-full max-w-6xl p-6">
@@ -50,7 +76,10 @@ export function LedgerView({
         title="Invoices"
         description="Every invoice on the platform. Open one to edit it, or raise a new one."
         action={
-          <Button size="sm" render={<Link href="/backflip/invoicing/invoices/new" />}>
+          <Button
+            size="sm"
+            render={<Link href="/backflip/invoicing/invoices/new" />}
+          >
             <RiAddBoxLine className="size-4" />
             New invoice
           </Button>
@@ -88,10 +117,37 @@ export function LedgerView({
         <SalesChart points={points} stats={stats} taxYear={taxYear} />
       </div>
 
-      <div className="mt-6 flex items-center justify-between gap-3">
-        <SectionLabel>
-          {rows.length} {rows.length === 1 ? "invoice" : "invoices"}
-        </SectionLabel>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <SectionLabel>
+            {narrowed ? `${filtered.length} of ${rows.length}` : rows.length}{" "}
+            {rows.length === 1 ? "invoice" : "invoices"}
+          </SectionLabel>
+          {stats.length > 1 ? (
+            <ToggleGroup
+              variant="outline"
+              spacing={0}
+              value={series}
+              onValueChange={(next: string[]) =>
+                setSeries(next.length > 0 ? next : [ALL_SERIES])
+              }
+              aria-label="Filter by series"
+            >
+              <ToggleGroupItem value={ALL_SERIES} className={CHIP}>
+                All
+              </ToggleGroupItem>
+              {stats.map((stat) => (
+                <ToggleGroupItem
+                  key={stat.code}
+                  value={stat.code}
+                  className={CHIP}
+                >
+                  {stat.code}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          ) : null}
+        </div>
         <Input
           value={query}
           placeholder="Search invoices"
@@ -105,7 +161,7 @@ export function LedgerView({
         <p className="mt-3 rounded-lg border bg-muted/50 px-3 py-2 text-[13px] text-muted-foreground">
           {rows.length === 0
             ? "No invoices yet. Raise the first one."
-            : "No invoice matches that search."}
+            : "No invoice matches that filter."}
         </p>
       ) : (
         <ul className="mt-3 overflow-hidden rounded-xl border bg-card">

@@ -32,7 +32,7 @@ export default async function LoginPage({
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             b
           </div>
-          react-invoice
+          Backflip Invoice
         </div>
         <LoginForm
           callbackUrl={callbackUrl}

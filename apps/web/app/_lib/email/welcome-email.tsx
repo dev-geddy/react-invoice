@@ -18,7 +18,7 @@ export type WelcomeEmailProps = {
 export function WelcomeEmail({
   name,
   loginUrl,
-  appName = "React Invoice",
+  appName = "Backflip Invoice",
 }: WelcomeEmailProps) {
   const greetingName = name?.trim() || "there"
 

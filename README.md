@@ -1,12 +1,20 @@
-# React Invoice
+# Backflip Invoice
 
 **v3.0.0** — invoicing behind a login. A shared ledger every signed-in user can
 read, each invoice recording who raised it, with a live preview that *is* the
 printed document.
 
 v1–v2 were a Create React App single-pager that kept invoices in `localStorage`.
-v3 is the same job rebuilt on a full-stack platform foundation: Postgres, real
-accounts and roles, an admin shell, and a shared UI system.
+v3 is the same job rebuilt on **[Backflip](https://github.com/dev-geddy/backflip)**
+([backflip.dev-geddy.com](https://backflip.dev-geddy.com/)) — a platform foundation
+that ships Postgres, real accounts and roles, an admin shell, and a shared UI system
+on day one.
+
+So this repo is two things at once: a working invoicing app, and a worked example of
+how quickly a new platform, internal business tool or website gets built on Backflip
+without trading away quality — auth, roles, migrations, transactional email,
+integrations, tests and deploys are already there, so the feature work is the only
+work left.
 
 Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres · Auth.js · Turborepo · yarn 4.
 
@@ -21,8 +29,6 @@ Contract: [`docs/contracts/invoice.md`](./docs/contracts/invoice.md) · notes: [
 The v2 CRA/MUI/localStorage app is kept for reference in `.legacy-ref-project/` — reference only, not built or deployed.
 
 ![The invoice editor: form on the left, the printable document previewed on the right, with download and print actions beside the paper](./docs/assets/invoice-editor.png)
-
-![React Invoice admin console — Integrations, with AI providers and email configured per workspace](./docs/assets/admin-integrations.png)
 
 > **Self-hosted.** You run this yourself and supply your own secrets. The values in `.env.example` are local-dev defaults only — generate real secrets before deploying anywhere (see [Security](#security)).
 

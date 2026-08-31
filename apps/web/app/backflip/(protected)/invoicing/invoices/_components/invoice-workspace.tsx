@@ -50,10 +50,21 @@ export function InvoiceWorkspace({
 }) {
   const router = useRouter()
   const [draft, setDraft] = useState<InvoiceDraft>(initialDraft)
+  // Baseline for the unsaved-changes banner: what the server last stored. The
+  // draft is deliberately not synced from props (the workspace is keyed on the
+  // invoice id), so the baseline moves forward on a successful save instead.
+  const [savedDraft, setSavedDraft] = useState<InvoiceDraft>(initialDraft)
   const [prefillOpen, setPrefillOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(true)
   const [saving, startSave] = useTransition()
   const [downloadingPdf, setDownloadingPdf] = useState(false)
+
+  // Every draft field is a string built by spreads, so key order is stable and
+  // a serialised compare is enough — no field-by-field diff to keep in step.
+  const dirty = useMemo(
+    () => JSON.stringify(draft) !== JSON.stringify(savedDraft),
+    [draft, savedDraft]
+  )
 
   // Browsers name a printed PDF after the document title (L2-INVOICE-11).
   useEffect(() => {
@@ -131,6 +142,7 @@ export function InvoiceWorkspace({
         return
       }
       toast.success(res.message)
+      setSavedDraft(draft)
       // A new invoice gets its own address; an existing one just reloads.
       if (invoice) router.refresh()
       else router.replace(`${LEDGER_PATH}/${res.id}`)
@@ -208,6 +220,7 @@ export function InvoiceWorkspace({
           series={series}
           canManageSettings={canManageSettings}
           saving={saving}
+          dirty={dirty}
           onMetaChange={updateMeta}
           onSeriesChange={selectSeries}
           onPartyChange={updateParty}

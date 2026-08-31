@@ -7,9 +7,9 @@ import { SiteFooter } from "../../_components/site-footer"
 import { SiteHeader } from "../../_components/site-header"
 
 export const metadata: Metadata = {
-  title: "What is React Invoice",
+  title: "What is Backflip Invoice",
   description:
-    "What React Invoice is, what ships in the box, and who it's for — the discovery phase of getting started.",
+    "What Backflip Invoice is, what ships in the box, and who it's for — the discovery phase of getting started.",
 }
 
 const IN_THE_BOX = [
@@ -66,13 +66,14 @@ export default function IntroPage() {
               Getting started — discover
             </span>
             <h1 className="mt-2 text-[clamp(1.75rem,4vw,2.5rem)] font-semibold tracking-tight">
-              What is React Invoice
+              What is Backflip Invoice
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              React Invoice is a self-hosted foundation for web products: a Next.js
-              monorepo with auth, database, admin console, integrations and
-              production deploys already working. You clone it, configure it,
-              and spend your time on the features that make your product yours.
+              Backflip Invoice is a self-hosted foundation for web products: a
+              Next.js monorepo with auth, database, admin console, integrations
+              and production deploys already working. You clone it, configure
+              it, and spend your time on the features that make your product
+              yours.
             </p>
           </div>
         </section>

@@ -8,7 +8,7 @@ import { SiteHeader } from "../_components/site-header"
 export const metadata: Metadata = {
   title: "Getting started",
   description:
-    "Getting started with React Invoice in three phases: discover what it is, set it up on a droplet, then build your first feature with prompts.",
+    "Getting started with Backflip Invoice in three phases: discover what it is, set it up on a droplet, then build your first feature with prompts.",
 }
 
 type Guide = {
@@ -23,11 +23,11 @@ const PHASES: { n: string; title: string; lead: string; guides: Guide[] }[] = [
   {
     n: "01",
     title: "Discover",
-    lead: "What React Invoice is, what ships in the box, and whether it fits what you're building.",
+    lead: "What Backflip Invoice is, what ships in the box, and whether it fits what you're building.",
     guides: [
       {
         href: "/getting-started/intro",
-        title: "What is React Invoice",
+        title: "What is Backflip Invoice",
         body: "The foundation in one page: public site + admin, auth, database, integrations, deploys — and who it's for.",
       },
     ],

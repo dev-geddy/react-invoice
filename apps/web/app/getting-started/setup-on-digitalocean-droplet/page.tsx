@@ -8,7 +8,7 @@ import { SetupGuide } from "./_components/setup-guide"
 export const metadata: Metadata = {
   title: "Setup on a DigitalOcean droplet",
   description:
-    "A guided, step-by-step wizard for deploying React Invoice to a DigitalOcean droplet — fill in your variables and copy the ready-made commands.",
+    "A guided, step-by-step wizard for deploying Backflip Invoice to a DigitalOcean droplet — fill in your variables and copy the ready-made commands.",
 }
 
 // Server Component (RSC) shell around the client guide island. The guide is
@@ -21,7 +21,7 @@ export default function SetupOnDigitalOceanDropletPage() {
         <GuideHero
           title={["Setup on a", "DigitalOcean droplet"]}
           flavour="pm2 · nginx · native Postgres"
-          lead="A few guided steps from a bare Ubuntu droplet to React Invoice live on your domain, over HTTPS. Fill in your variables once and copy the commands — they run from the repo root on your own machine."
+          lead="A few guided steps from a bare Ubuntu droplet to Backflip Invoice live on your domain, over HTTPS. Fill in your variables once and copy the commands — they run from the repo root on your own machine."
         />
         <SetupGuide />
       </main>

@@ -47,7 +47,7 @@ export const STEPS: StepMeta[] = [
   },
   {
     id: "clone",
-    title: "Clone React Invoice locally",
+    title: "Clone Backflip Invoice locally",
     short: "Clone",
     lead: "Everything in this guide runs from a local clone — provisioning, deploys, migrations, the admin seed. Grab the repo and the few tools the scripts expect.",
   },
@@ -164,8 +164,8 @@ export function StepBody({
           Upload the printed <Mono>.pub</Mono> contents in the DigitalOcean
           panel under Settings → Security → SSH keys, then pick that key when
           creating the droplet. The private half (
-          <Mono>~/.ssh/id_react-invoice</Mono>) stays on your machine — it&apos;s the
-          key path variable in the next step.
+          <Mono>~/.ssh/id_react-invoice</Mono>) stays on your machine —
+          it&apos;s the key path variable in the next step.
         </Note>
         <div>
           <Button
@@ -253,10 +253,10 @@ export function StepBody({
           />
         </div>
         <Note>
-          React Invoice is developed primarily with <strong>Claude Code</strong> —
-          the repo ships instructions, skills and doc contracts tuned for it
-          (that&apos;s what the Start building phase leans on). Other AI coding
-          agents are untested.
+          Backflip Invoice is developed primarily with{" "}
+          <strong>Claude Code</strong> — the repo ships instructions, skills and
+          doc contracts tuned for it (that&apos;s what the Start building phase
+          leans on). Other AI coding agents are untested.
         </Note>
       </div>
     )
