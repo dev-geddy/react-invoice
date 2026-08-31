@@ -7,7 +7,7 @@ Under `apps/web/app/backflip/(protected)/invoicing/` (`L1-ARCH-07/08`), one dire
 
 - `_lib/` — `calc.ts` (+ tests), `types.ts`, `validation.ts`: shared by invoices, customers and settings.
 - `_components/` — `party-card.tsx`, `party-dialog.tsx`, `party-fields.tsx`: the party UI both the invoice form and the address book use.
-- `invoices/`, `customers/`, `settings/` — the three routes.
+- `invoices/`, `customers/`, `settings/` — the three routes. Invoices splits again: `page.tsx` (ledger list), `new/page.tsx`, `[id]/page.tsx`, with `_lib/queries.ts` (server reads), `_lib/ledger-stats.ts` (+ tests) and `_components/` shared between them.
 
 Invoice surface:
 
@@ -28,6 +28,13 @@ Invoice surface:
 - Draft state is deliberately *not* synced from props in an effect — the workspace is keyed on the selected invoice id. That is also why saving a new invoice (`null` → id) shows the saved copy: the key changes and the workspace remounts.
 - `numeric` columns arrive as strings; the form edits strings; only `calc.ts` parses. Line totals are stored, not recomputed on read, because the operator may override a total (which back-solves the rate).
 - VAT: the reference app printed VAT 0 for a non-VAT-registered provider yet still added VAT to the payable total. Fixed here (`L2-INVOICE-14`) — the tests pin both directions.
+
+## Ledger list + overview
+- `_lib/queries.ts` — `loadLedger()` (one row per invoice, gross computed with the provider's VAT status), `loadInvoice(id)`, `loadEditorContext()` (series with the brand fallback resolved, saved customers, existing numbers per series) and `loadNewInvoiceDraft()` (carry-over from the most recent invoice). Splitting the routes means the list no longer ships every party and line to the browser.
+- `_lib/ledger-stats.ts` — `taxYearStart` / `taxYearEnd` / `taxYearLabel` (configurable opening, UK 6 April by default; a January opening labels as one year, not `2026/27`), `seriesStats`, `cumulativeByMonth`. The month walk normalises to the 1st: stepping from the raw 6 April start would skip the current month once the 6th has passed (pinned by a test).
+- `_components/sales-chart.tsx` — recharts line chart via the shared `ChartContainer`. Palette is three categorical hues (#2563eb/#0d9488/#c2410c light, #3b82f6/#0d9488/#ea580c dark) validated with the dataviz validator for CVD separation and contrast in both modes; the theme's `--chart-1..5` ramp is a single blue hue and fails identity separation. Lines carry direct end labels so identity is never colour-alone.
+- The tax-year opening lives on `invoice_config` and is edited in the settings page's Tax year block; `loadTaxYear()` falls back to 6 April when nothing is saved.
+- Currencies are never converted (`L2-INVOICE-35`): two series bill in £ and one in €, so the axis is unitless and every value is formatted with its series' symbol.
 
 ## Customers
 - `customers/page.tsx` + `_components/customers-view.tsx` + `_actions.ts` — the address book. Cards reuse `PartyCard`; editing reuses `PartyDialog` with `onDone`/`doneLabel`, so add and edit go through the same four-column form the invoice uses.
@@ -51,12 +58,14 @@ Invoice surface:
 ## Layout
 - The admin shell does not bound its children's height, so `invoices-view` sets `h-[calc(100svh-var(--header-height))]` itself; without it the whole page scrolls and the preview cannot centre in its rail.
 - The form scroll container carries `px-5 pb-5` only — a padded scrollport leaves a transparent strip that `sticky top-0` column headers cannot cover, so the top padding lives on a spacer inside instead.
-- A new draft shows an amber "not saved" banner above the title (`L2-INVOICE-27`); the ledger list carries stored invoices only.
+- A new draft shows an amber "not saved" banner above the title (`L2-INVOICE-27`) on `/invoices/new`; the ledger list carries stored invoices only.
+- The editor row is an even split: form and preview each take half, and hiding the preview releases the whole width. Entry-row column widths live in one `COL` map shared by the header and the inputs — the header drifted out of alignment when its description column used a different flex basis from the input's.
 - Provider/customer cards sit side by side; their fields moved into dialogs when the form column was capped at 500px — 13 inputs per side did not survive that width.
 
 ## Gotchas
 - `getByLabel("Rate")` matches "VAT rate %" too; the e2e suite uses `{ exact: true }` for the short numeric labels.
 - e2e fills party details through the cards: `getByRole("button", { name: "Edit customer details" })` → fields → "Done".
 - base-ui's `Select` puts the `id` on its hidden native input, so `getByLabel("Series")` finds that input, not the control. Target the trigger with `getByRole("combobox", { name: "Series" })`.
-- e2e `global-setup` truncates `invoice_series` alongside the auth tables — series survive the user truncate otherwise (no FK to `user`) and leak between runs.
+- e2e `global-setup` truncates `invoice_series`, `invoice_config` and `customer` alongside the auth tables — none has an FK to `user`, so they survive that truncate and leak between runs (the tax-year test both reads and writes the config).
+- Save/Lock appear twice on the editor (toolbar + below the totals), so e2e selectors take `.first()`.
 - Deleting a user with invoices is refused by the FK (`on delete restrict`) — intentional, an invoice is a financial record. Reassign or delete their invoices first.

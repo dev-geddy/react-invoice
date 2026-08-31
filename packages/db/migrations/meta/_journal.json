@@ -120,6 +120,13 @@
       "when": 1788194881839,
       "tag": "0016_heavy_cerebro",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1788202726876,
+      "tag": "0017_loud_kree",
+      "breakpoints": true
     }
   ]
 }

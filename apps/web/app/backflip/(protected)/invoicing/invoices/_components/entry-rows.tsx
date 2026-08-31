@@ -15,6 +15,21 @@ import type { InvoiceEntry } from "../../_lib/types"
  *
  * @spec L2-INVOICE-10
  */
+/**
+ * One width per column, shared by the header and the inputs — the two must use
+ * the *same* flex basis or the header drifts out of alignment once flex
+ * distributes the leftover space.
+ */
+const COL = {
+  date: "w-[124px] flex-none",
+  description: "min-w-[100px] flex-1 basis-[120px]",
+  qty: "w-[52px] flex-none",
+  unit: "w-[48px] flex-none",
+  rate: "w-[68px] flex-none",
+  total: "w-[80px] flex-none",
+  remove: "size-8 flex-none",
+}
+
 export function EntryRows({
   entries,
   disabled,
@@ -40,25 +55,25 @@ export function EntryRows({
     <div className="@container flex flex-col gap-2">
       {/* The header only lines up while the row is on one line — below that
           width the row wraps and each field carries its own aria-label. */}
-      <div className="hidden gap-2 px-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase @2xl:flex">
-        <span className="w-[120px] flex-none">Date</span>
-        <span className="flex-1">Description</span>
-        <span className="w-[56px] flex-none">Qty</span>
-        <span className="w-[56px] flex-none">Unit</span>
-        <span className="w-[72px] flex-none">Rate</span>
-        <span className="w-[84px] flex-none">Total</span>
-        <span className="w-8 flex-none" />
+      <div className="hidden gap-2 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase @lg:flex">
+        <span className={COL.date}>Date</span>
+        <span className={COL.description}>Description</span>
+        <span className={COL.qty}>Qty</span>
+        <span className={COL.unit}>Unit</span>
+        <span className={COL.rate}>Rate</span>
+        <span className={COL.total}>Total</span>
+        <span className={COL.remove} />
       </div>
 
       {entries.map((entry, index) => (
         <div
           key={index}
-          className="flex flex-wrap items-center gap-2 border-b pb-2 last:border-b-0 @2xl:flex-nowrap @2xl:border-b-0 @2xl:pb-0"
+          className="flex flex-wrap items-center gap-2 border-b pb-2 last:border-b-0 @lg:flex-nowrap @lg:border-b-0 @lg:pb-0"
         >
           <Input
             aria-label="Date provided"
             type="date"
-            className="w-[120px] flex-none"
+            className={COL.date}
             value={entry.dateProvided}
             disabled={disabled}
             onChange={(e) => update(index, entry, "dateProvided", e.target.value)}
@@ -66,7 +81,7 @@ export function EntryRows({
           <Input
             aria-label="Description"
             placeholder="Description"
-            className="min-w-[120px] flex-1 basis-[160px]"
+            className={COL.description}
             value={entry.description}
             disabled={disabled}
             onChange={(e) => update(index, entry, "description", e.target.value)}
@@ -75,7 +90,7 @@ export function EntryRows({
             aria-label="Quantity"
             placeholder="Qty"
             inputMode="decimal"
-            className="w-[56px] flex-none"
+            className={COL.qty}
             value={entry.qty}
             disabled={disabled}
             onChange={(e) => update(index, entry, "qty", e.target.value)}
@@ -83,7 +98,7 @@ export function EntryRows({
           <Input
             aria-label="Unit"
             placeholder="Unit"
-            className="w-[56px] flex-none"
+            className={COL.unit}
             value={entry.qtyType}
             disabled={disabled}
             onChange={(e) => update(index, entry, "qtyType", e.target.value)}
@@ -92,7 +107,7 @@ export function EntryRows({
             aria-label="Rate"
             placeholder="Rate"
             inputMode="decimal"
-            className="w-[72px] flex-none"
+            className={COL.rate}
             value={entry.rate}
             disabled={disabled}
             onChange={(e) => update(index, entry, "rate", e.target.value)}
@@ -101,7 +116,7 @@ export function EntryRows({
             aria-label="Line total"
             placeholder="Total"
             inputMode="decimal"
-            className="w-[84px] flex-none"
+            className={COL.total}
             value={entry.total}
             disabled={disabled}
             onChange={(e) => update(index, entry, "total", e.target.value)}
@@ -109,7 +124,7 @@ export function EntryRows({
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 flex-none text-muted-foreground hover:text-destructive"
+            className={`${COL.remove} text-muted-foreground hover:text-destructive`}
             aria-label={`Remove line ${index + 1}`}
             disabled={disabled}
             onClick={() => onRemove(index)}

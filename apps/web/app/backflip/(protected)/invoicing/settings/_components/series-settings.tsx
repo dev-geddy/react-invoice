@@ -13,9 +13,23 @@ import { Separator } from "@workspace/ui/components/separator"
 
 import { PageHeading, SectionLabel } from "../../../_components/page-heading"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+
+import {
+  taxYearEnd,
+  taxYearStart,
+  type TaxYear,
+} from "../../invoices/_lib/ledger-stats"
+import {
   deleteInvoiceSeries,
   saveInvoiceBrand,
   saveInvoiceSeries,
+  saveInvoiceTaxYear,
 } from "../_actions"
 
 export type SeriesRow = {
@@ -38,16 +52,41 @@ const EMPTY = { code: "", currency: "€", brandName: "", brandSubName: "" }
  */
 export type Brand = { brandName: string; brandSubName: string }
 
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
+
+const RANGE_FMT = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+})
+
 export function SeriesSettings({
   series,
   unconfigured,
   brand,
+  taxYear,
 }: {
   series: SeriesRow[]
   unconfigured: { code: string; invoiceCount: number }[]
   brand: Brand
+  taxYear: TaxYear
 }) {
   const [brandDraft, setBrandDraft] = useState(brand)
+  const [yearDraft, setYearDraft] = useState(taxYear)
   const [draft, setDraft] = useState(EMPTY)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [pending, start] = useTransition()
@@ -158,6 +197,98 @@ export function SeriesSettings({
               Save brand
             </Button>
           </div>
+        </div>
+      </section>
+
+      <Separator className="my-6" />
+
+      <section className="flex flex-col gap-3">
+        <SectionLabel>Tax year</SectionLabel>
+        <div className="rounded-xl border bg-card p-4">
+          <p className="text-xs text-muted-foreground">
+            The financial year the ledger totals and its cumulative-sales chart
+            report against. Defaults to the UK tax year, 6 April.
+          </p>
+          <div className="mt-3 flex flex-wrap items-end gap-3">
+            <Field className="w-[170px]">
+              <FieldLabel
+                htmlFor="taxYearMonth"
+                className="text-xs text-muted-foreground"
+              >
+                Starts in
+              </FieldLabel>
+              <Select
+                value={String(yearDraft.month)}
+                disabled={pending}
+                onValueChange={(value) =>
+                  setYearDraft({ ...yearDraft, month: Number(value ?? 1) })
+                }
+              >
+                <SelectTrigger
+                  id="taxYearMonth"
+                  aria-label="Tax year start month"
+                  className="w-full"
+                >
+                  {/* The stored value is the month number; show its name. */}
+                  <SelectValue>
+                    {(value) => MONTHS[Number(value) - 1] ?? ""}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {MONTHS.map((label, index) => (
+                    <SelectItem key={label} value={String(index + 1)}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field className="w-[110px]">
+              <FieldLabel
+                htmlFor="taxYearDay"
+                className="text-xs text-muted-foreground"
+              >
+                On day
+              </FieldLabel>
+              <Input
+                id="taxYearDay"
+                inputMode="numeric"
+                value={String(yearDraft.day)}
+                disabled={pending}
+                onChange={(e) =>
+                  setYearDraft({
+                    ...yearDraft,
+                    day: Number(e.target.value.replace(/\D/g, "") || 0),
+                  })
+                }
+              />
+            </Field>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mb-0.5"
+              disabled={pending}
+              onClick={() =>
+                start(async () => {
+                  const res = await saveInvoiceTaxYear(yearDraft)
+                  if (res.ok) toast.success(res.message)
+                  else toast.error(res.message)
+                })
+              }
+            >
+              Save tax year
+            </Button>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Current year:{" "}
+            <span className="font-medium text-foreground">
+              {RANGE_FMT.format(taxYearStart(new Date(), yearDraft))} –{" "}
+              {RANGE_FMT.format(
+                taxYearEnd(taxYearStart(new Date(), yearDraft))
+              )}
+            </span>
+            . Day 1–28, so the date exists in every month.
+          </p>
         </div>
       </section>
 

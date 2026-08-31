@@ -50,7 +50,7 @@ export const JUMP_GROUPS: {
     items: [
       {
         label: "New invoice",
-        href: "/backflip/invoicing/invoices",
+        href: "/backflip/invoicing/invoices/new",
         keywords: "create invoice bill draft",
       },
       {

@@ -8,7 +8,11 @@ import { eq } from "drizzle-orm"
 import { auth } from "@/app/_lib/auth"
 import { canManageInvoiceSettings } from "@/app/_lib/auth/permissions"
 import { firstError } from "@/app/_lib/validation"
-import { invoiceBrandSchema, invoiceSeriesSchema } from "../_lib/validation"
+import {
+  invoiceBrandSchema,
+  invoiceSeriesSchema,
+  taxYearSchema,
+} from "../_lib/validation"
 
 /**
  * Invoice series management — operator configuration (owner/admin), separate
@@ -135,4 +139,42 @@ export async function saveInvoiceBrand(input: {
   revalidatePath(SETTINGS_PATH)
   revalidatePath("/backflip/invoicing/invoices")
   return { ok: true, message: "Brand saved." }
+}
+
+/**
+ * The financial year the ledger reports against — its opening month and day.
+ * Stored on the same singleton as the brand.
+ */
+export async function saveInvoiceTaxYear(input: {
+  month: number
+  day: number
+}): Promise<SeriesActionState> {
+  const session = await auth()
+  if (!session?.user || !canManageInvoiceSettings(session.user.role)) {
+    return { ok: false, message: "Unauthorized" }
+  }
+
+  const parsed = taxYearSchema.safeParse(input)
+  if (!parsed.success) return { ok: false, message: firstError(parsed.error) }
+  const { month, day } = parsed.data
+
+  await db
+    .insert(invoiceConfig)
+    .values({
+      kind: "invoice",
+      taxYearStartMonth: month,
+      taxYearStartDay: day,
+    })
+    .onConflictDoUpdate({
+      target: invoiceConfig.kind,
+      set: {
+        taxYearStartMonth: month,
+        taxYearStartDay: day,
+        updatedAt: new Date(),
+      },
+    })
+
+  revalidatePath(SETTINGS_PATH)
+  revalidatePath("/backflip/invoicing/invoices")
+  return { ok: true, message: "Tax year saved." }
 }

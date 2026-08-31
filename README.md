@@ -11,7 +11,7 @@ accounts and roles, an admin shell, and a shared UI system.
 Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres · Auth.js · Turborepo · yarn 4.
 
 ## Invoicing
-- **Shared ledger** — `/backflip/invoicing/invoices`. Every user sees every invoice; the creator (or an owner/admin) may edit, lock or delete it.
+- **Shared ledger** — `/backflip/invoicing/invoices`. Per-series totals and a cumulative-sales chart for the tax year, then every invoice. Each one opens on its own page; the creator (or an owner/admin) may edit, lock or delete it.
 - **Editor + live preview** — provider and customer as cards opening a four-column detail dialog, line items whose qty/rate/total recompute each other, series-aware numbering, VAT.
 - **Print** — the preview *is* the document: print (or save to PDF) prints the invoice alone, named after it.
 - **Customers** — `/backflip/invoicing/customers`. An address book that feeds the invoice form's prefill; companies invoiced but not saved are offered for one-click adoption.

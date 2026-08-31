@@ -2,6 +2,7 @@ import { db, invoiceConfig, invoiceSeries, invoices } from "@workspace/db"
 import { asc, count, eq } from "drizzle-orm"
 
 import { requireCapability } from "@/app/_lib/auth/guard"
+import { DEFAULT_TAX_YEAR } from "../invoices/_lib/ledger-stats"
 import { SeriesSettings } from "./_components/series-settings"
 
 /**
@@ -20,6 +21,8 @@ export default async function InvoiceSettingsPage() {
     .select({
       brandName: invoiceConfig.brandName,
       brandSubName: invoiceConfig.brandSubName,
+      taxYearStartMonth: invoiceConfig.taxYearStartMonth,
+      taxYearStartDay: invoiceConfig.taxYearStartDay,
     })
     .from(invoiceConfig)
     .where(eq(invoiceConfig.kind, "invoice"))
@@ -57,7 +60,14 @@ export default async function InvoiceSettingsPage() {
         invoiceCount: usedByCode.get(row.code) ?? 0,
       }))}
       unconfigured={unconfigured}
-      brand={config ?? { brandName: "", brandSubName: "" }}
+      brand={{
+        brandName: config?.brandName ?? "",
+        brandSubName: config?.brandSubName ?? "",
+      }}
+      taxYear={{
+        month: config?.taxYearStartMonth ?? DEFAULT_TAX_YEAR.month,
+        day: config?.taxYearStartDay ?? DEFAULT_TAX_YEAR.day,
+      }}
     />
   )
 }

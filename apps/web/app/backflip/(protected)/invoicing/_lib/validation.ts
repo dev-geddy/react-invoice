@@ -96,6 +96,19 @@ export const invoiceBrandSchema = z.object({
 })
 
 /**
+ * Where the financial year opens. The day is capped at 28 so the opening date
+ * exists in every month (`L2-INVOICE-36`).
+ */
+export const taxYearSchema = z.object({
+  month: z.coerce.number().int().min(1, "Pick a month.").max(12, "Pick a month."),
+  day: z.coerce
+    .number()
+    .int()
+    .min(1, "Day must be between 1 and 28.")
+    .max(28, "Day must be between 1 and 28."),
+})
+
+/**
  * A saved customer. Only the company name is required — it is what identifies
  * the row in the address book and on the invoice.
  *

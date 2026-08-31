@@ -5,6 +5,7 @@ import { useState } from "react"
 import Link from "next/link"
 
 import {
+  RiArrowLeftLine,
   RiDeleteBinLine,
   RiLayoutRightLine,
   RiLockLine,
@@ -129,6 +130,16 @@ export function InvoiceEditor({
           padded scrollport leaves a transparent strip that `sticky top-0`
           headers cannot cover, and rows scroll through it. */}
       <div className="pt-5" />
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="mb-3 -ml-2 self-start"
+        render={<Link href="/backflip/invoicing/invoices" />}
+      >
+        <RiArrowLeftLine className="size-4" />
+        Invoices
+      </Button>
 
       {/* An unsaved draft is nowhere in the ledger yet, so it says so here
           rather than occupying a phantom row in the list. */}
@@ -413,7 +424,9 @@ export function InvoiceEditor({
 
       <Separator className="my-6" />
 
-      <dl className="flex flex-wrap gap-8 text-sm">
+      {/* Net and VAT read left to right; the payable total is the answer, so it
+          sits at the trailing edge where the eye lands last. */}
+      <dl className="flex flex-wrap items-end gap-8 text-sm">
         <div>
           <dt className="text-xs text-muted-foreground">Net</dt>
           <dd className="tabular-nums">
@@ -428,14 +441,43 @@ export function InvoiceEditor({
             {money(vatAmount)}
           </dd>
         </div>
-        <div>
+        <div className="ml-auto text-right">
           <dt className="text-xs text-muted-foreground">Total payable</dt>
-          <dd className="font-semibold tabular-nums">
+          <dd className="text-base font-semibold tabular-nums">
             {draft.meta.currency}
             {money(gross)}
           </dd>
         </div>
       </dl>
+
+      {/* The same save/lock actions as the toolbar, repeated where the form
+          ends — a long invoice puts the header well out of reach. */}
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t pt-4">
+        <Button size="sm" disabled={disabled} onClick={onSave}>
+          <RiSaveLine className="size-4" />
+          {saving ? "Saving…" : invoice ? "Save" : "Create invoice"}
+        </Button>
+        {invoice && invoice.canManage ? (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={saving}
+            onClick={onToggleLock}
+          >
+            {locked ? (
+              <RiLockUnlockLine className="size-4" />
+            ) : (
+              <RiLockLine className="size-4" />
+            )}
+            {locked ? "Unlock" : "Lock"}
+          </Button>
+        ) : null}
+        {locked ? (
+          <span className="text-xs text-muted-foreground">
+            Locked — unlock to make changes.
+          </span>
+        ) : null}
+      </div>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>

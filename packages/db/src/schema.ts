@@ -519,8 +519,9 @@ export const customers = pgTable("customer", {
 
 /**
  * Platform-wide invoicing defaults — a single row, in the same read-or-create
- * singleton shape as the other config tables. Today it holds the fallback
- * brand name: a series that leaves its own brand blank prints this one.
+ * singleton shape as the other config tables: the fallback brand (a series that
+ * leaves its own blank prints this one) and the financial year the ledger
+ * reports against.
  *
  * @spec L2-INVOICE-32, L2-DB-35
  */
@@ -531,5 +532,9 @@ export const invoiceConfig = pgTable("invoice_config", {
   kind: text("kind").notNull().unique().default("invoice"),
   brandName: text("brandName").notNull().default(""),
   brandSubName: text("brandSubName").notNull().default(""),
+  /** Financial-year start, as month (1-12) and day (1-28). Defaults to the UK
+   *  tax year, 6 April. The year end is the day before, a year on. */
+  taxYearStartMonth: integer("taxYearStartMonth").notNull().default(4),
+  taxYearStartDay: integer("taxYearStartDay").notNull().default(6),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 })
