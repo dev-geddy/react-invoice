@@ -89,6 +89,12 @@ export const invoiceSeriesSchema = z.object({
 
 export type InvoiceSeriesInput = z.infer<typeof invoiceSeriesSchema>
 
+/** The platform-wide fallback brand (`L2-INVOICE-32`). */
+export const invoiceBrandSchema = z.object({
+  brandName: text(60),
+  brandSubName: text(60),
+})
+
 /**
  * A saved customer. Only the company name is required — it is what identifies
  * the row in the address book and on the invoice.

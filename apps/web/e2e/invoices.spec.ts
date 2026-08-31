@@ -149,3 +149,28 @@ test("a customer saved in the address book prefills an invoice", async ({
     page.getByRole("button", { name: "Edit customer details" })
   ).toContainText("Book Customer Ltd")
 })
+
+test("a series with no brand of its own prints the platform brand", async ({
+  page,
+}) => {
+  await login(page, OWNER.email, OWNER.password)
+
+  await page.goto("/backflip/invoicing/settings")
+  await page.getByLabel("Brand name part 1", { exact: true }).first().fill("Dev")
+  await page
+    .getByLabel("Brand name part 2", { exact: true })
+    .first()
+    .fill("Geddy")
+  await page.getByRole("button", { name: "Save brand" }).click()
+  await expect(page.getByText("Brand saved.")).toBeVisible()
+
+  await ensureSeries(page, "BRAND")
+  await page.goto("/backflip/invoicing/invoices")
+  await page.getByRole("combobox", { name: "Series" }).click()
+  await page.getByRole("option", { name: "BRAND", exact: true }).click()
+
+  // The preview header carries the fallback brand.
+  await expect(page.locator("#invoice-print-root").first()).toContainText(
+    "DevGeddy"
+  )
+})

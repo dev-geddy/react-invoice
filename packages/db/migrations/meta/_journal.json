@@ -113,6 +113,13 @@
       "when": 1788194735827,
       "tag": "0015_curved_proudstar",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1788194881839,
+      "tag": "0016_heavy_cerebro",
+      "breakpoints": true
     }
   ]
 }

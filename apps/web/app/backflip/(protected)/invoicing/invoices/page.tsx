@@ -1,6 +1,7 @@
 import {
   customers,
   db,
+  invoiceConfig,
   invoiceEntries,
   invoiceParties,
   invoiceSeries,
@@ -55,7 +56,8 @@ export default async function InvoicesPage() {
     .innerJoin(users, eq(users.id, invoices.ownerId))
     .orderBy(desc(invoices.createdAt))
 
-  const [partyRows, entryRows, customerRows, seriesRows] = await Promise.all([
+  const [partyRows, entryRows, customerRows, seriesRows, configRows] =
+    await Promise.all([
     db.select().from(invoiceParties),
     db.select().from(invoiceEntries).orderBy(invoiceEntries.position),
     db
@@ -71,6 +73,13 @@ export default async function InvoicesPage() {
       })
       .from(invoiceSeries)
       .orderBy(asc(invoiceSeries.code)),
+    db
+      .select({
+        brandName: invoiceConfig.brandName,
+        brandSubName: invoiceConfig.brandSubName,
+      })
+      .from(invoiceConfig)
+      .where(eq(invoiceConfig.kind, "invoice")),
   ])
 
   const partiesByInvoice = new Map<
@@ -140,7 +149,14 @@ export default async function InvoicesPage() {
   return (
     <InvoicesView
       invoices={ledger}
-      series={seriesRows}
+      series={seriesRows.map((row) => ({
+        ...row,
+        // A series with no brand of its own prints the platform brand
+        // (`L2-INVOICE-32`); resolving here means the invoice snapshots the
+        // brand it actually shows.
+        brandName: row.brandName || (configRows[0]?.brandName ?? ""),
+        brandSubName: row.brandSubName || (configRows[0]?.brandSubName ?? ""),
+      }))}
       savedCustomers={customerRows.map((row) => ({
         companyName: row.companyName,
         companyRegNo: row.companyRegNo,

@@ -1,5 +1,5 @@
-import { db, invoiceSeries, invoices } from "@workspace/db"
-import { asc, count } from "drizzle-orm"
+import { db, invoiceConfig, invoiceSeries, invoices } from "@workspace/db"
+import { asc, count, eq } from "drizzle-orm"
 
 import { requireCapability } from "@/app/_lib/auth/guard"
 import { SeriesSettings } from "./_components/series-settings"
@@ -13,6 +13,16 @@ import { SeriesSettings } from "./_components/series-settings"
  */
 export default async function InvoiceSettingsPage() {
   await requireCapability("invoices.settings")
+
+  // Singleton, read-or-create: no seed migration, same shape as the other
+  // config tables.
+  const [config] = await db
+    .select({
+      brandName: invoiceConfig.brandName,
+      brandSubName: invoiceConfig.brandSubName,
+    })
+    .from(invoiceConfig)
+    .where(eq(invoiceConfig.kind, "invoice"))
 
   const rows = await db
     .select({
@@ -47,6 +57,7 @@ export default async function InvoiceSettingsPage() {
         invoiceCount: usedByCode.get(row.code) ?? 0,
       }))}
       unconfigured={unconfigured}
+      brand={config ?? { brandName: "", brandSubName: "" }}
     />
   )
 }

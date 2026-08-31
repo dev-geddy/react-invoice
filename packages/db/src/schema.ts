@@ -516,3 +516,20 @@ export const customers = pgTable("customer", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 })
+
+/**
+ * Platform-wide invoicing defaults — a single row, in the same read-or-create
+ * singleton shape as the other config tables. Today it holds the fallback
+ * brand name: a series that leaves its own brand blank prints this one.
+ *
+ * @spec L2-INVOICE-32, L2-DB-35
+ */
+export const invoiceConfig = pgTable("invoice_config", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  kind: text("kind").notNull().unique().default("invoice"),
+  brandName: text("brandName").notNull().default(""),
+  brandSubName: text("brandSubName").notNull().default(""),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})

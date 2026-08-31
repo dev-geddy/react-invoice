@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache"
 
-import { db, invoiceSeries, invoices } from "@workspace/db"
+import { db, invoiceConfig, invoiceSeries, invoices } from "@workspace/db"
 import { eq } from "drizzle-orm"
 
 import { auth } from "@/app/_lib/auth"
 import { canManageInvoiceSettings } from "@/app/_lib/auth/permissions"
 import { firstError } from "@/app/_lib/validation"
-import { invoiceSeriesSchema } from "../_lib/validation"
+import { invoiceBrandSchema, invoiceSeriesSchema } from "../_lib/validation"
 
 /**
  * Invoice series management — operator configuration (owner/admin), separate
@@ -106,4 +106,33 @@ export async function deleteInvoiceSeries(
   revalidatePath(SETTINGS_PATH)
   revalidatePath("/backflip/invoicing/invoices")
   return { ok: true, message: "Series removed." }
+}
+
+/**
+ * The platform-wide fallback brand. Series that leave their own brand blank
+ * print this one (`L2-INVOICE-32`).
+ */
+export async function saveInvoiceBrand(input: {
+  brandName: string
+  brandSubName: string
+}): Promise<SeriesActionState> {
+  const session = await auth()
+  if (!session?.user || !canManageInvoiceSettings(session.user.role)) {
+    return { ok: false, message: "Unauthorized" }
+  }
+
+  const parsed = invoiceBrandSchema.safeParse(input)
+  if (!parsed.success) return { ok: false, message: firstError(parsed.error) }
+
+  await db
+    .insert(invoiceConfig)
+    .values({ kind: "invoice", ...parsed.data })
+    .onConflictDoUpdate({
+      target: invoiceConfig.kind,
+      set: { ...parsed.data, updatedAt: new Date() },
+    })
+
+  revalidatePath(SETTINGS_PATH)
+  revalidatePath("/backflip/invoicing/invoices")
+  return { ok: true, message: "Brand saved." }
 }

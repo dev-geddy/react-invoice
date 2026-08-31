@@ -12,7 +12,11 @@ import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
 
 import { PageHeading, SectionLabel } from "../../../_components/page-heading"
-import { deleteInvoiceSeries, saveInvoiceSeries } from "../_actions"
+import {
+  deleteInvoiceSeries,
+  saveInvoiceBrand,
+  saveInvoiceSeries,
+} from "../_actions"
 
 export type SeriesRow = {
   id: string
@@ -32,13 +36,18 @@ const EMPTY = { code: "", currency: "€", brandName: "", brandSubName: "" }
  *
  * @spec L2-INVOICE-22
  */
+export type Brand = { brandName: string; brandSubName: string }
+
 export function SeriesSettings({
   series,
   unconfigured,
+  brand,
 }: {
   series: SeriesRow[]
   unconfigured: { code: string; invoiceCount: number }[]
+  brand: Brand
 }) {
+  const [brandDraft, setBrandDraft] = useState(brand)
   const [draft, setDraft] = useState(EMPTY)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [pending, start] = useTransition()
@@ -93,6 +102,68 @@ export function SeriesSettings({
       />
 
       <section className="mt-6 flex flex-col gap-3">
+        <SectionLabel>Brand</SectionLabel>
+        <div className="rounded-xl border bg-card p-4">
+          <p className="text-xs text-muted-foreground">
+            Printed on every invoice whose series leaves its own brand blank.
+            The two parts sit side by side in the header — the second in bold.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Field className="w-[200px]">
+              <FieldLabel
+                htmlFor="globalBrandName"
+                className="text-xs text-muted-foreground"
+              >
+                Brand name part 1
+              </FieldLabel>
+              <Input
+                id="globalBrandName"
+                value={brandDraft.brandName}
+                disabled={pending}
+                onChange={(e) =>
+                  setBrandDraft({ ...brandDraft, brandName: e.target.value })
+                }
+              />
+            </Field>
+            <Field className="w-[200px]">
+              <FieldLabel
+                htmlFor="globalBrandSubName"
+                className="text-xs text-muted-foreground"
+              >
+                Brand name part 2
+              </FieldLabel>
+              <Input
+                id="globalBrandSubName"
+                value={brandDraft.brandSubName}
+                disabled={pending}
+                onChange={(e) =>
+                  setBrandDraft({ ...brandDraft, brandSubName: e.target.value })
+                }
+              />
+            </Field>
+          </div>
+          <div className="mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pending}
+              onClick={() =>
+                start(async () => {
+                  const res = await saveInvoiceBrand(brandDraft)
+                  if (res.ok) toast.success(res.message)
+                  else toast.error(res.message)
+                })
+              }
+            >
+              Save brand
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <Separator className="my-6" />
+
+      <section className="flex flex-col gap-3">
         <SectionLabel>Series</SectionLabel>
         {series.length === 0 ? (
           <p className="rounded-lg border bg-muted/50 px-3 py-2 text-[13px] text-muted-foreground">
@@ -110,6 +181,9 @@ export function SeriesSettings({
                   <div className="text-[13px] font-semibold">{row.code}</div>
                   <div className="truncate text-xs text-muted-foreground">
                     {[row.brandName, row.brandSubName].filter(Boolean).join("") ||
+                      [brand.brandName, brand.brandSubName]
+                        .filter(Boolean)
+                        .join("") ||
                       "No branding"}{" "}
                     · {row.currency} · {row.invoiceCount}{" "}
                     {row.invoiceCount === 1 ? "invoice" : "invoices"}
@@ -229,6 +303,7 @@ export function SeriesSettings({
             <Input
               id="brandName"
               value={draft.brandName}
+              placeholder={brand.brandName || "—"}
               disabled={pending}
               onChange={(e) => setDraft({ ...draft, brandName: e.target.value })}
             />
@@ -243,6 +318,7 @@ export function SeriesSettings({
             <Input
               id="brandSubName"
               value={draft.brandSubName}
+              placeholder={brand.brandSubName || "—"}
               disabled={pending}
               onChange={(e) =>
                 setDraft({ ...draft, brandSubName: e.target.value })
@@ -252,8 +328,9 @@ export function SeriesSettings({
         </div>
         <p className="text-xs text-muted-foreground">
           The two brand parts print side by side on the invoice header — the
-          second is shown in bold. Currency is the default for invoices raised
-          under this series; each invoice keeps its own and can override it.
+          second is shown in bold. Leave them blank to print the brand above.
+          Currency is the default for invoices raised under this series; each
+          invoice keeps its own and can override it.
         </p>
         <div className="flex gap-2">
           <Button size="sm" disabled={pending} onClick={save}>
