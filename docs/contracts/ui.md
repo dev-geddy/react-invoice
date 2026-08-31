@@ -25,6 +25,7 @@ Shared design system: `packages/ui` component library, theme, and the `/ui-sampl
 - `L2-UI-21` — Docs index built at **build time**, never at runtime: a `server-only` module parses `/docs/**/*.md` (headings, `L[123]-<CAT>-<NN>` IDs, `Implements L1:` / `Depends on L2:` / inline `L2-…` cite edges) and greps `@spec` tags across `apps/*`, `packages/*`, `devops/*` into one serializable index. `yarn workspace web docs:index` writes `docs-index.generated.json`; the workspace `build` script runs it before `next build`. Rationale: the Docker runner ships only `.next/standalone`, so `/docs` is absent at runtime. Dev reads the working tree live.
 
 ## Invariants
+- `L2-UI-10` — Each theme declares `color-scheme` (`:root` light, `.dark` dark). Native widgets — date pickers, scrollbars, select popups — follow that property, not the tokens, so without it a light theme on a dark desktop keeps dark chrome inside the page.
 - `L2-UI-08` — One theme source: `packages/ui`. No per-app component copies.
 - `L2-UI-09` — Overlay components (tooltip/toast) require their providers mounted in root layout.
 - `L2-UI-10` — Web app transpiles `@workspace/ui` (`next.config.ts transpilePackages`).

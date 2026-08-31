@@ -8,7 +8,12 @@
 @source "../../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
+/* Native widgets (date pickers, scrollbars, select popups) follow
+   `color-scheme`, not our tokens. Declaring it per theme keeps them in step
+   with the chosen theme instead of the operating system's, so forcing light on
+   a dark desktop no longer leaves dark chrome inside the page. */
 :root {
+    color-scheme: light;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -44,6 +49,7 @@
 }
 
 .dark {
+    color-scheme: dark;
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);

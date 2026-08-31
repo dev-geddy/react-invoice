@@ -218,6 +218,8 @@ Hook: `src/hooks/use-mobile.ts` (sidebar).
 - **Base UI button-semantics warning ×4 on the public homepage.** `Button` passed base-ui's default `nativeButton: true` while rendering `<a>` (site-header ×2, hero ×2), so base-ui warned that native button semantics were lost. Fixed centrally by inferring `nativeButton` from `render` (see "Composition") rather than patching call sites — the same latent bug existed at `app-sidebar.tsx` ×2, `verify-email-confirm.tsx`, `forgot-password-form.tsx`, `reset-password-form.tsx`. Verified: 0 console errors/warnings across `/`, `/ui-samples`, `/backflip/login`, `/backflip/forgot-password`, `/backflip`, `/backflip/users`, `/backflip/account`, `/backflip/settings`.
 - **Admin header overflowed below `lg`.** The right cluster (`ml-auto`) plus breadcrumb could not compress — +33px at 768. Cluster got `min-w-0 shrink`, breadcrumb `nav` got `min-w-0 truncate`, `header-search.tsx` button got `min-w-0 shrink`. Verified no horizontal overflow at 1200/1024/900/768/640.
 
+- **Manual theme switching left native chrome dark.** Nothing declared `color-scheme`, so date inputs, scrollbars and select popups followed the OS while the tokens followed the toggle — on a dark desktop a light theme still rendered dark widgets inside the page. `:root { color-scheme: light }` + `.dark { color-scheme: dark }` in `globals.css` (`L2-UI-10`). The class toggle itself was never broken: next-themes writes `light`/`dark` on `<html>` and persists to `localStorage.theme` (verified across `/backflip`, the invoicing routes and the public pages, in both OS schemes).
+
 ## TODO
 - _(none)_ — admin chrome (sidebar/topbar) landed; flat-restyled (see "Admin flat restyle").
 
