@@ -49,8 +49,8 @@ Usage:
   -h  droplet host or IP        (required)
   -i  ssh private key path      (required)
   -d  domain of this instance   (required — keys the deploy dir /var/www/<domain>; must match setup -d)
-  -n  app/instance name         (default: backflip — must match setup -n)
-  --app-port  app loopback port (default: 3070 — must match setup --app-port)
+  -n  app/instance name         (default: react-invoice — must match setup -n)
+  --app-port  app loopback port (default: 3080 — must match setup --app-port)
   -u  ssh user                  (default: root)
   -p  ssh port                  (default: 22)
 
@@ -136,7 +136,7 @@ ok "build done"
 
 # --- assemble the artifact (same layout app-release.sh builds on the droplet) ---
 log "packing release artifact"
-ART_DIR="$(mktemp -d "${TMPDIR:-/tmp}/backflip-artifact-XXXXXX")"
+ART_DIR="$(mktemp -d "${TMPDIR:-/tmp}/react-invoice-artifact-XXXXXX")"
 ART_ROOT="$ART_DIR/release"
 mkdir -p "$ART_ROOT"
 

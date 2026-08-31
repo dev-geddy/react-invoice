@@ -24,11 +24,11 @@ export type DockerSetupVars = {
 }
 
 /** Script defaults — an operator only passes `-n`/`--app-port` to override. */
-export const DEFAULT_APP_NAME = "backflip"
-export const DEFAULT_APP_PORT = "3070"
+export const DEFAULT_APP_NAME = "react-invoice"
+export const DEFAULT_APP_PORT = "3080"
 /** compose.prod.yml defaults: role, database and loopback port of the db. */
-export const DEFAULT_DB_USER = "backflip"
-export const DEFAULT_DB_NAME = "backflip"
+export const DEFAULT_DB_USER = "react-invoice"
+export const DEFAULT_DB_NAME = "react-invoice"
 export const DEFAULT_DB_PORT = "5432"
 
 export const EMPTY_VARS: DockerSetupVars = {
@@ -150,13 +150,13 @@ export function rollbackCommands(r: Resolved) {
 
 export function logsCommand(r: Resolved) {
   return [
-    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u backflip bash -c 'cd; pm2 logs ${r.appName}'"`,
+    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u react-invoice bash -c 'cd; pm2 logs ${r.appName}'"`,
   ]
 }
 
 export function statusCommand(r: Resolved) {
   return [
-    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u backflip bash -c 'cd; pm2 status'; readlink ${r.appDir}/current"`,
+    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u react-invoice bash -c 'cd; pm2 status'; readlink ${r.appDir}/current"`,
   ]
 }
 
@@ -175,7 +175,7 @@ export function ownerSeedCommands(r: Resolved) {
   return [
     `printf 'ADMIN_EMAIL=%s\\nADMIN_PASSWORD=%s\\n' '${r.adminEmail}' '${r.adminPassword}' > .env.init`,
     `scp -i ${r.sshKey} .env.init root@${r.host}:${r.appDir}/.env.init`,
-    `ssh -i ${r.sshKey} root@${r.host} 'chown backflip:backflip ${r.appDir}/.env.init && sudo -H -u backflip bash -c "cd ${r.appDir} && corepack yarn init-owner" && rm ${r.appDir}/.env.init'`,
+    `ssh -i ${r.sshKey} root@${r.host} 'chown react-invoice:react-invoice ${r.appDir}/.env.init && sudo -H -u react-invoice bash -c "cd ${r.appDir} && corepack yarn init-owner" && rm ${r.appDir}/.env.init'`,
     "rm .env.init",
   ]
 }
@@ -200,7 +200,7 @@ export function claudeHandoffPrompt() {
     "tell me what to check if Caddy can't get a certificate yet.",
     "",
     "--- setup summary ---",
-    "<paste the contents of backflip-setup-summary-docker.txt here>",
+    "<paste the contents of react-invoice-setup-summary-docker.txt here>",
   ]
 }
 
@@ -238,7 +238,7 @@ export function summaryDocument(vars: DockerSetupVars) {
     [`${title}`, "-".repeat(title.length), ...lines, ""].join("\n")
 
   return [
-    "BACKFLIP — DROPLET SETUP SUMMARY (DOCKER FLAVOUR)",
+    "REACT INVOICE — DROPLET SETUP SUMMARY (DOCKER FLAVOUR)",
     "=================================================",
     "",
     "Keep this file private: it contains the database password, and the owner",

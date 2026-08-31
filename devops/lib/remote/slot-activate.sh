@@ -57,4 +57,4 @@ if [ -n "$have_script" ] && [ "$have_script" != "$want_script" ]; then
   echo "--> pm2 script path changed ($have_script) — recreating $APP_NAME"
   pm2 delete "$APP_NAME" >/dev/null 2>&1 || true
 fi
-APP_DIR="$REMOTE_DIR" APP_PORT="${APP_PORT:-3070}" pm2 startOrRestart devops/pm2/ecosystem.config.cjs --only "$APP_NAME" && pm2 save
+APP_DIR="$REMOTE_DIR" APP_PORT="${APP_PORT:-3080}" pm2 startOrRestart devops/pm2/ecosystem.config.cjs --only "$APP_NAME" && pm2 save

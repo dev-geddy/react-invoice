@@ -28,7 +28,7 @@ const CRUMBS: { match: (p: string) => boolean; trail: string[] }[] = [
 ]
 
 function crumbsFor(pathname: string): string[] {
-  return CRUMBS.find((c) => c.match(pathname))?.trail ?? ["Backflip"]
+  return CRUMBS.find((c) => c.match(pathname))?.trail ?? ["React Invoice"]
 }
 
 export function SiteHeader({

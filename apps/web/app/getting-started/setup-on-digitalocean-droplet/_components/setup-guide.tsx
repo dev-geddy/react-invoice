@@ -25,7 +25,7 @@ export function SetupGuide() {
       steps={STEPS}
       emptyVars={EMPTY_VARS}
       persisted={PERSISTED}
-      storageKey="backflip.setup"
+      storageKey="react-invoice.setup"
       renderStep={({ index, vars, onChange }) => (
         <StepBody index={index} vars={vars} onChange={onChange} />
       )}

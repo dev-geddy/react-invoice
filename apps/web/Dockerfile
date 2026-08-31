@@ -5,7 +5,7 @@
 #            source and devDeps, not a compiled app).
 #   build  — Next standalone build on top of deps.
 #   runner — ships only the standalone bundle (`node apps/web/server.js`,
-#            not `next start`). Container port 3070 (compose maps host 3071).
+#            not `next start`). Container port 3080 (compose maps host 3081).
 # @spec L2-INF-04, L2-INF-16
 FROM node:24-alpine AS base
 RUN corepack enable
@@ -20,7 +20,7 @@ RUN corepack yarn workspace web build
 
 FROM node:24-alpine AS runner
 ENV NODE_ENV=production
-ENV PORT=3070
+ENV PORT=3080
 ENV HOSTNAME=0.0.0.0
 WORKDIR /app
 # Standalone bundle mirrors the monorepo: server at apps/web/server.js, minimal
@@ -31,5 +31,5 @@ COPY --from=build /repo/apps/web/.next/static ./apps/web/.next/static
 # built-in unprivileged `node` user (uid 1000) can run it read-only. Limits the
 # blast radius of any RCE in the app or a dependency.
 USER node
-EXPOSE 3070
+EXPOSE 3080
 CMD ["node", "apps/web/server.js"]

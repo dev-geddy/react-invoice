@@ -26,7 +26,7 @@ Optional. Package/area: `web`, `ui`, `auth`, `docs`, … Use when it sharpens me
 ## Examples
 - `feat(auth): add google login callback`
 - `fix(ui): mount tooltip provider in root layout`
-- `chore(web): run dev server on port 3070`
+- `chore(web): run dev server on port 3080`
 - `docs: bootstrap three-level doc system`
 
 ## Do NOT

@@ -32,8 +32,8 @@ Usage:
   -i  ssh private key path      (required)
   -d  domain for nginx + TLS    (required; A record should point at the droplet)
   -m  email for Let's Encrypt   (recommended: expiry notices)
-  -n  app/instance name         (default: backflip — pm2 app + nginx site name)
-  --app-port  app loopback port (default: 3070; must be unique per instance)
+  -n  app/instance name         (default: react-invoice — pm2 app + nginx site name)
+  --app-port  app loopback port (default: 3080; must be unique per instance)
   -u  ssh user                  (default: root)
   -p  ssh port                  (default: 22)
 USAGE
@@ -70,7 +70,7 @@ NVM_VERSION="v0.40.3"
 
 # --- preflight ---
 require_file "$SSH_KEY" "ssh private key not found"
-require_file "$SCRIPT_DIR/nginx/backflip.conf" "nginx site template missing"
+require_file "$SCRIPT_DIR/nginx/react-invoice.conf" "nginx site template missing"
 preflight_ssh "check host, key, port"
 ok "ssh reachable"
 
@@ -101,11 +101,11 @@ remote_script app-dirs.sh "REMOTE_DIR='$REMOTE_DIR' APP_USER='$APP_USER'"
 # host-wide, not per-instance; pushed verbatim to conf.d before the site so the
 # site's `limit_req`/`access_log` references resolve when nginx -t runs.
 log "nginx http snippet (rate-limit zone + scrubbed logs)"
-require_file "$SCRIPT_DIR/nginx/backflip-http.conf" "nginx http snippet missing"
-remote_run "tee /etc/nginx/conf.d/backflip-http.conf >/dev/null" < "$SCRIPT_DIR/nginx/backflip-http.conf"
+require_file "$SCRIPT_DIR/nginx/react-invoice-http.conf" "nginx http snippet missing"
+remote_run "tee /etc/nginx/conf.d/react-invoice-http.conf >/dev/null" < "$SCRIPT_DIR/nginx/react-invoice-http.conf"
 
 log "nginx site $APP_NAME.conf for $DOMAIN (app port $APP_PORT)"
-sed -e "s/__DOMAIN__/$DOMAIN/g" -e "s/__PORT__/$APP_PORT/g" "$SCRIPT_DIR/nginx/backflip.conf" \
+sed -e "s/__DOMAIN__/$DOMAIN/g" -e "s/__PORT__/$APP_PORT/g" "$SCRIPT_DIR/nginx/react-invoice.conf" \
   | remote_run "tee /etc/nginx/sites-available/$APP_NAME.conf >/dev/null"
 remote_script nginx-certbot.sh "DOMAIN='$DOMAIN' CERTBOT_EMAIL='$CERTBOT_EMAIL' APP_NAME='$APP_NAME'"
 

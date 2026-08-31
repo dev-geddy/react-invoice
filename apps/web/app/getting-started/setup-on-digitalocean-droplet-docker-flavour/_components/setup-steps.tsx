@@ -49,7 +49,7 @@ export const STEPS: StepMeta[] = [
   },
   {
     id: "clone",
-    title: "Clone Backflip locally",
+    title: "Clone React Invoice locally",
     short: "Clone",
     lead: "Everything in this guide runs from a local clone — provisioning, deploys, migrations, the admin seed. Grab the repo and the few tools the scripts expect.",
   },
@@ -87,7 +87,7 @@ export const STEPS: StepMeta[] = [
     id: "seed",
     title: "Seed the admin account",
     short: "Admin",
-    lead: "One-off, after the first deploy. Writes a temporary .env.init, hands it to the locked backflip user on the droplet, runs the seed, then removes it on both ends.",
+    lead: "One-off, after the first deploy. Writes a temporary .env.init, hands it to the locked react-invoice user on the droplet, runs the seed, then removes it on both ends.",
   },
   {
     id: "summary",
@@ -160,8 +160,8 @@ export function StepBody({
           <RunOn>your machine — any shell</RunOn>
           <CommandBlock
             lines={[
-              'ssh-keygen -t ed25519 -f ~/.ssh/id_backflip -C "backflip"',
-              "cat ~/.ssh/id_backflip.pub",
+              'ssh-keygen -t ed25519 -f ~/.ssh/id_react-invoice -C "react-invoice"',
+              "cat ~/.ssh/id_react-invoice.pub",
             ]}
             label="generate an ssh key (skip if you have one)"
           />
@@ -170,7 +170,7 @@ export function StepBody({
           Upload the printed <Mono>.pub</Mono> contents in the DigitalOcean
           panel under Settings → Security → SSH keys, then pick that key when
           creating the droplet. The private half (
-          <Mono>~/.ssh/id_backflip</Mono>) stays on your machine — it&apos;s the
+          <Mono>~/.ssh/id_react-invoice</Mono>) stays on your machine — it&apos;s the
           key path variable in step 3.
         </Note>
         <div>
@@ -228,7 +228,7 @@ export function StepBody({
               variant="outline"
               render={
                 <a
-                  href="https://github.com/dev-geddy/backflip/fork"
+                  href="https://github.com/dev-geddy/react-invoice/fork"
                   target="_blank"
                   rel="noopener noreferrer"
                 />
@@ -243,8 +243,8 @@ export function StepBody({
           <RunOn>your machine — any shell</RunOn>
           <CommandBlock
             lines={[
-              "git clone https://github.com/<your-github-account>/backflip.git",
-              "cd backflip",
+              "git clone https://github.com/<your-github-account>/react-invoice.git",
+              "cd react-invoice",
               "corepack enable",
               "corepack yarn install",
             ]}
@@ -252,8 +252,8 @@ export function StepBody({
           />
           <CommandBlock
             lines={[
-              "git clone https://github.com/dev-geddy/backflip.git",
-              "cd backflip",
+              "git clone https://github.com/dev-geddy/react-invoice.git",
+              "cd react-invoice",
               "corepack enable",
               "corepack yarn install",
             ]}
@@ -267,7 +267,7 @@ export function StepBody({
           pm2 flavour.
         </Note>
         <Note>
-          Backflip is developed primarily with <strong>Claude Code</strong> —
+          React Invoice is developed primarily with <strong>Claude Code</strong> —
           the repo ships instructions, skills and doc contracts tuned for it
           (that&apos;s what the Start building phase leans on). Other AI coding
           agents are untested. That is also what makes the handoff in the last
@@ -320,7 +320,7 @@ export function StepBody({
           Nothing is created yet. The <Mono>postgres:17-alpine</Mono> container
           starts on the first deploy, publishes on{" "}
           <Mono>127.0.0.1:{DEFAULT_DB_PORT}</Mono> only, and keeps its data in
-          the named volume <Mono>backflip_pgdata</Mono> — deploys and container
+          the named volume <Mono>react_invoice_pgdata</Mono> — deploys and container
           restarts never touch it. The role and database are created from the
           <Mono>POSTGRES_*</Mono> values you set in the next step.
         </Note>
@@ -493,7 +493,7 @@ export function StepBody({
         <Note>
           No <Mono>nvm</Mono> here, unlike the pm2 flavour: Node is installed
           system-wide from apt on this droplet, so the locked{" "}
-          <Mono>backflip</Mono> user finds <Mono>corepack</Mono> on its PATH.
+          <Mono>react-invoice</Mono> user finds <Mono>corepack</Mono> on its PATH.
         </Note>
         <Note>
           Done. Sign in at <Mono>{r.appUrl}/backflip</Mono> with the owner email
@@ -516,13 +516,13 @@ export function StepBody({
             )
             const a = document.createElement("a")
             a.href = url
-            a.download = "backflip-setup-summary-docker.txt"
+            a.download = "react-invoice-setup-summary-docker.txt"
             a.click()
             URL.revokeObjectURL(url)
           }}
         >
           <RiDownloadLine aria-hidden="true" />
-          Download backflip-setup-summary-docker.txt
+          Download react-invoice-setup-summary-docker.txt
         </Button>
       </div>
       <Note>
@@ -532,7 +532,7 @@ export function StepBody({
       </Note>
       <CommandBlock
         lines={doc.split("\n")}
-        label="backflip-setup-summary-docker.txt"
+        label="react-invoice-setup-summary-docker.txt"
         prompt={false}
       />
       <SubSection title="Or hand the whole setup to Claude Code">

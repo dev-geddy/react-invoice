@@ -20,7 +20,7 @@ export function EmailChangeVerifyEmail({
   name,
   newEmail,
   verifyUrl,
-  appName = "Backflip",
+  appName = "React Invoice",
   expiresIn = "60 minutes",
 }: EmailChangeVerifyEmailProps) {
   const greetingName = name?.trim() || "there"

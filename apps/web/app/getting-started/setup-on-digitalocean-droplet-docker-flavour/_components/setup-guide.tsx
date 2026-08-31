@@ -28,7 +28,7 @@ export function DockerSetupGuide() {
       steps={STEPS}
       emptyVars={EMPTY_VARS}
       persisted={PERSISTED}
-      storageKey="backflip.setup.docker"
+      storageKey="react-invoice.setup.docker"
       renderStep={({ index, vars, onChange }) => (
         <StepBody index={index} vars={vars} onChange={onChange} />
       )}

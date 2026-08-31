@@ -9,7 +9,7 @@ import { getCachedConnectorSettings } from "./connector-config"
  */
 
 /** Dev-only issuer fallback — this app's `yarn dev` port. */
-const DEV_ORIGIN = "http://localhost:3070"
+const DEV_ORIGIN = "http://localhost:3080"
 
 /**
  * Whether the environment forces the connector off regardless of the database
@@ -53,7 +53,7 @@ export async function isMcpEnabled(): Promise<boolean> {
  * identifier and the PRM URL are built from this single helper so the issuer,
  * the audience and the metadata documents can never disagree.
  *
- * Outside production a missing `AUTH_URL` falls back to `http://localhost:3070`
+ * Outside production a missing `AUTH_URL` falls back to `http://localhost:3080`
  * so a local `yarn dev` works without extra env. In production it throws
  * instead: tokens minted against the wrong origin would be bound to the wrong
  * audience (`L2-MCP-33`), which is a real security problem, not a nuisance.

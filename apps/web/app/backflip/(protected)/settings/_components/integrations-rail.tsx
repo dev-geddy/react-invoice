@@ -8,7 +8,7 @@ const ABOUT: Record<
 > = {
   ai: {
     title: "About AI providers",
-    body: "Backflip talks to model providers through the Vercel AI SDK. Set one provider as default; enable the ones you want available.",
+    body: "React Invoice talks to model providers through the Vercel AI SDK. Set one provider as default; enable the ones you want available.",
     links: [{ label: "AI SDK docs", href: "https://ai-sdk.dev/docs" }],
   },
   email: {
@@ -43,7 +43,7 @@ const ABOUT: Record<
     links: [
       {
         label: "Connector docs",
-        href: "https://github.com/dev-geddy/backflip/blob/master/docs/notes/mcp.md",
+        href: "https://github.com/dev-geddy/react-invoice/blob/master/docs/notes/mcp.md",
       },
     ],
   },

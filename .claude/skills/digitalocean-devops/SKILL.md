@@ -25,9 +25,9 @@ Two droplet flavors; matching setup + deploy script pairs.
 - Scripts are thin orchestrators over `devops/lib/remote/*.sh` fragments (standalone bash, piped via `remote_script`); shared base/hardening/node/db/health fragments.
 - `devops/lib/common.sh` — shared helpers sourced by all scripts.
 - `devops/compose.prod.yml` — db-only compose (Postgres, loopback `127.0.0.1:5432`).
-- `devops/pm2/start.sh`, `devops/pm2/ecosystem.config.cjs` — pm2 entry/config for the app process (`backflip`).
+- `devops/pm2/start.sh`, `devops/pm2/ecosystem.config.cjs` — pm2 entry/config for the app process (`react-invoice`).
 - `devops/Caddyfile` — Caddy template (`__DOMAIN__`); deploy-for-docker.sh renders it to `/etc/caddy/Caddyfile`.
-- `devops/nginx/backflip.conf` — nginx site template (`__DOMAIN__`); setup-droplet-for-pm2.sh renders it; certbot injects TLS.
+- `devops/nginx/react-invoice.conf` — nginx site template (`__DOMAIN__`); setup-droplet-for-pm2.sh renders it; certbot injects TLS.
 - `devops/env/*.example` — env templates (source for first deploy's `.env`/`.env.local`).
 - Docs: root `devops.md` (index) → `devops/docs/{droplet-setup,deploy-local,deploy-github-actions,deploy-drone}.md` (one per build setup).
 - CI: `.github/workflows/deploy.yml` (`workflow_dispatch`), `.drone.yml` pipeline `deploy` (**push to master**, or promote to re-run an older master build) — both call `deploy-for-pm2-build-locally.sh` on a glibc runner (matches the droplet's pm2 flavor; alpine would ship musl binaries). `.drone.yml` also has pipeline `ci` (push + PR: install → typecheck → lint), which runs beside `deploy` on master without gating it. Push to master is the routine deploy; the local script is break-glass.
@@ -47,7 +47,7 @@ Two droplet flavors; matching setup + deploy script pairs.
 - New CI provider = new thin wrapper script + new short doc in `devops/docs/`, linked from `devops.md`.
 - Docs stay short and actionable.
 - Droplet runtime env = `/var/www/<domain>/.env` + `.env.local`.
-- Droplet runtime = pm2 process `backflip` serving `/var/www/<domain>/current` (Next standalone). Releases pruned to last 3.
+- Droplet runtime = pm2 process `react-invoice` serving `/var/www/<domain>/current` (Next standalone). Releases pruned to last 3.
 - Compose (db only) is always invoked as `docker compose --project-directory . -f devops/compose.prod.yml`, run from `/var/www/<domain>`.
 
 ## Before changing anything

@@ -43,13 +43,13 @@ REPO_ROOT="${REPO_ROOT:-$(cd "$_COMMON_DIR/../.." && pwd)}"
 # slots, `current` symlink, shared/ instance data); APP_NAME names the pm2
 # process and nginx site; APP_PORT the loopback port. Scripts taking -d/--domain
 # set REMOTE_DIR after parsing flags.
-APP_NAME="${APP_NAME:-backflip}"
-APP_PORT="${APP_PORT:-3070}"
+APP_NAME="${APP_NAME:-react-invoice}"
+APP_PORT="${APP_PORT:-3080}"
 REMOTE_DIR="${REMOTE_DIR:-}"
 # Dedicated app user: pm2 + the app run as this locked, no-ssh user; root does
 # only system work (packages, db, proxy). Created by the setup scripts.
 # Shared by all instances on a droplet (one pm2 daemon supervising all).
-APP_USER="${APP_USER:-backflip}"
+APP_USER="${APP_USER:-react-invoice}"
 
 SSH_OPTS=(-o BatchMode=yes -o StrictHostKeyChecking=accept-new)
 

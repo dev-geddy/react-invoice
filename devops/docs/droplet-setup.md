@@ -15,7 +15,7 @@ Database (pm2 flavor — run one after setup):
 The docker flavor already includes Docker; its db comes up on first deploy.
 
 ## What both flavors do
-- Create a locked `backflip` app user (no password, no ssh) — pm2 + the app run as it, `/var/www/<domain>` belongs to it; root does only system work (packages, db, proxy)
+- Create a locked `react-invoice` app user (no password, no ssh) — pm2 + the app run as it, `/var/www/<domain>` belongs to it; root does only system work (packages, db, proxy)
 - Install base packages, add 2G swap (if none present)
 - Harden SSH: key-only (password + keyboard-interactive auth disabled), `MaxAuthTries 4`, no X11 forwarding
 - Install fail2ban (sshd jail: 5 retries → 1h ban) and enable unattended security upgrades
@@ -57,9 +57,9 @@ Pass both to the first deploy run via `--env` / `--env-local` (see [deploy-local
 Run once, after the first deploy, to create the admin user:
 ```bash
 scp -i <ssh-key> .env.init root@<host>:/var/www/<domain>/.env.init
-ssh -i <ssh-key> root@<host> 'chown backflip:backflip /var/www/<domain>/.env.init && sudo -H -u backflip bash -c ". \$HOME/.nvm/nvm.sh 2>/dev/null; cd /var/www/<domain> && corepack yarn init-owner" && rm /var/www/<domain>/.env.init'
+ssh -i <ssh-key> root@<host> 'chown react-invoice:react-invoice /var/www/<domain>/.env.init && sudo -H -u react-invoice bash -c ". \$HOME/.nvm/nvm.sh 2>/dev/null; cd /var/www/<domain> && corepack yarn init-owner" && rm /var/www/<domain>/.env.init'
 ```
-Seed script reads `/var/www/<domain>/.env` + `.env.init` directly on the host, as the `backflip` user (the nvm sourcing is a no-op on the docker flavor's system node).
+Seed script reads `/var/www/<domain>/.env` + `.env.init` directly on the host, as the `react-invoice` user (the nvm sourcing is a no-op on the docker flavor's system node).
 
 ## Troubleshooting
 - `Permission denied (publickey)` → `chmod 600 <ssh-key>`.

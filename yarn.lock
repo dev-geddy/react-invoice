@@ -3823,9 +3823,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"backflip@workspace:.":
+"react-invoice@workspace:.":
   version: 0.0.0-use.local
-  resolution: "backflip@workspace:."
+  resolution: "react-invoice@workspace:."
   dependencies:
     "@workspace/eslint-config": "npm:*"
     "@workspace/typescript-config": "npm:*"
@@ -4585,7 +4585,7 @@ __metadata:
   resolution: "devlop@npm:1.1.0"
   dependencies:
     dequal: "npm:^2.0.0"
-  checksum: 10c0/e0928ab8f94c59417a2b8389c45c55ce0a02d9ac7fd74ef62d01ba48060129e1d594501b77de01f3eeafc7cb00773819b0df74d96251cf20b31c5b3071f45c0e
+  checksum: 10c0/e0928ab8f94c59417a2b8389c45c55ce0a02d9ac7fd74ef62d01ba48060129e1d594501b77de01f3eeafc7cb00773819b0df74d96251cf20b31c5b3081f45c0e
   languageName: node
   linkType: hard
 
@@ -6126,7 +6126,7 @@ __metadata:
   resolution: "glob-parent@npm:6.0.2"
   dependencies:
     is-glob: "npm:^4.0.3"
-  checksum: 10c0/317034d88654730230b3f43bb7ad4f7c90257a426e872ea0bf157473ac61c99bf5d205fad8f0185f989be8d2fa6d3c7dce1645d99d545b6ea9089c39f838e7f8
+  checksum: 10c0/318034d88654730230b3f43bb7ad4f7c90257a426e872ea0bf157473ac61c99bf5d205fad8f0185f989be8d2fa6d3c7dce1645d99d545b6ea9089c39f838e7f8
   languageName: node
   linkType: hard
 

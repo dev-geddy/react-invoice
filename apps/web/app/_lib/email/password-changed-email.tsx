@@ -16,7 +16,7 @@ export type PasswordChangedEmailProps = {
 export function PasswordChangedEmail({
   name,
   loginUrl,
-  appName = "Backflip",
+  appName = "React Invoice",
 }: PasswordChangedEmailProps) {
   const greetingName = name?.trim() || "there"
 

@@ -11,7 +11,7 @@ import type { DocClause } from "../_lib/parse-docs"
 import { BADGE_HELP, type DocsGraph } from "../_lib/docs-graph"
 import { DriftBadgePill, IdChip } from "./drift-badge"
 
-const REPO_BLOB = "https://github.com/dev-geddy/backflip/blob/master/"
+const REPO_BLOB = "https://github.com/dev-geddy/react-invoice/blob/master/"
 
 const LEVEL_NAMES = ["", "Constitution", "Contract", "Notes"] as const
 

@@ -1,6 +1,6 @@
 # Deployment
 
-Deploy backflip to a DigitalOcean droplet. Routine path is **Drone CI: push to `master` ships production** ([deploy-drone.md](./devops/docs/deploy-drone.md)); the scripts below are the break-glass path from your machine, and GitHub Actions is a manual `workflow_dispatch` alternative. App runs via pm2 (Next standalone build) on the host. Two droplet flavors:
+Deploy react-invoice to a DigitalOcean droplet. Routine path is **Drone CI: push to `master` ships production** ([deploy-drone.md](./devops/docs/deploy-drone.md)); the scripts below are the break-glass path from your machine, and GitHub Actions is a manual `workflow_dispatch` alternative. App runs via pm2 (Next standalone build) on the host. Two droplet flavors:
 
 - **pm2 flavor** (preferred): nvm Node 24 + yarn 4, nginx reverse proxy + Let's Encrypt TLS, Postgres native or in Docker (separate db script)
 - **docker flavor**: apt Node 24, native Caddy for TLS, Postgres in Docker

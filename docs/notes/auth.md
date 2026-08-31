@@ -77,11 +77,11 @@ Colocated next to the sources they protect. They exist to freeze the security in
 ## State
 - Credentials login verified end-to-end earlier (seeded owner → session `role: owner` → protected 200).
 - Login UI (`login-03`) + dashboard shell (`sidebar-08`) built; typecheck + lint clean; login page renders.
-- Google wired; inert until `AUTH_GOOGLE_ID`/`AUTH_GOOGLE_SECRET` set in `.env.local`. Redirect URI `http://localhost:3070/api/auth/callback/google`.
+- Google wired; inert until `AUTH_GOOGLE_ID`/`AUTH_GOOGLE_SECRET` set in `.env.local`. Redirect URI `http://localhost:3080/api/auth/callback/google`.
 - Sign-out wired in `nav-user` → `signOut({ callbackUrl: "/backflip/login" })`.
 
 ## Dashboard notes
-- Admin shell replicated from `dashboard-01` (inset sidebar + `site-header`, `--sidebar-width`/`--header-height` vars). Logo = icon + "Backflip" (no "Admin"). Dashboard content (cards + chart) from the shadcn dashboard example. Icons mapped tabler/lucide → remixicon (project convention).
+- Admin shell replicated from `dashboard-01` (inset sidebar + `site-header`, `--sidebar-width`/`--header-height` vars). Logo = icon + "React Invoice" (no "Admin"). Dashboard content (cards + chart) from the shadcn dashboard example. Icons mapped tabler/lucide → remixicon (project convention).
 - Simplification vs example: the heavy dnd/tanstack `data-table` was replaced with a plain `@workspace/ui` table (`recent-table`). Revisit if a sortable/editable grid is needed.
 - base-mira composition uses base-ui `render={<el/>}` (not `asChild`) — see [[ui]] notes.
 

@@ -22,8 +22,8 @@ export type SetupVars = {
 }
 
 /** Script defaults — an operator only passes `-n`/`--app-port` to override. */
-export const DEFAULT_APP_NAME = "backflip"
-export const DEFAULT_APP_PORT = "3070"
+export const DEFAULT_APP_NAME = "react-invoice"
+export const DEFAULT_APP_PORT = "3080"
 
 export const EMPTY_VARS: SetupVars = {
   host: "",
@@ -145,13 +145,13 @@ export function rollbackCommand(r: Resolved) {
 export function logsCommand(r: Resolved) {
   const name = varsAppName(r)
   return [
-    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u backflip bash -c 'cd; . \\$HOME/.nvm/nvm.sh; pm2 logs ${name}'"`,
+    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u react-invoice bash -c 'cd; . \\$HOME/.nvm/nvm.sh; pm2 logs ${name}'"`,
   ]
 }
 
 export function statusCommand(r: Resolved) {
   return [
-    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u backflip bash -c 'cd; . \\$HOME/.nvm/nvm.sh; pm2 status'; readlink ${r.appDir}/current"`,
+    `ssh -i ${r.sshKey} root@${r.host} "sudo -H -u react-invoice bash -c 'cd; . \\$HOME/.nvm/nvm.sh; pm2 status'; readlink ${r.appDir}/current"`,
   ]
 }
 
@@ -181,7 +181,7 @@ export function claudeHandoffPrompt() {
     "tell me what to check if the TLS certificate can't be issued yet.",
     "",
     "--- setup summary ---",
-    "<paste the contents of backflip-setup-summary.txt here>",
+    "<paste the contents of react-invoice-setup-summary.txt here>",
   ]
 }
 
@@ -214,7 +214,7 @@ export function summaryDocument(vars: SetupVars) {
     [`${title}`, "-".repeat(title.length), ...lines, ""].join("\n")
 
   return [
-    "BACKFLIP — DROPLET SETUP SUMMARY",
+    "REACT INVOICE — DROPLET SETUP SUMMARY",
     "================================",
     "",
     "Keep this file private: it contains the owner password when one was set.",
@@ -243,7 +243,7 @@ export function ownerSeedCommands(r: Resolved) {
   return [
     `printf 'ADMIN_EMAIL=%s\\nADMIN_PASSWORD=%s\\n' '${r.adminEmail}' '${r.adminPassword}' > .env.init`,
     `scp -i ${r.sshKey} .env.init root@${r.host}:${r.appDir}/.env.init`,
-    `ssh -i ${r.sshKey} root@${r.host} 'chown backflip:backflip ${r.appDir}/.env.init && sudo -H -u backflip bash -c ". \\$HOME/.nvm/nvm.sh 2>/dev/null; cd ${r.appDir} && corepack yarn init-owner" && rm ${r.appDir}/.env.init'`,
+    `ssh -i ${r.sshKey} root@${r.host} 'chown react-invoice:react-invoice ${r.appDir}/.env.init && sudo -H -u react-invoice bash -c ". \\$HOME/.nvm/nvm.sh 2>/dev/null; cd ${r.appDir} && corepack yarn init-owner" && rm ${r.appDir}/.env.init'`,
     "rm .env.init",
   ]
 }

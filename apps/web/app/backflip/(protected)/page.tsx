@@ -32,7 +32,7 @@ function initials(value: string) {
  * cards + a setup checklist and recent members. All figures derive from real
  * data (users / ai_config / email_config); no mock metrics.
  */
-export default async function BackflipOverviewPage() {
+export default async function React InvoiceOverviewPage() {
   const sessionUser = await requireCapability("dashboard")
   // The member roster (names + emails) is user data — only `users.view` roles
   // (owner/admin) see it; teammates get the dashboard without the roster.

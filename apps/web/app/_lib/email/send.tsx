@@ -35,13 +35,13 @@ export function appUrl() {
     process.env.APP_URL ??
     process.env.AUTH_URL ??
     process.env.NEXTAUTH_URL ??
-    "http://localhost:3070"
+    "http://localhost:3080"
   return raw.replace(/\/$/, "")
 }
 
 /** Resolved brand name for subjects/copy (Resend "from name" or default). */
 function appName(cfg: { fromName: string | null }) {
-  return cfg.fromName?.trim() || "Backflip"
+  return cfg.fromName?.trim() || "React Invoice"
 }
 
 /**

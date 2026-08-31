@@ -15,13 +15,13 @@ the app role + database. Prints the DATABASE_URL for .env.production.
 
 Usage:
   ./devops/setup-droplet-db-native.sh -h <host> -i <path-to-ssh-key>
-                                      [--db-name backflip] [--db-user backflip]
+                                      [--db-name react_invoice] [--db-user react_invoice]
                                       [--db-password <pw>] [-u user] [-p port]
 
   -h  droplet host or IP        (required)
   -i  ssh private key path      (required)
-  --db-name      database name  (default: backflip)
-  --db-user      role name      (default: backflip)
+  --db-name      database name  (default: react_invoice)
+  --db-user      role name      (default: react_invoice)
   --db-password  role password  (default: generated, printed once)
   -u  ssh user                  (default: root)
   -p  ssh port                  (default: 22)
@@ -32,8 +32,8 @@ HOST=""
 SSH_KEY=""
 SSH_USER="root"
 SSH_PORT="22"
-DB_NAME="backflip"
-DB_USER="backflip"
+DB_NAME="react_invoice"
+DB_USER="react_invoice"
 DB_PASSWORD=""
 
 while [ $# -gt 0 ]; do

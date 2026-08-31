@@ -104,7 +104,7 @@ export function DocsExplorer({ index }: { index: DocsIndex }) {
           </p>
         </div>
         <a
-          href="https://github.com/dev-geddy/backflip#readme"
+          href="https://github.com/dev-geddy/react-invoice#readme"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"

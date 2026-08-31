@@ -104,14 +104,14 @@ describe("issuerOrigin", () => {
     vi.stubEnv("AUTH_URL", "https://app.example.com/some/path?x=1")
     expect(issuerOrigin()).toBe("https://app.example.com")
 
-    vi.stubEnv("AUTH_URL", "http://localhost:3070")
-    expect(issuerOrigin()).toBe("http://localhost:3070")
+    vi.stubEnv("AUTH_URL", "http://localhost:3080")
+    expect(issuerOrigin()).toBe("http://localhost:3080")
   })
 
   it("falls back to the dev origin when AUTH_URL is unset outside production", () => {
     vi.stubEnv("AUTH_URL", undefined)
     vi.stubEnv("NODE_ENV", "development")
-    expect(issuerOrigin()).toBe("http://localhost:3070")
+    expect(issuerOrigin()).toBe("http://localhost:3080")
   })
 
   it("throws in production rather than issuing against a guessed origin", () => {

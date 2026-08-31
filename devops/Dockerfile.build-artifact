@@ -61,7 +61,7 @@ COPY --from=manifests /manifests/ /repo/
 # .yarnrc.yml sets enableGlobalCache:false → yarn caches into /repo/.yarn/cache.
 # Mounting it keeps downloads across builds without baking them into the layer.
 # Full install (not --production): the Next build needs devDependencies.
-RUN --mount=type=cache,id=backflip-yarn-cache,target=/repo/.yarn/cache,sharing=locked \
+RUN --mount=type=cache,id=react-invoice-yarn-cache,target=/repo/.yarn/cache,sharing=locked \
     corepack yarn install --immutable
 
 # --- build -----------------------------------------------------------------
@@ -70,7 +70,7 @@ COPY . /repo
 # NEXT_SKIP_TYPECHECK: the deploy script typechecks natively on the operator's
 # machine before it ever starts this build — don't pay for the pass twice, and
 # especially not under emulation.
-RUN --mount=type=cache,id=backflip-next-cache,target=/repo/apps/web/.next/cache,sharing=locked \
+RUN --mount=type=cache,id=react-invoice-next-cache,target=/repo/apps/web/.next/cache,sharing=locked \
     NEXT_SKIP_TYPECHECK=1 corepack yarn workspace web build
 
 # --- assemble --------------------------------------------------------------

@@ -3,7 +3,7 @@
 > L3 = how / volatile. AI writes free. Cites L2 IDs up. Matches code as-is.
 
 ## What this is
-A Claude-compatible **remote MCP connector**: a read-only tool surface at `/api/mcp` (Streamable HTTP, `L2-MCP-01`) protected by an in-app **OAuth 2.1 authorization server** (`/api/oauth/*` + `/.well-known/*`, `L2-MCP-10`–`L2-MCP-17`). Lets a Claude client (claude.ai custom connector, Claude Desktop, Claude Code) authenticate as a Backflip admin user and call a handful of dashboard/user/settings-read tools, scoped to that user's role. No write tools in this phase (`L2-MCP-09`).
+A Claude-compatible **remote MCP connector**: a read-only tool surface at `/api/mcp` (Streamable HTTP, `L2-MCP-01`) protected by an in-app **OAuth 2.1 authorization server** (`/api/oauth/*` + `/.well-known/*`, `L2-MCP-10`–`L2-MCP-17`). Lets a Claude client (claude.ai custom connector, Claude Desktop, Claude Code) authenticate as a React Invoice admin user and call a handful of dashboard/user/settings-read tools, scoped to that user's role. No write tools in this phase (`L2-MCP-09`).
 
 Whole domain is opt-in and off by default: until an owner enables it (`connector_config.enabled`, `L2-MCP-25`) every connector route 404s (`L2-MCP-37`, `L2-INF-17`).
 
@@ -41,12 +41,12 @@ Everything below exists on disk — the domain landed across migrations `0009`�
 ## Running it locally
 1. Turn the connector on: `/backflip/settings` → Connectors → Enable. It is a **database flag** (`connector_config.enabled`, default off, `L2-MCP-25`) like every other integration here, not an env var. While it is off every route in this domain 404s, including the well-known documents — a "connector not found" symptom is usually just this. `MCP_ENABLED=false` in the environment forces it off regardless of the toggle (deploy-level kill switch); unset means the database decides. The resolved flag is cached in-process for ~30s, so a toggle can take that long to reach other processes (`L2-MCP-54`).
 2. `AUTH_URL` must be the origin the Claude client will actually hit — it's both the Auth.js issuer/canonical-URL var (`L2-AUTH-07`) and the OAuth `issuer`/PRM `resource` origin (`L2-MCP-10`, `L2-MCP-11`, `L2-MCP-25`). A mismatch between what's advertised and what's called breaks the resource-audience check (`L2-MCP-33`).
-3. `corepack yarn dev` (app on 3070, `L2-INF-03`) or the docker `web` profile (3071, `L2-INF-01`) — db must be up either way.
-4. `db:migrate` to create the connector tables (migrations `0009`–`0011`, `L2-DB-08`). Locally `AUTH_URL` may be left unset — `issuerOrigin()` falls back to `http://localhost:3070` outside production.
+3. `corepack yarn dev` (app on 3080, `L2-INF-03`) or the docker `web` profile (3081, `L2-INF-01`) — db must be up either way.
+4. `db:migrate` to create the connector tables (migrations `0009`–`0011`, `L2-DB-08`). Locally `AUTH_URL` may be left unset — `issuerOrigin()` falls back to `http://localhost:3080` outside production.
 5. Sanity check without a Claude client: `curl <origin>/.well-known/oauth-authorization-server` and `.../.well-known/oauth-protected-resource` should return metadata (not 404) once the connector is enabled.
 
 ## Adding it to Claude
-Claude's custom-connector UI needs a **publicly reachable https origin** — plain `localhost` doesn't work for claude.ai (Claude Desktop/Code may differ; verify per client). For local testing, tunnel 3070/3071 (ngrok, cloudflared, etc.) and point `AUTH_URL` at the tunnel's https URL *before* starting the app, since the issuer identity is baked into every token's `resource` claim (`L2-MCP-33`).
+Claude's custom-connector UI needs a **publicly reachable https origin** — plain `localhost` doesn't work for claude.ai (Claude Desktop/Code may differ; verify per client). For local testing, tunnel 3080/3081 (ngrok, cloudflared, etc.) and point `AUTH_URL` at the tunnel's https URL *before* starting the app, since the issuer identity is baked into every token's `resource` claim (`L2-MCP-33`).
 
 **Default path — manual client (`dcrMode = "off"`).** Dynamic registration is off out of the box, so nobody can create a client without an owner doing it deliberately:
 1. `/backflip/settings` → Connectors → Create client. Name it, give it the redirect URI `https://claude.ai/api/mcp/auth_callback` (and/or the `claude.com` one). For Claude Code instead, tick "Native client" — it redirects to `http://127.0.0.1:<ephemeral>/callback`, so it needs port-agnostic loopback matching (`L2-MCP-51`).
@@ -58,7 +58,7 @@ Redirect hosts are allowlisted (`claude.ai`, `claude.com` seeded) and checked bo
 **Self-registration path** (only if an owner sets `dcrMode` to `allowlist` or `open`):
 1. claude.ai → Settings → Connectors → Add custom connector → `https://<origin>/api/mcp`, Advanced settings left blank.
 2. Claude reads `WWW-Authenticate` off an unauthenticated probe (`L2-MCP-03`), fetches the protected-resource + authorization-server metadata (`L2-MCP-10`, `L2-MCP-11`), then DCRs itself via `POST /api/oauth/register` (`L2-MCP-12`). With `dcrMode = "off"` that endpoint is `404` and this path simply does not exist.
-3. Claude opens `/api/oauth/authorize` in a browser tab. No Backflip session → redirected to `/backflip/login?from=…` (`L2-MCP-13`, the standard `/backflip` gate, `L2-AUTH-01`).
+3. Claude opens `/api/oauth/authorize` in a browser tab. No React Invoice session → redirected to `/backflip/login?from=…` (`L2-MCP-13`, the standard `/backflip` gate, `L2-AUTH-01`).
 4. After login, lands on `/backflip/connect` — consent screen: client name, requested scopes in plain language, the signed-in account, Allow/Deny (`L2-MCP-14`).
 5. Allow → `approveAuthorization` mints a single-use authorization code, redirects back to Claude's `redirect_uri` (`L2-MCP-32`).
 6. Claude exchanges the code at `/api/oauth/token` with its PKCE `code_verifier` (`L2-MCP-15`, `L2-MCP-26`) → access + refresh token pair (`L2-MCP-24` lifetimes).
@@ -137,7 +137,7 @@ Dynamic registration is **off by default** (`dcrMode`), so the anonymous-registr
 - `/api/oauth/revoke` is deliberately not rate-limited: the response is constant for known and unknown tokens (no oracle), and sharing the token bucket would throttle legitimate refreshes.
 - DCR errors use the RFC 7591 vocabulary (`invalid_redirect_uri`, `invalid_client_metadata`), not the RFC 6749 set.
 - `redirect_uri` is mandatory at authorize — no "single registered URI" fallback. Smaller attack surface; Claude always sends it.
-- `issuerOrigin()` falls back to `http://localhost:3070` when `AUTH_URL` is unset outside production, and throws in production. Every URL (issuer, resource, PRM, the audience check) derives from that one helper so they cannot disagree.
+- `issuerOrigin()` falls back to `http://localhost:3080` when `AUTH_URL` is unset outside production, and throws in production. Every URL (issuer, resource, PRM, the audience check) derives from that one helper so they cannot disagree.
 
 ### Security review — what was found and what remains
 An adversarial review ran over the whole domain before it landed. Fixed in place:

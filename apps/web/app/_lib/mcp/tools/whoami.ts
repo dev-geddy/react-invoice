@@ -59,7 +59,7 @@ export function registerWhoami(server: McpServer, ctx: McpAuthContext): void {
     {
       title: "Who am I",
       description:
-        "The connected Backflip account (id, email, name, role), the scopes " +
+        "The connected React Invoice account (id, email, name, role), the scopes " +
         "this connector was granted, and the connected client's name.",
       inputSchema,
       annotations: {

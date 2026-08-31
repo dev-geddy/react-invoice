@@ -19,7 +19,7 @@ Explicitly **not** owned: any analytics inside `/backflip/*` (admin is never mea
 
 ## Schemas
 - `L2-ANALYTICS-01` — `analytics_config` table (single row per `kind`, `kind` unique default `google_analytics`): `id`, `kind`, `measurementId` (nullable text, plaintext), `cookieBannerEnabled` (bool, default `true`), `cookieBannerText` (nullable text), `updatedAt`. Migration `0005` creates it; `0006` seeds the singleton row with the default banner copy, `ON CONFLICT (kind) DO NOTHING` (re-runnable). `db` counterpart: `L2-DB-23`. (`packages/db/src/schema.ts`)
-- `L2-ANALYTICS-09` — Consent is stored client-side only: `localStorage["backflip.consent.analytics"]` ∈ `{"granted","denied"}`. Absent = undecided. No consent record is ever written to the database.
+- `L2-ANALYTICS-09` — Consent is stored client-side only: `localStorage["react-invoice.consent.analytics"]` ∈ `{"granted","denied"}`. Absent = undecided. No consent record is ever written to the database.
 
 ## Invariants
 - `L2-ANALYTICS-06` — **Consent gate.** With `cookieBannerEnabled`, gtag.js is not injected and no GA request is made until the visitor clicks Accept. Decline loads nothing at all. Banner disabled + id set → GA loads unconditionally. This is the load-bearing invariant of the domain.

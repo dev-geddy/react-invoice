@@ -1,10 +1,10 @@
-# backflip
+# react-invoice
 
 A full-stack **platform foundation** for kicking off new projects fast — auth, admin dashboard, database, and UI system already wired, so you build features instead of boilerplate.
 
 Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres · Auth.js · Turborepo · yarn 4.
 
-![Backflip admin console — Integrations, with AI providers and email configured per workspace](./docs/assets/admin-integrations.png)
+![React Invoice admin console — Integrations, with AI providers and email configured per workspace](./docs/assets/admin-integrations.png)
 
 > **Self-hosted starter.** You run this yourself and supply your own secrets. The values in `.env.example` are local-dev defaults only — generate real secrets before deploying anywhere (see [Security](#security)).
 
@@ -36,25 +36,25 @@ and can be deleted once the owner is seeded.
 **2. Install, set up the database, run:**
 ```bash
 corepack yarn install
-docker compose up -d         # start Postgres (backflip-db) only
+docker compose up -d         # start Postgres (react-invoice-db) only
 corepack yarn db:migrate     # create tables
 corepack yarn init-owner     # seed admin from .env.init
-corepack yarn dev            # app → http://localhost:3070
+corepack yarn dev            # app → http://localhost:3080
 ```
 
 ## Log in
-- Sign in at **http://localhost:3070/backflip/login** with your `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+- Sign in at **http://localhost:3080/backflip/login** with your `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
 - **After editing env:**
   - changed `ADMIN_*` in `.env.init` → rerun `corepack yarn init-owner`
   - changed `AUTH_*` (incl. Google) in `.env.local` → **restart `yarn dev`** (env loads at startup)
-- Google login is optional — add `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` (redirect URI `http://localhost:3070/api/auth/callback/google`); works only for already-registered emails.
+- Google login is optional — add `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` (redirect URI `http://localhost:3080/api/auth/callback/google`); works only for already-registered emails.
 
 ## Tests
 ```bash
 corepack yarn workspace web test        # unit (Vitest) — fast, no database needed
 corepack yarn workspace web test:e2e    # e2e (Playwright) — needs `docker compose up -d`
 ```
-E2e boots its own app on port `3170` against a dedicated `backflip_test` database —
+E2e boots its own app on port `3180` against a dedicated `react_invoice_test` database —
 your dev server and dev data are untouched. First run on a machine also needs the
 browser once: `corepack yarn workspace web exec playwright install chromium`.
 Optional: `corepack yarn workspace web test:e2e:screenshots` captures key pages
@@ -81,11 +81,11 @@ in place. Re-seed anytime by recreating `.env.init` and rerunning `init-owner`.
 > hygiene — restore from git history to seed another owner later.
 
 ## Good to know
-- **Ports**: app `3070`, Postgres `5544` (change `POSTGRES_PORT` in `.env` if it clashes).
+- **Ports**: app `3080`, Postgres `5545` (change `POSTGRES_PORT` in `.env` if it clashes).
 - **Secrets**: set a real `ENCRYPTION_KEY` in `.env` (`openssl rand -base64 32`) — it encrypts stored secrets (AI provider keys).
 - **DB changes**: edit `packages/db/src/schema.ts` → `corepack yarn db:generate` → `db:migrate`.
 - **Admin dashboard UI** is built from shadcn blocks — browse and lift components/layouts from **https://ui.shadcn.com/blocks** (this project uses `login-03`, `dashboard-01`, `sidebar-08`).
-- **Full Docker** (app + db): `docker compose --profile web up -d --build` → migrations run, app on `3071`. Owner seed: `docker compose --profile seed run --rm db-seed`.
+- **Full Docker** (app + db): `docker compose --profile web up -d --build` → migrations run, app on `3081`. Owner seed: `docker compose --profile seed run --rm db-seed`.
 - More commands + conventions: `.claude/skills/dev-workflow`.
 
 ## Deployment

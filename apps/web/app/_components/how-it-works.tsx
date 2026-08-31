@@ -7,7 +7,7 @@ const STEPS = [
     title: "Clone",
     body: "Pull the foundation and install. Auth, DB, and UI come with it.",
     cta: {
-      href: "https://github.com/dev-geddy/backflip",
+      href: "https://github.com/dev-geddy/react-invoice",
       label: "View on GitHub",
       external: true,
     },

@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test"
 import { OWNER, TEAMMATE } from "./env"
 
 /**
- * Auth happy paths against a seeded `backflip_test` database.
+ * Auth happy paths against a seeded `react_invoice_test` database.
  * Covers L2-AUTH-16, L2-AUTH-17, L2-AUTH-13, L2-AUTH-24 and sign-out.
  */
 
@@ -19,7 +19,7 @@ test("unauthenticated /backflip redirects to login with from param", async ({
 }) => {
   await page.goto("/backflip")
 
-  await expect(page).toHaveURL("/backflip/login?from=%2Fbackflip")
+  await expect(page).toHaveURL("/backflip/login?from=%2Freact-invoice")
   await expect(page.getByRole("button", { name: "Sign in" })).toBeVisible()
 })
 
@@ -46,7 +46,7 @@ test("wrong password shows an error and grants no session", async ({
 
   // No session was issued: the protected area still bounces to login.
   await page.goto("/backflip")
-  await expect(page).toHaveURL("/backflip/login?from=%2Fbackflip")
+  await expect(page).toHaveURL("/backflip/login?from=%2Freact-invoice")
 })
 
 test("teammate is redirected away from /backflip/settings", async ({
@@ -75,5 +75,5 @@ test("signed-in owner can sign out", async ({ page }) => {
   await expect(page).toHaveURL(/\/backflip\/login/)
 
   await page.goto("/backflip")
-  await expect(page).toHaveURL("/backflip/login?from=%2Fbackflip")
+  await expect(page).toHaveURL("/backflip/login?from=%2Freact-invoice")
 })

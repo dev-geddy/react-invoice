@@ -14,7 +14,7 @@ import { BASE_URL, OWNER, TEAMMATE, TEST_DATABASE_URL } from "./env"
  * End-to-end proof of the Claude-compatible MCP connector: the OAuth 2.1
  * authorization server (`/api/oauth/*`, `/.well-known/*`) and the Streamable
  * HTTP resource server (`/api/mcp`) it protects, against a real running app
- * and a real (seeded) `backflip_test` database.
+ * and a real (seeded) `react_invoice_test` database.
  *
  * Enablement is DB-driven (`connector_config.enabled`, `L2-MCP-25`), not
  * `MCP_ENABLED` — `global-setup.ts` seeds that row (`enabled: true`,

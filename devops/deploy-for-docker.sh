@@ -30,8 +30,8 @@ Usage:
   -h  droplet host or IP        (required)
   -i  ssh private key path      (required)
   -d  domain of this instance   (required — keys the deploy dir /var/www/<domain>; also in .env DOMAIN for Caddy)
-  -n  app/instance name         (default: backflip)
-  --app-port  app loopback port (default: 3070)
+  -n  app/instance name         (default: react-invoice)
+  --app-port  app loopback port (default: 3080)
   -u  ssh user                  (default: root)
   -p  ssh port                  (default: 22)
 

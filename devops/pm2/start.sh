@@ -14,6 +14,6 @@ source "$APP_DIR/.env"
 source "$APP_DIR/.env.local"
 set +a
 
-export NODE_ENV=production PORT="${APP_PORT:-3070}" HOSTNAME=127.0.0.1   # loopback only — the reverse proxy (nginx/Caddy) fronts it
+export NODE_ENV=production PORT="${APP_PORT:-3080}" HOSTNAME=127.0.0.1   # loopback only — the reverse proxy (nginx/Caddy) fronts it
 
 exec node "$APP_DIR/current/apps/web/server.js"

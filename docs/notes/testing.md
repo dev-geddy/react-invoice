@@ -5,7 +5,7 @@
 ## File map
 - `apps/web/vitest.config.ts` — unit runner config (`L2-TEST-01`). Node env; `@` alias mirrors tsconfig `@/*`.
 - `apps/web/playwright.config.ts` — e2e config (`L2-TEST-02`, `L2-TEST-05`). Chromium only, `workers: 1`.
-- `apps/web/e2e/env.ts` — test DB names/URLs, port 3170, fixture accounts.
+- `apps/web/e2e/env.ts` — test DB names/URLs, port 3180, fixture accounts.
 - `apps/web/e2e/global-setup.ts` — DB create/migrate/truncate/seed (`L2-TEST-03/04`).
 - `apps/web/e2e/auth.spec.ts` — 5 happy paths: unauth redirect, owner login, wrong password, teammate blocked from settings, sign-out.
 - `apps/web/e2e/admin-chrome.spec.ts` — 1 case: contracted sidebar rail is icon-only (labels hidden, brand tile + footer avatar geometrically inside the 3.5rem rail). Geometry, not snapshot — the failure mode is an icon clipped to negative `x`, which a visibility assertion alone misses.
@@ -21,8 +21,8 @@
 
 ## Gotchas
 - `webServer` calls the `next` binary directly — the dotenv-cli `dev` script would load root `.env` and dotenv never overrides preset vars, but bypassing it entirely keeps dev credentials out (`L2-TEST-02`).
-- `NEXT_DIST_DIR=.next-e2e`: honored by two lines in `next.config.ts`; without it the e2e server corrupts a running 3070 dev server's `.next`. `.next-e2e` ignored in git/eslint/prettier.
+- `NEXT_DIST_DIR=.next-e2e`: honored by two lines in `next.config.ts`; without it the e2e server corrupts a running 3080 dev server's `.next`. `.next-e2e` ignored in git/eslint/prettier.
 - Login page shadcn `CardTitle` renders a `div`, not a heading — assert on the "Sign in" button instead.
 - Never read `ConnectorCopyField` values positionally (`page.locator("code").nth(n)`). The manual-client reveal dialog grew a "Remote MCP server URL" row above the credentials, which silently shifted every index — `createManualClientViaUI` then handed back the MCP URL as the client id and 3 connector tests failed at `/api/oauth/authorize` with an unknown client. `revealedValue(page, label)` anchors on the field's own `aria-label="Copy {label}"` button instead (`L2-MCP-50`, `L2-MCP-52`).
-- Setup truncates + reseeds, never drops `backflip_test` — a reused dev server keeps live pool connections (`reuseExistingServer: !CI`).
-- `postgres` superuser rights: compose `backflip` user owns the cluster, so `create database` from globalSetup just works.
+- Setup truncates + reseeds, never drops `react_invoice_test` — a reused dev server keeps live pool connections (`reuseExistingServer: !CI`).
+- `postgres` superuser rights: compose `react_invoice` user owns the cluster, so `create database` from globalSetup just works.

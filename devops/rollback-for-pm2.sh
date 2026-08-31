@@ -24,8 +24,8 @@ Usage:
   -h  droplet host or IP        (required)
   -i  ssh private key path      (required)
   -d  domain of this instance   (required — keys the deploy dir /var/www/<domain>)
-  -n  app/instance name         (default: backflip — must match the deploy -n)
-  --app-port  app loopback port (default: 3070 — must match the deploy --app-port)
+  -n  app/instance name         (default: react-invoice — must match the deploy -n)
+  --app-port  app loopback port (default: 3080 — must match the deploy --app-port)
   -u  ssh user                  (default: root)
   -p  ssh port                  (default: 22)
 USAGE

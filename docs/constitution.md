@@ -1,4 +1,4 @@
-# Constitution (L1) — Backflip
+# Constitution (L1) — React Invoice
 
 > L1 = invariants / why. Human-only changes. Cites nothing up. Governs L2 below.
 > Style: terse. One fact per line.
@@ -37,7 +37,7 @@ Tailored for AI-assisted dev — non-technical builders extend it via establishe
 - `L1-STACK-01` — Next.js 16 (App Router) — unified SSR/RSC + API routes for both surfaces.
 - `L1-STACK-02` — TypeScript 5 — type safety across the foundation.
 - `L1-STACK-03` — React 19.2 — current, RSC support.
-- `L1-STACK-04` — Turborepo + yarn 4 (corepack) — monorepo builds; corepack pins yarn@4.17.1 (see [[backflip-yarn-corepack]]).
+- `L1-STACK-04` — Turborepo + yarn 4 (corepack) — monorepo builds; corepack pins yarn@4.17.1 (see [[react-invoice-yarn-corepack]]).
 - `L1-STACK-05` — shadcn/ui, `base-mira` style, neutral base, remixicon — themed component system from monorepo preset.
 - `L1-STACK-06` — Tailwind CSS v4 — styling, CSS variables theming.
 - `L1-STACK-07` — PostgreSQL — primary datastore. Runs in Docker for local dev.

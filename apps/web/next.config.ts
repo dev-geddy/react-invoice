@@ -87,7 +87,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.resolve(import.meta.dirname, "../.."),
   // The e2e suite boots its own dev server; it sets NEXT_DIST_DIR so it never
-  // shares `.next` with a dev server already running on 3070.
+  // shares `.next` with a dev server already running on 3080.
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   transpilePackages: ["@workspace/ui"],
   devIndicators: {

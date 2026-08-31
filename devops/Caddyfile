@@ -5,7 +5,7 @@
 # needs a DNS A record for the domain → droplet IP, ports 80/443 open.
 #
 # No request-rate zone at this layer: unlike the pm2/nginx flavor
-# (backflip-http.conf's backflip_auth/backflip_oauth limit_req_zones), the
+# (react-invoice-http.conf's react-invoice_auth/react-invoice_oauth limit_req_zones), the
 # docker flavor's Caddy has no equivalent configured here. /api/oauth/register
 # and /api/oauth/token are therefore protected only by the app's in-process
 # rate limiter (L2-MCP-30) — no edge backstop on this flavor.
@@ -15,9 +15,9 @@ __DOMAIN__ {
 	# results stream to the client instead of being held until the
 	# connection closes. Matched first — Caddy keeps same-directive routes
 	# in file order, so this takes precedence over the catch-all below.
-	reverse_proxy /api/mcp* 127.0.0.1:3070 {
+	reverse_proxy /api/mcp* 127.0.0.1:3080 {
 		flush_interval -1
 	}
 
-	reverse_proxy 127.0.0.1:3070
+	reverse_proxy 127.0.0.1:3080
 }

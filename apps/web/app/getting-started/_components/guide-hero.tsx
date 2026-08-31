@@ -2,7 +2,7 @@ import { RiBookOpenLine, RiTerminalBoxLine } from "@remixicon/react"
 
 import { Badge } from "@workspace/ui/components/badge"
 
-const DEVOPS_DOC = "https://github.com/dev-geddy/backflip/blob/master/devops.md"
+const DEVOPS_DOC = "https://github.com/dev-geddy/react-invoice/blob/master/devops.md"
 
 /**
  * Hero band shared by the setup wizards. Same stripe-texture backdrop as the

@@ -15,7 +15,7 @@ import { visibleTools } from "./tools"
 const SERVER_VERSION = "1.0.0"
 
 export function buildMcpServer(ctx: McpAuthContext): McpServer {
-  const server = new McpServer({ name: "backflip", version: SERVER_VERSION })
+  const server = new McpServer({ name: "react-invoice", version: SERVER_VERSION })
   for (const tool of visibleTools(ctx)) tool.register(server, ctx)
   return server
 }

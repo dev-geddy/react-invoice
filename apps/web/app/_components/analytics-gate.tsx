@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react"
 import { CookieBanner } from "./cookie-banner"
 
 /** localStorage key holding the visitor's analytics choice. */
-const CONSENT_KEY = "backflip.consent.analytics"
+const CONSENT_KEY = "react-invoice.consent.analytics"
 const SCRIPT_ID = "ga-gtag-js"
 
 /**

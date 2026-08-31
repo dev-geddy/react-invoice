@@ -32,7 +32,7 @@ export function SiteFooter() {
               <path d="M6 8a7 7 0 1 0 12 0" />
             </svg>
           </span>
-          Backflip
+          React Invoice
         </a>
         <nav
           aria-label="Footer"
@@ -46,7 +46,7 @@ export function SiteFooter() {
           </a>
         </nav>
         <p className="flex items-baseline gap-2 text-[0.8125rem] text-muted-foreground">
-          © {new Date().getFullYear()} Backflip
+          © {new Date().getFullYear()} React Invoice
           <AppVersion />
         </p>
       </div>

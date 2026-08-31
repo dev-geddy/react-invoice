@@ -47,7 +47,7 @@ export const STEPS: StepMeta[] = [
   },
   {
     id: "clone",
-    title: "Clone Backflip locally",
+    title: "Clone React Invoice locally",
     short: "Clone",
     lead: "Everything in this guide runs from a local clone — provisioning, deploys, migrations, the admin seed. Grab the repo and the few tools the scripts expect.",
   },
@@ -85,7 +85,7 @@ export const STEPS: StepMeta[] = [
     id: "seed",
     title: "Seed the admin account",
     short: "Admin",
-    lead: "One-off, after the first deploy. Writes a temporary .env.init, hands it to the locked backflip user on the droplet, runs the seed, then removes it on both ends.",
+    lead: "One-off, after the first deploy. Writes a temporary .env.init, hands it to the locked react-invoice user on the droplet, runs the seed, then removes it on both ends.",
   },
   {
     id: "summary",
@@ -154,8 +154,8 @@ export function StepBody({
           <RunOn>your machine — any shell</RunOn>
           <CommandBlock
             lines={[
-              'ssh-keygen -t ed25519 -f ~/.ssh/id_backflip -C "backflip"',
-              "cat ~/.ssh/id_backflip.pub",
+              'ssh-keygen -t ed25519 -f ~/.ssh/id_react-invoice -C "react-invoice"',
+              "cat ~/.ssh/id_react-invoice.pub",
             ]}
             label="generate an ssh key (skip if you have one)"
           />
@@ -164,7 +164,7 @@ export function StepBody({
           Upload the printed <Mono>.pub</Mono> contents in the DigitalOcean
           panel under Settings → Security → SSH keys, then pick that key when
           creating the droplet. The private half (
-          <Mono>~/.ssh/id_backflip</Mono>) stays on your machine — it&apos;s the
+          <Mono>~/.ssh/id_react-invoice</Mono>) stays on your machine — it&apos;s the
           key path variable in the next step.
         </Note>
         <div>
@@ -220,7 +220,7 @@ export function StepBody({
               variant="outline"
               render={
                 <a
-                  href="https://github.com/dev-geddy/backflip/fork"
+                  href="https://github.com/dev-geddy/react-invoice/fork"
                   target="_blank"
                   rel="noopener noreferrer"
                 />
@@ -235,8 +235,8 @@ export function StepBody({
           <RunOn>your machine — any shell</RunOn>
           <CommandBlock
             lines={[
-              "git clone https://github.com/<your-github-account>/backflip.git",
-              "cd backflip",
+              "git clone https://github.com/<your-github-account>/react-invoice.git",
+              "cd react-invoice",
               "corepack enable",
               "corepack yarn install",
             ]}
@@ -244,8 +244,8 @@ export function StepBody({
           />
           <CommandBlock
             lines={[
-              "git clone https://github.com/dev-geddy/backflip.git",
-              "cd backflip",
+              "git clone https://github.com/dev-geddy/react-invoice.git",
+              "cd react-invoice",
               "corepack enable",
               "corepack yarn install",
             ]}
@@ -253,7 +253,7 @@ export function StepBody({
           />
         </div>
         <Note>
-          Backflip is developed primarily with <strong>Claude Code</strong> —
+          React Invoice is developed primarily with <strong>Claude Code</strong> —
           the repo ships instructions, skills and doc contracts tuned for it
           (that&apos;s what the Start building phase leans on). Other AI coding
           agents are untested.
@@ -456,13 +456,13 @@ export function StepBody({
             )
             const a = document.createElement("a")
             a.href = url
-            a.download = "backflip-setup-summary.txt"
+            a.download = "react-invoice-setup-summary.txt"
             a.click()
             URL.revokeObjectURL(url)
           }}
         >
           <RiDownloadLine aria-hidden="true" />
-          Download backflip-setup-summary.txt
+          Download react-invoice-setup-summary.txt
         </Button>
       </div>
       <Note>
@@ -471,7 +471,7 @@ export function StepBody({
       </Note>
       <CommandBlock
         lines={doc.split("\n")}
-        label="backflip-setup-summary.txt"
+        label="react-invoice-setup-summary.txt"
         prompt={false}
       />
       <SubSection title="Or hand the whole setup to Claude Code">

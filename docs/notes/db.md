@@ -26,7 +26,7 @@
 - Column names kept Auth.js-exact (camelCase, quoted in pg): `passwordHash`, `emailVerified`, `providerAccountId`, etc. Query with double-quotes in raw SQL.
 - `account.expires_at` typed `integer` (required by `@auth/drizzle-adapter` types).
 - `session`/`verificationToken` tables unused under JWT strategy; kept for adapter completeness.
-- Env: `DATABASE_URL` (localhost:5544) in `.env`; one-off admin seed creds in `.env.init` (loaded inline by the seed script, never the app). `.env.init.example` is the committed template. All `.env*` gitignored except the `*.example` files.
+- Env: `DATABASE_URL` (localhost:5545) in `.env`; one-off admin seed creds in `.env.init` (loaded inline by the seed script, never the app). `.env.init.example` is the committed template. All `.env*` gitignored except the `*.example` files.
 
 ## user_token table (migration 0003)
 - Purpose-scoped one-time tokens for self-service flows: `password_reset`, `email_change` (holds pending `newEmail`). Store only `tokenHash` (sha256 of the raw token); raw lives only in the emailed link. `expiresAt` + `consumedAt` enforce single-use, time-boxed validity. Cascade-deletes with the user. Consumed by `apps/web/app/_lib/auth/tokens.ts`.

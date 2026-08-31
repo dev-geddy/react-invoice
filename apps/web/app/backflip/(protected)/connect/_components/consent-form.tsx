@@ -41,7 +41,7 @@ export function ConsentForm({
               `L2-MCP-12`) — rendered as plain text only, never as markup. */}
           <div className="truncate text-sm font-semibold">{clientName}</div>
           <div className="text-xs text-muted-foreground">
-            wants to connect to your Backflip account
+            wants to connect to your React Invoice account
           </div>
         </div>
       </div>

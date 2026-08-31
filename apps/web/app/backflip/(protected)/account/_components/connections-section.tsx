@@ -30,7 +30,7 @@ export function ConnectionsSection({ grants }: { grants: OAuthGrant[] }) {
           <div className="p-4 text-sm text-muted-foreground">
             No connectors are linked. A connector is a third-party app — like
             Claude — that you’ve authorized to access your account through the
-            Backflip API.
+            React Invoice API.
           </div>
         ) : (
           grants.map((grant, i) => (

@@ -24,7 +24,7 @@ export default async function ResetPasswordPage({
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             b
           </div>
-          backflip
+          react-invoice
         </Link>
         <ResetPasswordForm token={token ?? ""} />
       </div>

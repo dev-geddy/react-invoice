@@ -19,7 +19,7 @@ disclosure.
 
 ## Scope
 
-`backflip` is a self-hosted starter foundation — you deploy it and supply your
+`react-invoice` is a self-hosted starter foundation — you deploy it and supply your
 own secrets. Before running it anywhere non-local, make sure you have:
 
 - set a strong, unique `AUTH_SECRET` (`openssl rand -base64 33`),

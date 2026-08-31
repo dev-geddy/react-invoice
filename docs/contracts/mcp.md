@@ -13,7 +13,7 @@ The Claude-compatible connector: a remote MCP server at `/api/mcp` (Streamable H
 
 ### MCP server
 - `L2-MCP-01` _(iface)_ — Route `/api/mcp` (`runtime="nodejs"`) — MCP Streamable HTTP endpoint, **stateless** (a fresh `McpServer` per request, no session id). `POST` handles JSON-RPC; `GET`/`DELETE` are answered by the SDK handler. Built on `@modelcontextprotocol/server` `createMcpHandler`. (`apps/web/app/api/mcp/route.ts`)
-- `L2-MCP-02` _(iface)_ — `@/app/_lib/mcp/server` → `buildMcpServer(ctx: McpAuthContext)` — registers the tools that `ctx` is allowed (`L2-MCP-20`). Server identity `{ name: "backflip", version }`.
+- `L2-MCP-02` _(iface)_ — `@/app/_lib/mcp/server` → `buildMcpServer(ctx: McpAuthContext)` — registers the tools that `ctx` is allowed (`L2-MCP-20`). Server identity `{ name: "react-invoice", version }`.
 - `L2-MCP-03` _(iface)_ — Bearer gate `@/app/_lib/oauth/bearer` → `requireBearer(request)` → `McpAuthContext | Response`. On failure returns `401` with `WWW-Authenticate: Bearer resource_metadata="<PRM url>", error="invalid_token"` — this header is what makes a Claude client start the OAuth flow.
 
 ### Read-only tools (phase 1)

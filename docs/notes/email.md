@@ -15,7 +15,7 @@
 - **Consumers:** `POST /api/backflip/users` → welcome (see [[auth]]); account actions `changePassword`/`requestEmailChange`/`confirmEmailChange` → password-changed / verify / email-changed; `(auth)` actions `requestPasswordReset`/`resetPassword` → reset / password-changed. All best-effort.
 
 ## App URL
-- CTA link base = `APP_URL ?? AUTH_URL ?? NEXTAUTH_URL ?? http://localhost:3070`, `+ /backflip/login`.
+- CTA link base = `APP_URL ?? AUTH_URL ?? NEXTAUTH_URL ?? http://localhost:3080`, `+ /backflip/login`.
 
 ## State
 - Sending lands: `resend@6` + `@react-email/components@1` installed in `web`.

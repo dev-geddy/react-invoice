@@ -56,7 +56,7 @@ export function WizardShell<V extends Record<string, string>>({
   emptyVars: V
   /** Keys mirrored into sessionStorage. Omit anything secret. */
   persisted: (keyof V)[]
-  /** Namespace for this guide's storage entries, e.g. `backflip.setup`. */
+  /** Namespace for this guide's storage entries, e.g. `react-invoice.setup`. */
   storageKey: string
   renderStep: (args: {
     index: number

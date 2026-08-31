@@ -39,7 +39,7 @@ export type ConnectorClientRow = {
 }
 
 const DOCS_URL =
-  "https://github.com/dev-geddy/backflip/blob/master/docs/notes/mcp.md"
+  "https://github.com/dev-geddy/react-invoice/blob/master/docs/notes/mcp.md"
 
 /**
  * Connectors integration detail (design 2a) — owner-only admin surface for

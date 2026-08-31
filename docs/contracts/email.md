@@ -20,7 +20,7 @@ Email sending configuration (Resend provider config under `/backflip/settings`, 
 ## Schemas
 - `L2-EMAIL-04` — Provider: `resend` (fixed, single row). Extensible later.
 - `L2-EMAIL-05` — Fields (UI): `apiKey` (write-only), `fromEmail`, `fromName`, `replyTo`, `enabled`.
-- `L2-EMAIL-14` — Deps: `resend` + `@react-email/components` (`web`). CTA base URL: `APP_URL ?? AUTH_URL ?? NEXTAUTH_URL ?? http://localhost:3070`.
+- `L2-EMAIL-14` — Deps: `resend` + `@react-email/components` (`web`). CTA base URL: `APP_URL ?? AUTH_URL ?? NEXTAUTH_URL ?? http://localhost:3080`.
 
 ## Invariants
 - `L2-EMAIL-06` — Full API key never sent to the client. UI may show a masked preview (first 3 + last 4 chars around a fixed dot run; keys ≤8 chars fully masked) decrypted server-side. Stored encrypted (`L2-DB-16`), never plaintext.

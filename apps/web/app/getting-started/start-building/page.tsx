@@ -7,7 +7,7 @@ import { PromptBlock } from "./_components/prompt-block"
 export const metadata: Metadata = {
   title: "Start building",
   description:
-    "Copy-ready prompts for extending Backflip with a coding agent — a public contact form, its admin view, and email notifications.",
+    "Copy-ready prompts for extending React Invoice with a coding agent — a public contact form, its admin view, and email notifications.",
 }
 
 /**
@@ -49,7 +49,7 @@ export default function StartBuildingPage() {
               Build your first feature with prompts
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Backflip is built to be extended by a coding agent. Open Claude
+              React Invoice is built to be extended by a coding agent. Open Claude
               Code (or your agent of choice) in the repo root and paste these
               prompts one at a time — the repo&apos;s docs and conventions steer
               the agent, so plain product language is enough. Review each diff

@@ -4,10 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "dotenv -e ../../.env -e ../../.env.local -- next dev -p 3070",
+    "dev": "dotenv -e ../../.env -e ../../.env.local -- next dev -p 3080",
     "build": "yarn docs:index && next build",
     "docs:index": "tsx scripts/build-docs-index.ts",
-    "start": "next start -p 3070",
+    "start": "next start -p 3080",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",

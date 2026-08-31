@@ -68,8 +68,8 @@ Usage:
   -i  ssh private key path      (required unless --build-only)
   -d  domain of this instance   (required unless --build-only — keys the deploy dir
                                  /var/www/<domain>; must match setup -d)
-  -n  app/instance name         (default: backflip — must match setup -n)
-  --app-port  app loopback port (default: 3070 — must match setup --app-port)
+  -n  app/instance name         (default: react-invoice — must match setup -n)
+  --app-port  app loopback port (default: 3080 — must match setup --app-port)
   -u  ssh user                  (default: root)
   -p  ssh port                  (default: 22)
 
@@ -230,7 +230,7 @@ ok "build done"
 # then fails at runtime, on the droplet, in production. Everything below is a
 # hard failure.
 log "verifying artifact"
-VERIFY_DIR="$(mktemp -d "${TMPDIR:-/tmp}/backflip-verify-XXXXXX")"
+VERIFY_DIR="$(mktemp -d "${TMPDIR:-/tmp}/react-invoice-verify-XXXXXX")"
 tar -xzf "$ART_TGZ" -C "$VERIFY_DIR"
 
 # Layout: exactly what devops/lib/remote/artifact-extract.sh untars and asserts.
@@ -385,7 +385,7 @@ else
   log "tunnelling 127.0.0.1:$LOCAL_PORT → droplet 127.0.0.1:$DB_PORT"
   # ControlMaster socket instead of a pid: teardown is `ssh -O exit`, no pgrep
   # guesswork. ExitOnForwardFailure makes a busy port fail here, not later.
-  TUNNEL_CTL="$(mktemp -d "${TMPDIR:-/tmp}/backflip-tunnel-XXXXXX")/tunnel.sock"
+  TUNNEL_CTL="$(mktemp -d "${TMPDIR:-/tmp}/react-invoice-tunnel-XXXXXX")/tunnel.sock"
   ssh -i "$SSH_KEY" -p "$SSH_PORT" "${SSH_OPTS[@]}" \
     -o ExitOnForwardFailure=yes -M -S "$TUNNEL_CTL" -f -N \
     -L "$LOCAL_PORT:127.0.0.1:$DB_PORT" "$SSH_USER@$HOST" \

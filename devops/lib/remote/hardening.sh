@@ -12,7 +12,7 @@ if [ "$(id -u)" -eq 0 ]; then SUDO=""; else SUDO="sudo"; fi
 # fragments (sshd_config.d is Include'd first). Validate before reload so a
 # bad config never kills the running sshd (existing session survives anyway).
 echo "--> ssh hardening (key-only auth)"
-$SUDO tee /etc/ssh/sshd_config.d/99-backflip-hardening.conf >/dev/null <<'SSHD'
+$SUDO tee /etc/ssh/sshd_config.d/99-react-invoice-hardening.conf >/dev/null <<'SSHD'
 PasswordAuthentication no
 KbdInteractiveAuthentication no
 PermitRootLogin prohibit-password

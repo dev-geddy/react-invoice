@@ -1,21 +1,21 @@
 /**
  * Shared constants for the e2e suite. The tests run against a dedicated
- * `backflip_test` database on the local dev postgres — never the dev database.
+ * `react_invoice_test` database on the local dev postgres — never the dev database.
  */
 
 const HOST = process.env.E2E_PG_HOST ?? "localhost"
-const PORT = process.env.E2E_PG_PORT ?? "5544"
-const USER = process.env.E2E_PG_USER ?? "backflip"
-const PASSWORD = process.env.E2E_PG_PASSWORD ?? "backflip_local_dev"
+const PORT = process.env.E2E_PG_PORT ?? "5545"
+const USER = process.env.E2E_PG_USER ?? "react-invoice"
+const PASSWORD = process.env.E2E_PG_PASSWORD ?? "react_invoice_local_dev"
 
-export const TEST_DB_NAME = "backflip_test"
+export const TEST_DB_NAME = "react_invoice_test"
 
 /** Connection to the maintenance db, used to create/drop the test db. */
 export const ADMIN_DATABASE_URL = `postgres://${USER}:${PASSWORD}@${HOST}:${PORT}/postgres`
 
 export const TEST_DATABASE_URL = `postgres://${USER}:${PASSWORD}@${HOST}:${PORT}/${TEST_DB_NAME}`
 
-export const PORT_APP = 3170
+export const PORT_APP = 3180
 export const BASE_URL = `http://localhost:${PORT_APP}`
 
 export const OWNER = {

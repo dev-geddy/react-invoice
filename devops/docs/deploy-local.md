@@ -54,7 +54,7 @@ Extra flags:
 Verify without deploying:
 ```bash
 ./devops/deploy-for-pm2-build-docker.sh --build-only
-tar -tzf .artifacts/backflip-artifact.tgz | head
+tar -tzf .artifacts/react-invoice-artifact.tgz | head
 ```
 
 ### Which one should I use?

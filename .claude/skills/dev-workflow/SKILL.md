@@ -1,7 +1,7 @@
 ---
 name: dev-workflow
 description: >
-  How to work with the backflip project: package manager, running the dev
+  How to work with the react-invoice project: package manager, running the dev
   server, build/lint/typecheck/format, adding shadcn components, and monorepo
   layout. Load WHENEVER you run, start, build, test, lint, or install anything
   in this repo, add a dependency or shadcn component, or need a project command.
@@ -11,7 +11,7 @@ description: >
 
 # dev-workflow
 
-How to operate the backflip monorepo. Terse. Exact commands.
+How to operate the react-invoice monorepo. Terse. Exact commands.
 
 ## Working directory
 - All work stays in the project dir. No `/tmp` or other scratch/system dirs for logs, output, or intermediate files — use the project (e.g. `.next`, ignored paths) instead.
@@ -25,17 +25,17 @@ How to operate the backflip monorepo. Terse. Exact commands.
 - Root `yarn.lock` marker present so berry treats repo as standalone (parent `~/` is another yarn project).
 
 ## Run the app
-- Dev (web app): `corepack yarn workspace web dev` → **port 3070**.
+- Dev (web app): `corepack yarn workspace web dev` → **port 3080**.
 - All workspaces dev (turbo): `corepack yarn dev`.
 - Prod: `corepack yarn workspace web build` then `corepack yarn workspace web start`. Works but warns (`output: "standalone"`); prod-parity run is `node apps/web/.next/standalone/apps/web/server.js` (needs `.next/static` copied into the bundle — see `apps/web/Dockerfile`). Real prod = pm2 on the droplet (`digitalocean-devops` skill).
 
 ## Docker + database
-- **Preferred dev flow: app local, db in Docker.** Run app via `corepack yarn dev` (port 3070, hot reload); run only postgres in Docker.
+- **Preferred dev flow: app local, db in Docker.** Run app via `corepack yarn dev` (port 3080, hot reload); run only postgres in Docker.
   - First time: `cp .env.example .env`.
-  - `docker compose up -d` → `backflip-db` only (web/seed sit behind profiles) → postgres on `localhost:${POSTGRES_PORT:-5544}`.
-  - `corepack yarn dev` → app on 3070, reads `DATABASE_URL` from `.env`.
-- Full Docker (app + db): `docker compose --profile web up -d --build` → `backflip-web` on **3071** (containerized prod build) after one-shot `backflip-db-migrate` applies migrations; db as above. In-container app connects to db at `db:5432`. Owner seed in Docker: `docker compose --profile seed run --rm db-seed` (`.env.init` or `-e ADMIN_EMAIL -e ADMIN_PASSWORD`).
-- Postgres host port default **5544** (env `POSTGRES_PORT`), kept off 5432 to avoid clashes. Change in `.env` if it collides.
+  - `docker compose up -d` → `react-invoice-db` only (web/seed sit behind profiles) → postgres on `localhost:${POSTGRES_PORT:-5545}`.
+  - `corepack yarn dev` → app on 3080, reads `DATABASE_URL` from `.env`.
+- Full Docker (app + db): `docker compose --profile web up -d --build` → `react-invoice-web` on **3081** (containerized prod build) after one-shot `react-invoice-db-migrate` applies migrations; db as above. In-container app connects to db at `db:5432`. Owner seed in Docker: `docker compose --profile seed run --rm db-seed` (`.env.init` or `-e ADMIN_EMAIL -e ADMIN_PASSWORD`).
+- Postgres host port default **5545** (env `POSTGRES_PORT`), kept off 5432 to avoid clashes. Change in `.env` if it collides.
 - Creds: `.env` (gitignored) — copy of `.env.example` (committed template). Same values seed the db container and are read by the local app.
 - Files: `docker-compose.yml`, `apps/web/Dockerfile`, `.dockerignore`. See `README.md`.
 
@@ -49,7 +49,7 @@ How to operate the backflip monorepo. Terse. Exact commands.
 - **DB discipline (do automatically):**
   - Schema edited (`packages/db/src/schema.ts`) → run `db:generate` then `db:migrate`. Commit the generated SQL. No schema change lands without its migration.
   - Seed data added/changed → run the matching seed (e.g. `init-owner`).
-  - Before any db op, ensure the db is up: if `docker compose up -d` / the `backflip-db` container isn't running, start it (or ask the user to start Docker if the daemon is down).
+  - Before any db op, ensure the db is up: if `docker compose up -d` / the `react-invoice-db` container isn't running, start it (or ask the user to start Docker if the daemon is down).
 
 ## Quality gates (turbo, from repo root)
 - Typecheck: `corepack yarn typecheck` (per-app: `corepack yarn workspace web typecheck` → `tsc --noEmit`).
@@ -59,7 +59,7 @@ How to operate the backflip monorepo. Terse. Exact commands.
 
 ## Tests
 - Unit (Vitest, no db): `corepack yarn workspace web test`. Suites colocated `**/*.test.ts` (auth invariants under `app/_lib/auth/`).
-- E2e (Playwright, needs `backflip-db` up): `corepack yarn workspace web test:e2e`. Boots own app on **3170** against dedicated `backflip_test` db (dev db untouched); builds into `.next-e2e`. First run per machine: `corepack yarn workspace web exec playwright install chromium`.
+- E2e (Playwright, needs `react-invoice-db` up): `corepack yarn workspace web test:e2e`. Boots own app on **3180** against dedicated `react_invoice_test` db (dev db untouched); builds into `.next-e2e`. First run per machine: `corepack yarn workspace web exec playwright install chromium`.
 - Screenshots (separate step, 1200×900): `corepack yarn workspace web test:e2e:screenshots` → `.screenshots/*.png` (gitignored).
 - Contract: `docs/contracts/testing.md`; notes: `docs/notes/testing.md`.
 
