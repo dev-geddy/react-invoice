@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 
+import Link from "next/link"
+
 import {
   RiDeleteBinLine,
   RiLayoutRightLine,
@@ -10,6 +12,7 @@ import {
   RiMagicLine,
   RiPrinterLine,
   RiSaveLine,
+  RiSettings3Line,
 } from "@remixicon/react"
 
 import {
@@ -25,6 +28,13 @@ import {
 import { Button } from "@workspace/ui/components/button"
 import { Field, FieldLabel } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
 import { Separator } from "@workspace/ui/components/separator"
 
 import { PageHeading, SectionLabel } from "../../_components/page-heading"
@@ -35,6 +45,7 @@ import type {
   InvoiceEntry,
   InvoiceMeta,
   InvoiceParty,
+  InvoiceSeriesOption,
 } from "../_lib/types"
 import { EntryRows } from "./entry-rows"
 import { PartyFields } from "./party-fields"
@@ -49,8 +60,11 @@ import { PartyFields } from "./party-fields"
 export function InvoiceEditor({
   draft,
   invoice,
+  series,
+  canManageSettings,
   saving,
   onMetaChange,
+  onSeriesChange,
   onPartyChange,
   onEntriesChange,
   onSave,
@@ -64,8 +78,11 @@ export function InvoiceEditor({
 }: {
   draft: InvoiceDraft
   invoice: Invoice | null
+  series: InvoiceSeriesOption[]
+  canManageSettings: boolean
   saving: boolean
   onMetaChange: (field: keyof InvoiceMeta, value: string) => void
+  onSeriesChange: (code: string) => void
   onPartyChange: (
     kind: "provider" | "customer",
     field: keyof InvoiceParty,
@@ -86,6 +103,15 @@ export function InvoiceEditor({
   const locked = invoice?.locked ?? false
   const readOnly = locked || (invoice != null && !invoice.canManage)
   const disabled = readOnly || saving
+  // The saved series may no longer be configured; keep it selectable so the
+  // form never silently reassigns an issued invoice.
+  const seriesCodes = Array.from(
+    new Set(
+      [...series.map((s) => s.code), draft.meta.series].filter(
+        (code) => code.length > 0
+      )
+    )
+  )
   const { net, vatAmount, gross } = getTotals(
     draft.entries,
     draft.provider,
@@ -93,7 +119,11 @@ export function InvoiceEditor({
   )
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-card p-5">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-card px-5 pb-5">
+      {/* The top padding belongs to the content, not the scroll container: a
+          padded scrollport leaves a transparent strip that `sticky top-0`
+          headers cannot cover, and rows scroll through it. */}
+      <div className="pt-5" />
       <PageHeading
         title={
           invoice
@@ -123,6 +153,16 @@ export function InvoiceEditor({
             <RiLayoutRightLine className="size-4" />
             {previewOpen ? "Hide preview" : "Show preview"}
           </Button>
+          {canManageSettings ? (
+            <Button
+              variant="outline"
+              size="sm"
+              render={<Link href="/backflip/invoices/settings" />}
+            >
+              <RiSettings3Line className="size-4" />
+              Invoice settings
+            </Button>
+          ) : null}
           <Button variant="outline" size="sm" onClick={onPrint}>
             <RiPrinterLine className="size-4" />
             Print
@@ -177,16 +217,35 @@ export function InvoiceEditor({
               onChange={(e) => onMetaChange("invoiceDate", e.target.value)}
             />
           </Field>
-          <Field className="w-[110px]">
-            <FieldLabel htmlFor="series" className="text-xs text-muted-foreground">
+          <Field className="w-[150px]">
+            <FieldLabel
+              htmlFor="series"
+              className="text-xs text-muted-foreground"
+            >
               Series
             </FieldLabel>
-            <Input
-              id="series"
+            {/* A series the operator has since removed still appears here, so
+                an issued invoice keeps reading as what it was raised under. */}
+            <Select
               value={draft.meta.series}
-              disabled={disabled}
-              onChange={(e) => onMetaChange("series", e.target.value)}
-            />
+              disabled={disabled || seriesCodes.length === 0}
+              onValueChange={(value) => onSeriesChange(value ?? "")}
+            >
+              <SelectTrigger
+                id="series"
+                aria-label="Series"
+                className="w-full"
+              >
+                <SelectValue placeholder="No series yet" />
+              </SelectTrigger>
+              <SelectContent>
+                {seriesCodes.map((code) => (
+                  <SelectItem key={code} value={code}>
+                    {code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
           <Field className="w-[130px]">
             <FieldLabel htmlFor="number" className="text-xs text-muted-foreground">
@@ -240,30 +299,6 @@ export function InvoiceEditor({
           and the rate is above zero.
         </p>
 
-        <div className="flex flex-wrap gap-3">
-          <Field className="w-[220px]">
-            <FieldLabel htmlFor="brandName" className="text-xs text-muted-foreground">
-              Brand name part 1
-            </FieldLabel>
-            <Input
-              id="brandName"
-              value={draft.meta.brandName}
-              disabled={disabled}
-              onChange={(e) => onMetaChange("brandName", e.target.value)}
-            />
-          </Field>
-          <Field className="w-[220px]">
-            <FieldLabel htmlFor="brandSubName" className="text-xs text-muted-foreground">
-              Brand name part 2
-            </FieldLabel>
-            <Input
-              id="brandSubName"
-              value={draft.meta.brandSubName}
-              disabled={disabled}
-              onChange={(e) => onMetaChange("brandSubName", e.target.value)}
-            />
-          </Field>
-        </div>
       </section>
       <Separator className="my-6" />
 
@@ -276,7 +311,7 @@ export function InvoiceEditor({
           {/* Both headers are one fixed-height row — the customer side carries
               a button, and without a matching row the two field columns would
               start at different heights. */}
-          <div className="sticky top-0 z-10 flex h-8 items-center justify-between gap-2 bg-card">
+          <div className="sticky top-0 z-10 flex h-9 items-center justify-between gap-2 bg-card">
             <SectionLabel>Provider</SectionLabel>
           </div>
           <PartyFields
@@ -290,7 +325,7 @@ export function InvoiceEditor({
         </section>
 
         <section className="flex min-w-0 max-w-[14rem] flex-col gap-3">
-          <div className="sticky top-0 z-10 flex h-8 items-center justify-between gap-2 bg-card">
+          <div className="sticky top-0 z-10 flex h-9 items-center justify-between gap-2 bg-card">
             <SectionLabel>Customer</SectionLabel>
             <Button
               variant="ghost"

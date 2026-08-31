@@ -2,13 +2,17 @@ import {
   db,
   invoiceEntries,
   invoiceParties,
+  invoiceSeries,
   invoices,
   users,
 } from "@workspace/db"
-import { desc, eq } from "drizzle-orm"
+import { asc, desc, eq } from "drizzle-orm"
 
 import { requireCapability } from "@/app/_lib/auth/guard"
-import { canManageInvoice } from "@/app/_lib/auth/permissions"
+import {
+  canManageInvoice,
+  canManageInvoiceSettings,
+} from "@/app/_lib/auth/permissions"
 import { InvoicesView } from "./_components/invoices-view"
 import {
   EMPTY_PARTY,
@@ -50,9 +54,17 @@ export default async function InvoicesPage() {
     .innerJoin(users, eq(users.id, invoices.ownerId))
     .orderBy(desc(invoices.createdAt))
 
-  const [partyRows, entryRows] = await Promise.all([
+  const [partyRows, entryRows, seriesRows] = await Promise.all([
     db.select().from(invoiceParties),
     db.select().from(invoiceEntries).orderBy(invoiceEntries.position),
+    db
+      .select({
+        code: invoiceSeries.code,
+        brandName: invoiceSeries.brandName,
+        brandSubName: invoiceSeries.brandSubName,
+      })
+      .from(invoiceSeries)
+      .orderBy(asc(invoiceSeries.code)),
   ])
 
   const partiesByInvoice = new Map<
@@ -119,5 +131,11 @@ export default async function InvoicesPage() {
     entries: entriesByInvoice.get(row.id) ?? [],
   }))
 
-  return <InvoicesView invoices={ledger} />
+  return (
+    <InvoicesView
+      invoices={ledger}
+      series={seriesRows}
+      canManageSettings={canManageInvoiceSettings(sessionUser.role)}
+    />
+  )
 }

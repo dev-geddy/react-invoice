@@ -50,7 +50,7 @@ async function migrateAndSeed() {
     await migrate(db, { migrationsFolder: MIGRATIONS_DIR })
 
     await db.execute(
-      sql`truncate table "user", "account", "session", "verificationToken" cascade`
+      sql`truncate table "user", "account", "session", "verificationToken", "invoice_series" cascade`
     )
 
     for (const account of [OWNER, TEAMMATE]) {

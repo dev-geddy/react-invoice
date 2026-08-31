@@ -27,6 +27,7 @@ export type Capability =
   | "users.edit"
   | "settings"
   | "invoices"
+  | "invoices.settings"
 
 /** Capabilities granted per role. Owner is the superset. */
 const CAPABILITIES: Record<Role, readonly Capability[]> = {
@@ -37,8 +38,15 @@ const CAPABILITIES: Record<Role, readonly Capability[]> = {
     "users.edit",
     "settings",
     "invoices",
+    "invoices.settings",
   ],
-  admin: ["dashboard", "account", "users.view", "invoices"],
+  admin: [
+    "dashboard",
+    "account",
+    "users.view",
+    "invoices",
+    "invoices.settings",
+  ],
   teammate: ["dashboard", "account", "invoices"],
 }
 
@@ -57,6 +65,15 @@ export const canViewUsers = (role?: string | null) => can(role, "users.view")
 export const canEditUsers = (role?: string | null) => can(role, "users.edit")
 export const canAccessSettings = (role?: string | null) => can(role, "settings")
 export const canUseInvoices = (role?: string | null) => can(role, "invoices")
+
+/**
+ * Series and branding are company-level configuration, not per-invoice data:
+ * every user raises invoices, operators decide what series exist.
+ *
+ * @spec L2-INVOICE-23
+ */
+export const canManageInvoiceSettings = (role?: string | null) =>
+  can(role, "invoices.settings")
 
 /**
  * Who may change an existing invoice (edit fields, lock/unlock, delete).

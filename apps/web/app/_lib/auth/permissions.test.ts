@@ -16,10 +16,12 @@ const ALL_CAPABILITIES: Capability[] = [
   "users.edit",
   "settings",
   "invoices",
+  "invoices.settings",
 ]
 
-// Contract L2-AUTH-21: owner = all 6, admin = dashboard/account/users.view/invoices,
-// teammate = dashboard/account/invoices (invoices are shared, L2-INVOICE-05).
+// Contract L2-AUTH-21: owner = all 7; admin adds users.view + invoice settings;
+// teammate = dashboard/account/invoices (the ledger is shared, L2-INVOICE-05,
+// but series/branding are operator configuration, L2-INVOICE-23).
 const GRANTED: Record<Role, Capability[]> = {
   owner: [
     "dashboard",
@@ -28,8 +30,15 @@ const GRANTED: Record<Role, Capability[]> = {
     "users.edit",
     "settings",
     "invoices",
+    "invoices.settings",
   ],
-  admin: ["dashboard", "account", "users.view", "invoices"],
+  admin: [
+    "dashboard",
+    "account",
+    "users.view",
+    "invoices",
+    "invoices.settings",
+  ],
   teammate: ["dashboard", "account", "invoices"],
 }
 

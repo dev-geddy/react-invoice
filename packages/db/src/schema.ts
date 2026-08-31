@@ -464,3 +464,22 @@ export const invoiceEntries = pgTable(
   },
   (t) => [index("invoice_entry_invoice_idx").on(t.invoiceId, t.position)]
 )
+
+/**
+ * Invoice series — the numbering prefixes an operator issues under (`INV`,
+ * `2026-`, …) plus the branding printed on invoices of that series. Invoices
+ * snapshot the code and the brand at save time, so renaming or deleting a
+ * series never rewrites what an issued invoice says.
+ *
+ * @spec L2-INVOICE-22, L2-DB-33
+ */
+export const invoiceSeries = pgTable("invoice_series", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  code: text("code").notNull().unique(),
+  brandName: text("brandName").notNull().default(""),
+  brandSubName: text("brandSubName").notNull().default(""),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})

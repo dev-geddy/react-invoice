@@ -16,6 +16,7 @@ import {
   type InvoiceEntry,
   type InvoiceMeta,
   type InvoiceParty,
+  type InvoiceSeriesOption,
 } from "../_lib/types"
 import { InvoiceEditor } from "./invoice-editor"
 import { InvoiceList } from "./invoice-list"
@@ -29,7 +30,15 @@ import { PrefillCustomerDialog } from "./prefill-customer-dialog"
  *
  * @spec L2-INVOICE-08
  */
-export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
+export function InvoicesView({
+  invoices,
+  series,
+  canManageSettings,
+}: {
+  invoices: Invoice[]
+  series: InvoiceSeriesOption[]
+  canManageSettings: boolean
+}) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [query, setQuery] = useState("")
   // A just-saved invoice is selected before `router.refresh()` has delivered
@@ -81,6 +90,8 @@ export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
       <InvoiceWorkspace
         key={selectedId ?? "new"}
         invoices={invoices}
+        series={series}
+        canManageSettings={canManageSettings}
         selected={selected}
         seedDraft={saved?.id === selectedId ? saved.draft : null}
         onSaved={(id, draft) => {
@@ -96,12 +107,16 @@ export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
 /** The editing surface for one invoice (or one unsaved draft). */
 function InvoiceWorkspace({
   invoices,
+  series,
+  canManageSettings,
   selected,
   seedDraft,
   onSaved,
   onSelect,
 }: {
   invoices: Invoice[]
+  series: InvoiceSeriesOption[]
+  canManageSettings: boolean
   selected: Invoice | null
   seedDraft: InvoiceDraft | null
   onSaved: (id: string, draft: InvoiceDraft) => void
@@ -122,7 +137,7 @@ function InvoiceWorkspace({
             customer: selected.customer,
             entries: selected.entries,
           }
-        : seedDraft) ?? blankDraft(invoices)
+        : seedDraft) ?? blankDraft(invoices, series)
   )
 
   // Browsers name a printed PDF after the document title (L2-INVOICE-11).
@@ -150,6 +165,24 @@ function InvoiceWorkspace({
 
   function updateMeta(field: keyof InvoiceMeta, value: string) {
     setDraft((d) => ({ ...d, meta: { ...d.meta, [field]: value } }))
+  }
+
+  /**
+   * Picking a series also stamps its branding onto the draft: the invoice keeps
+   * its own copy (`L2-INVOICE-22`), so later edits to the series definition
+   * leave issued invoices untouched.
+   */
+  function selectSeries(code: string) {
+    const picked = series.find((s) => s.code === code)
+    setDraft((d) => ({
+      ...d,
+      meta: {
+        ...d.meta,
+        series: code,
+        brandName: picked?.brandName ?? d.meta.brandName,
+        brandSubName: picked?.brandSubName ?? d.meta.brandSubName,
+      },
+    }))
   }
 
   function updateParty(
@@ -222,6 +255,9 @@ function InvoiceWorkspace({
         <InvoiceEditor
           draft={draft}
           invoice={selected}
+          series={series}
+          canManageSettings={canManageSettings}
+          onSeriesChange={selectSeries}
           saving={saving}
           onMetaChange={updateMeta}
           onPartyChange={updateParty}
@@ -278,22 +314,32 @@ function InvoiceWorkspace({
  * currency, VAT rate and branding carry over (they change rarely), the date
  * resets to today and the number advances within the series.
  */
-function blankDraft(invoices: Invoice[]): InvoiceDraft {
+function blankDraft(
+  invoices: Invoice[],
+  seriesOptions: InvoiceSeriesOption[]
+): InvoiceDraft {
   const last = invoices[0]
-  const series = last?.meta.series ?? ""
+  // Carry the last invoice's series when it still exists, else the first
+  // configured one.
+  const known = seriesOptions.map((s) => s.code)
+  const code =
+    last && known.includes(last.meta.series)
+      ? last.meta.series
+      : (seriesOptions[0]?.code ?? last?.meta.series ?? "")
+  const picked = seriesOptions.find((s) => s.code === code)
   const used = invoices
-    .filter((i) => i.meta.series.trim() === series.trim())
+    .filter((i) => i.meta.series.trim() === code.trim())
     .map((i) => i.meta.number)
 
   return {
     meta: {
       invoiceDate: today(),
-      series,
+      series: code,
       number: nextNumber(used),
       currency: last?.meta.currency ?? "€",
       vatRate: last?.meta.vatRate ?? "0",
-      brandName: last?.meta.brandName ?? "",
-      brandSubName: last?.meta.brandSubName ?? "",
+      brandName: picked?.brandName ?? last?.meta.brandName ?? "",
+      brandSubName: picked?.brandSubName ?? last?.meta.brandSubName ?? "",
     },
     provider: last?.provider ?? EMPTY_PARTY,
     customer: EMPTY_PARTY,

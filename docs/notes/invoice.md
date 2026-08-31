@@ -22,12 +22,24 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 - `numeric` columns arrive as strings; the form edits strings; only `calc.ts` parses. Line totals are stored, not recomputed on read, because the operator may override a total (which back-solves the rate).
 - VAT: the reference app printed VAT 0 for a non-VAT-registered provider yet still added VAT to the payable total. Fixed here (`L2-INVOICE-14`) — the tests pin both directions.
 
+## Series + settings
+- `settings/page.tsx` + `_components/series-settings.tsx` + `settings/_actions.ts` — the series list, its inline editor and the two brand-name parts. Reached from the "Invoice settings" button in the editor toolbar (owner/admin only); no sidebar entry of its own.
+- Deletion is refused while any invoice carries the code, and the settings page shows the per-series invoice count so the disabled remove button explains itself.
+- The invoice keeps its own `series`/`brandName`/`brandSubName` columns. Renaming a series therefore leaves existing invoices printing what they were issued under — deliberate, and the reason there is no FK between `invoice` and `invoice_series`.
+
 ## Print
 `window.print()` on the detail view. The stylesheet hides every element (`visibility: hidden`) and re-shows `#invoice-print-root` and its subtree, absolutely positioned at the page origin, with nested `overflow` forced visible — the admin shell scrolls in nested containers that would otherwise clip the document to one viewport. `document.title` is swapped to `invoiceTitle(draft)` while the workspace is mounted, so "save as PDF" proposes the invoice's own name.
 
 ## Legacy reference
 `.legacy-ref-project/` holds the original CRA + MUI + redux-saga app (localStorage-backed) that this surface replaces. It is reference material only — not built, not linted, not deployed. Field labels, groupings, the recalculation rules and the printed layout were taken from it.
 
+## Layout
+- The admin shell does not bound its children's height, so `invoices-view` sets `h-[calc(100svh-var(--header-height))]` itself; without it the whole page scrolls and the preview cannot centre in its rail.
+- The form scroll container carries `px-5 pb-5` only — a padded scrollport leaves a transparent strip that `sticky top-0` column headers cannot cover, so the top padding lives on a spacer inside instead.
+- Provider/customer columns are capped at 14rem and always side by side; the form column is capped at 500px while the preview is open.
+
 ## Gotchas
 - `getByLabel("Rate")` matches "VAT rate %" too; the e2e suite uses `{ exact: true }` for the short numeric labels.
+- base-ui's `Select` puts the `id` on its hidden native input, so `getByLabel("Series")` finds that input, not the control. Target the trigger with `getByRole("combobox", { name: "Series" })`.
+- e2e `global-setup` truncates `invoice_series` alongside the auth tables — series survive the user truncate otherwise (no FK to `user`) and leak between runs.
 - Deleting a user with invoices is refused by the FK (`on delete restrict`) — intentional, an invoice is a financial record. Reassign or delete their invoices first.

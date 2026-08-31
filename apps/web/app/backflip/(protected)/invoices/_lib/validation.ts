@@ -67,3 +67,23 @@ export const invoiceDraftSchema = z.object({
 })
 
 export type InvoiceDraftInput = z.infer<typeof invoiceDraftSchema>
+
+/**
+ * A series definition: the code is the numbering prefix printed on the
+ * invoice, so it stays short and free of whitespace.
+ *
+ * @spec L2-INVOICE-22
+ */
+export const invoiceSeriesSchema = z.object({
+  id: z.string().trim().optional(),
+  code: z
+    .string()
+    .trim()
+    .min(1, "Enter a series code.")
+    .max(20, "Series code is too long.")
+    .refine((v) => !/\s/.test(v), "Series code can't contain spaces."),
+  brandName: text(60),
+  brandSubName: text(60),
+})
+
+export type InvoiceSeriesInput = z.infer<typeof invoiceSeriesSchema>

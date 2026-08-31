@@ -17,7 +17,19 @@ async function login(page: Page, email: string, password: string) {
   await expect(page).toHaveURL("/backflip")
 }
 
+/** Series are operator configuration, so an invoice needs one to exist first. */
+async function ensureSeries(page: Page, code: string) {
+  await page.goto("/backflip/invoices/settings")
+  await page.getByLabel("Series code").fill(code)
+  await page.getByRole("button", { name: "Add series" }).click()
+  // Idempotent: a series may already exist from an earlier step in the test.
+  await expect(
+    page.getByRole("button", { name: `Remove series ${code}` })
+  ).toBeVisible()
+}
+
 async function createInvoice(page: Page, series: string, number: string) {
+  await ensureSeries(page, series)
   await page.goto("/backflip/invoices")
 
   await page.getByLabel("Company name").first().fill("Provider Co")
@@ -29,7 +41,8 @@ async function createInvoice(page: Page, series: string, number: string) {
   await page.getByLabel("Quantity").fill("2")
   await page.getByLabel("Rate", { exact: true }).fill("100")
 
-  await page.getByLabel("Series", { exact: true }).fill(series)
+  await page.getByRole("combobox", { name: "Series" }).click()
+  await page.getByRole("option", { name: series, exact: true }).click()
   await page.getByLabel("Number", { exact: true }).fill(number)
   await page.getByLabel("VAT rate %").fill("21")
 
@@ -85,5 +98,25 @@ test("locking an invoice freezes the form until it is unlocked", async ({
 
   await page.getByRole("button", { name: "Unlock" }).click()
   await expect(page.getByText("Invoice unlocked.")).toBeVisible()
-  await expect(page.getByLabel("Series", { exact: true })).toBeEnabled()
+  await expect(page.getByRole("combobox", { name: "Series" })).toBeEnabled()
+})
+
+test("a teammate cannot reach invoice settings", async ({ page }) => {
+  await login(page, TEAMMATE.email, TEAMMATE.password)
+
+  await page.goto("/backflip/invoices/settings")
+
+  // The capability guard sends them back to the dashboard.
+  await expect(page).toHaveURL("/backflip")
+})
+
+test("a series in use cannot be removed", async ({ page }) => {
+  await login(page, OWNER.email, OWNER.password)
+  await createInvoice(page, "USED", "0001")
+
+  await page.goto("/backflip/invoices/settings")
+
+  await expect(
+    page.getByRole("button", { name: "Remove series USED" })
+  ).toBeDisabled()
 })
