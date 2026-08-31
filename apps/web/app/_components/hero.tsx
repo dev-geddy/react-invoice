@@ -33,22 +33,29 @@ export function Hero() {
               className="size-3.5 text-primary"
               aria-hidden="true"
             />
-            Full-stack foundation
+            Self-hosted invoicing
           </Badge>
           <h1 className="mt-5 text-[clamp(2.5rem,6.4vw,4.25rem)] leading-[1.02] font-bold tracking-tight">
-            Your idea, built by AI.
+            Invoices, behind
             <br />
-            Owned by you.
+            your own login.
           </h1>
           <p className="mt-5 max-w-lg text-lg leading-relaxed text-muted-foreground">
-            A pro-grade foundation with proper development standards built in,
-            so Claude Code can build and maintain your project the right way.
-            You own everything it makes. No coding knowledge required.
+            One shared ledger for your team: every invoice readable by everyone,
+            each one recording who raised it. Write it, watch the preview, print
+            it. Self-hosted on a foundation you own — data included.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" render={<a href="/getting-started" />}>
-              Getting started
+            <Button size="lg" render={<a href="/backflip/login" />}>
+              Open the invoice console
               <RiArrowRightLine className="size-4" aria-hidden="true" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              render={<a href="/getting-started" />}
+            >
+              Getting started
             </Button>
             {/* GitHub's /fork route opens the fork dialog (and prompts sign-in
                 when signed out) — the closest thing to a one-click fork. */}
