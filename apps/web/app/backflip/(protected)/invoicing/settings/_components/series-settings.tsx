@@ -80,7 +80,7 @@ export function SeriesSettings({
         variant="ghost"
         size="sm"
         className="mb-3 -ml-2"
-        render={<Link href="/backflip/invoices" />}
+        render={<Link href="/backflip/invoicing/invoices" />}
       >
         <RiArrowLeftLine className="size-4" />
         Invoices

@@ -28,7 +28,7 @@ function isUniqueViolation(e: unknown) {
   )
 }
 
-const SETTINGS_PATH = "/backflip/invoices/settings"
+const SETTINGS_PATH = "/backflip/invoicing/settings"
 
 /** Create a series, or update the one identified by `id`. */
 export async function saveInvoiceSeries(input: {
@@ -63,7 +63,7 @@ export async function saveInvoiceSeries(input: {
   }
 
   revalidatePath(SETTINGS_PATH)
-  revalidatePath("/backflip/invoices")
+  revalidatePath("/backflip/invoicing/invoices")
   return { ok: true, message: id ? "Series saved." : "Series added." }
 }
 
@@ -101,6 +101,6 @@ export async function deleteInvoiceSeries(
   await db.delete(invoiceSeries).where(eq(invoiceSeries.id, id))
 
   revalidatePath(SETTINGS_PATH)
-  revalidatePath("/backflip/invoices")
+  revalidatePath("/backflip/invoicing/invoices")
   return { ok: true, message: "Series removed." }
 }

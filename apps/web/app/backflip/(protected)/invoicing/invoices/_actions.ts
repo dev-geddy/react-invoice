@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm"
 import { auth } from "@/app/_lib/auth"
 import { canManageInvoice, canUseInvoices } from "@/app/_lib/auth/permissions"
 import { firstError } from "@/app/_lib/validation"
-import { invoiceDraftSchema, type InvoiceDraftInput } from "./_lib/validation"
+import { invoiceDraftSchema, type InvoiceDraftInput } from "../_lib/validation"
 
 /**
  * Invoice write actions. Reading is shared platform-wide (every signed-in user
@@ -25,7 +25,7 @@ export type InvoiceActionState =
   | { ok: true; message: string; id: string }
   | { ok: false; message: string }
 
-const LIST_PATH = "/backflip/invoices"
+const LIST_PATH = "/backflip/invoicing/invoices"
 
 /**
  * Create or update an invoice and its provider/customer/lines in one

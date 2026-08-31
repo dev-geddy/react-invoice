@@ -38,8 +38,8 @@ import {
 } from "@workspace/ui/components/select"
 import { Separator } from "@workspace/ui/components/separator"
 
-import { PageHeading, SectionLabel } from "../../_components/page-heading"
-import { getTotals, invoiceRef, money } from "../_lib/calc"
+import { PageHeading, SectionLabel } from "../../../_components/page-heading"
+import { getTotals, invoiceRef, money } from "../../_lib/calc"
 import type {
   Invoice,
   InvoiceDraft,
@@ -47,10 +47,10 @@ import type {
   InvoiceMeta,
   InvoiceParty,
   InvoiceSeriesOption,
-} from "../_lib/types"
+} from "../../_lib/types"
 import { EntryRows } from "./entry-rows"
-import { PartyCard } from "./party-card"
-import { PartyDialog } from "./party-dialog"
+import { PartyCard } from "../../_components/party-card"
+import { PartyDialog } from "../../_components/party-dialog"
 
 /**
  * The invoice form: provider and customer side by side, then the lines, then
@@ -175,7 +175,7 @@ export function InvoiceEditor({
             <Button
               variant="outline"
               size="sm"
-              render={<Link href="/backflip/invoices/settings" />}
+              render={<Link href="/backflip/invoicing/settings" />}
             >
               <RiSettings3Line className="size-4" />
               Invoice settings

@@ -17,8 +17,10 @@ import {
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
 import {
+  RiContactsBookLine,
   RiDashboardLine,
   RiFileList3Line,
+  RiFileSettingsLine,
   RiGroupLine,
   RiCheckboxMultipleBlankLine,
   RiShapesLine,
@@ -50,16 +52,33 @@ const NAV_GROUPS: { label: string; pinBottom?: boolean; items: NavItem[] }[] = [
         capability: "dashboard",
       },
       {
-        title: "Invoices",
-        url: "/backflip/invoices",
-        icon: RiFileList3Line,
-        capability: "invoices",
-      },
-      {
         title: "UI samples",
         url: "/backflip/ui-samples",
         icon: RiShapesLine,
         capability: "dashboard",
+      },
+    ],
+  },
+  {
+    label: "Invoicing",
+    items: [
+      {
+        title: "Invoices",
+        url: "/backflip/invoicing/invoices",
+        icon: RiFileList3Line,
+        capability: "invoices",
+      },
+      {
+        title: "Customers",
+        url: "/backflip/invoicing/customers",
+        icon: RiContactsBookLine,
+        capability: "invoices",
+      },
+      {
+        title: "Settings",
+        url: "/backflip/invoicing/settings",
+        icon: RiFileSettingsLine,
+        capability: "invoices.settings",
       },
     ],
   },
@@ -89,8 +108,17 @@ const NAV_GROUPS: { label: string; pinBottom?: boolean; items: NavItem[] }[] = [
   },
 ]
 
-function isActive(pathname: string, url: string) {
-  return url === "/backflip" ? pathname === url : pathname.startsWith(url)
+const ALL_URLS = NAV_GROUPS.flatMap((group) => group.items.map((i) => i.url))
+
+/**
+ * Longest-prefix match, so nested routes light up their own entry rather than
+ * their parent's: `/backflip/invoicing/customers` is Customers, not Invoices.
+ */
+function activeUrl(pathname: string) {
+  const matches = ALL_URLS.filter(
+    (url) => pathname === url || pathname.startsWith(`${url}/`)
+  )
+  return matches.sort((a, b) => b.length - a.length)[0] ?? null
 }
 
 export function AppSidebar({
@@ -98,6 +126,7 @@ export function AppSidebar({
   ...props
 }: ComponentProps<typeof Sidebar> & { user: SessionUser }) {
   const pathname = usePathname()
+  const active = activeUrl(pathname)
 
   const groups = NAV_GROUPS.map((g) => ({
     ...g,
@@ -148,7 +177,7 @@ export function AppSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       tooltip={item.title}
-                      isActive={isActive(pathname, item.url)}
+                      isActive={item.url === active}
                       render={<Link href={item.url} />}
                       className="gap-2.5 text-[13px] data-active:font-semibold"
                     >

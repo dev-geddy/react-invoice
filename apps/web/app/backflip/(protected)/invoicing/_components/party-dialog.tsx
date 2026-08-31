@@ -31,6 +31,8 @@ export function PartyDialog({
   onOpenChange,
   onChange,
   onPrefill,
+  onDone,
+  doneLabel = "Done",
 }: {
   open: boolean
   party: InvoiceParty
@@ -40,6 +42,9 @@ export function PartyDialog({
   onOpenChange: (open: boolean) => void
   onChange: (field: keyof InvoiceParty, value: string) => void
   onPrefill?: () => void
+  /** Called instead of a plain close — the address book saves on confirm. */
+  onDone?: () => void
+  doneLabel?: string
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -77,8 +82,12 @@ export function PartyDialog({
         />
 
         <DialogFooter>
-          <Button size="sm" onClick={() => onOpenChange(false)}>
-            Done
+          <Button
+            size="sm"
+            disabled={disabled}
+            onClick={() => (onDone ? onDone() : onOpenChange(false))}
+          >
+            {doneLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

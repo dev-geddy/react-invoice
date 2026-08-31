@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { deleteInvoice, saveInvoice, setInvoiceLock } from "../_actions"
-import { invoiceTitle, nextNumber, today } from "../_lib/calc"
+import { invoiceTitle, nextNumber, today } from "../../_lib/calc"
 import {
   EMPTY_PARTY,
   type Invoice,
@@ -17,7 +17,7 @@ import {
   type InvoiceMeta,
   type InvoiceParty,
   type InvoiceSeriesOption,
-} from "../_lib/types"
+} from "../../_lib/types"
 import { InvoiceEditor } from "./invoice-editor"
 import { InvoiceList } from "./invoice-list"
 import { InvoicePreview } from "./invoice-preview"
@@ -33,10 +33,12 @@ import { PrefillCustomerDialog } from "./prefill-customer-dialog"
 export function InvoicesView({
   invoices,
   series,
+  savedCustomers,
   canManageSettings,
 }: {
   invoices: Invoice[]
   series: InvoiceSeriesOption[]
+  savedCustomers: InvoiceParty[]
   canManageSettings: boolean
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -90,6 +92,7 @@ export function InvoicesView({
         key={selectedId ?? "new"}
         invoices={invoices}
         series={series}
+        savedCustomers={savedCustomers}
         canManageSettings={canManageSettings}
         selected={selected}
         seedDraft={saved?.id === selectedId ? saved.draft : null}
@@ -107,6 +110,7 @@ export function InvoicesView({
 function InvoiceWorkspace({
   invoices,
   series,
+  savedCustomers,
   canManageSettings,
   selected,
   seedDraft,
@@ -115,6 +119,7 @@ function InvoiceWorkspace({
 }: {
   invoices: Invoice[]
   series: InvoiceSeriesOption[]
+  savedCustomers: InvoiceParty[]
   canManageSettings: boolean
   selected: Invoice | null
   seedDraft: InvoiceDraft | null
@@ -148,10 +153,21 @@ function InvoiceWorkspace({
     }
   }, [draft])
 
-  /** Distinct customers across the ledger, most recently invoiced first. */
-  const pastCustomers = useMemo(() => {
+  /**
+   * Prefill candidates: the saved address book first, then any customer that
+   * only exists inside a past invoice (most recently invoiced first).
+   */
+  const prefillCustomers = useMemo(() => {
     const seen = new Set<string>()
     const out: InvoiceParty[] = []
+
+    for (const customer of savedCustomers) {
+      const key = customer.companyName.trim().toLowerCase()
+      if (!key || seen.has(key)) continue
+      seen.add(key)
+      out.push(customer)
+    }
+
     for (const invoice of invoices) {
       const c = invoice.customer
       const key = c.companyName.trim().toLowerCase()
@@ -159,8 +175,9 @@ function InvoiceWorkspace({
       seen.add(key)
       out.push(c)
     }
+
     return out
-  }, [invoices])
+  }, [invoices, savedCustomers])
 
   function updateMeta(field: keyof InvoiceMeta, value: string) {
     setDraft((d) => ({ ...d, meta: { ...d.meta, [field]: value } }))
@@ -297,7 +314,7 @@ function InvoiceWorkspace({
 
       <PrefillCustomerDialog
         open={prefillOpen}
-        customers={pastCustomers}
+        customers={prefillCustomers}
         onOpenChange={setPrefillOpen}
         onPick={(customer) => {
           setDraft((d) => ({ ...d, customer }))

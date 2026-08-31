@@ -3,7 +3,13 @@
 > L3 = how / volatile. Regenerated from code. Cites L2 by ID.
 
 ## Layout
-All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-07/08`):
+Under `apps/web/app/backflip/(protected)/invoicing/` (`L1-ARCH-07/08`), one directory per nav item plus shared code at the section root:
+
+- `_lib/` — `calc.ts` (+ tests), `types.ts`, `validation.ts`: shared by invoices, customers and settings.
+- `_components/` — `party-card.tsx`, `party-dialog.tsx`, `party-fields.tsx`: the party UI both the invoice form and the address book use.
+- `invoices/`, `customers/`, `settings/` — the three routes.
+
+Invoice surface:
 
 - `page.tsx` — RSC loader. One `select` for invoices + owner (join on `user`), plus one for all parties and one for all entries, assembled in memory into `Invoice[]`. Marks `canManage` per row via `canManageInvoice`. Satisfies `L2-INVOICE-08`.
 - `_actions.ts` — `saveInvoice`, `setInvoiceLock`, `deleteInvoice`. `saveInvoice` runs one transaction: `select … for update` on the invoice (ownership + lock check), update-or-insert the header, then delete + reinsert parties and entries. Guard failures inside the transaction throw a private `ActionError`, caught at the boundary and returned as `{ ok: false }`. Satisfies `L2-INVOICE-07`, `L2-INVOICE-16`, `L2-INVOICE-17`.
@@ -22,6 +28,11 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 - Draft state is deliberately *not* synced from props in an effect — the workspace is keyed on the selected invoice id. That is also why saving a new invoice (`null` → id) shows the saved copy: the key changes and the workspace remounts.
 - `numeric` columns arrive as strings; the form edits strings; only `calc.ts` parses. Line totals are stored, not recomputed on read, because the operator may override a total (which back-solves the rate).
 - VAT: the reference app printed VAT 0 for a non-VAT-registered provider yet still added VAT to the payable total. Fixed here (`L2-INVOICE-14`) — the tests pin both directions.
+
+## Customers
+- `customers/page.tsx` + `_components/customers-view.tsx` + `_actions.ts` — the address book. Cards reuse `PartyCard`; editing reuses `PartyDialog` with `onDone`/`doneLabel`, so add and edit go through the same four-column form the invoice uses.
+- Usage counts and the "invoiced but not saved" chips both come from `invoice_party` rows of kind `customer`, matched case-insensitively on company name (there is no FK — the invoice holds a snapshot).
+- Prefill on the invoice form merges the address book with ledger history, saved entries first.
 
 ## Series + settings
 - `settings/page.tsx` + `_components/series-settings.tsx` + `settings/_actions.ts` — the series list, its inline editor and the two brand-name parts. Reached from the "Invoice settings" button in the editor toolbar (owner/admin only); no sidebar entry of its own.

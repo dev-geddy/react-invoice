@@ -10,8 +10,18 @@ export const JUMP_GROUPS: {
       { label: "Overview", href: "/backflip", keywords: "dashboard home" },
       {
         label: "Invoices",
-        href: "/backflip/invoices",
+        href: "/backflip/invoicing/invoices",
         keywords: "invoice billing customers vat entries",
+      },
+      {
+        label: "Customers",
+        href: "/backflip/invoicing/customers",
+        keywords: "customer client address book company",
+      },
+      {
+        label: "Invoice settings",
+        href: "/backflip/invoicing/settings",
+        keywords: "series numbering brand branding invoice config",
       },
       {
         label: "Members",
@@ -40,7 +50,7 @@ export const JUMP_GROUPS: {
     items: [
       {
         label: "New invoice",
-        href: "/backflip/invoices/new",
+        href: "/backflip/invoicing/invoices",
         keywords: "create invoice bill draft",
       },
       {

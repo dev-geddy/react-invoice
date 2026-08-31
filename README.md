@@ -10,7 +10,7 @@ system already wired.
 Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres · Auth.js · Turborepo · yarn 4.
 
 ## Invoicing
-- **Shared ledger** — `/backflip/invoices`. Every user sees every invoice; the creator (or an owner/admin) may edit, lock or delete it.
+- **Shared ledger** — `/backflip/invoicing/invoices`. Every user sees every invoice; the creator (or an owner/admin) may edit, lock or delete it.
 - **Editor + live preview** — provider and customer detail, line items with qty/rate/total that recompute each other, series-aware numbering, VAT.
 - **Print** — the preview *is* the document: print (or save to PDF) prints the invoice alone, named after it.
 - **Prefill** — copy a customer off an earlier invoice; a new draft carries the provider, series, currency, VAT rate and branding over from the last one.

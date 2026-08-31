@@ -9,8 +9,8 @@ import {
   getTotals,
   invoiceRef,
   money,
-} from "../_lib/calc"
-import type { InvoiceDraft, InvoiceParty } from "../_lib/types"
+} from "../../_lib/calc"
+import type { InvoiceDraft, InvoiceParty } from "../../_lib/types"
 
 /**
  * The printable invoice. What is on screen is what prints: the print rules

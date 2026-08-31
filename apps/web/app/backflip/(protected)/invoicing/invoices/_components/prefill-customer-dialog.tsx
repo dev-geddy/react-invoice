@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog"
 
-import type { InvoiceParty } from "../_lib/types"
+import type { InvoiceParty } from "../../_lib/types"
 
 /**
  * Pick a customer off a previous invoice. The candidate list is the distinct

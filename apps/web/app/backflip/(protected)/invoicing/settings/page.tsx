@@ -5,7 +5,7 @@ import { requireCapability } from "@/app/_lib/auth/guard"
 import { SeriesSettings } from "./_components/series-settings"
 
 /**
- * /backflip/invoices/settings — invoice series and the branding printed with
+ * /backflip/invoicing/settings — invoice series and the branding printed with
  * them. Operator configuration (owner/admin); raising invoices needs no access
  * here.
  *

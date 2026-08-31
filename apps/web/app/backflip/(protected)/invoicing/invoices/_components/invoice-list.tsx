@@ -6,8 +6,8 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
 
-import { formatDate, getTotals, invoiceRef, money } from "../_lib/calc"
-import type { Invoice } from "../_lib/types"
+import { formatDate, getTotals, invoiceRef, money } from "../../_lib/calc"
+import type { Invoice } from "../../_lib/types"
 
 /**
  * Ledger column: every invoice on the platform, newest first, with a search

@@ -223,3 +223,6 @@ Hook: `src/hooks/use-mobile.ts` (sidebar).
 
 ## ADR
 _(none yet)_
+
+## Admin nav
+- Sidebar groups: Platform (Overview, UI samples), **Invoicing** (Invoices, Customers, Settings), Settings (Members, Account, Integrations, pinned bottom). Active item is resolved by longest-prefix match over every nav url, so `/backflip/invoicing/customers` highlights Customers rather than Invoices (`L2-INVOICE-30`).

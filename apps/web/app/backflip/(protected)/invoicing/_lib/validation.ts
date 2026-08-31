@@ -87,3 +87,16 @@ export const invoiceSeriesSchema = z.object({
 })
 
 export type InvoiceSeriesInput = z.infer<typeof invoiceSeriesSchema>
+
+/**
+ * A saved customer. Only the company name is required — it is what identifies
+ * the row in the address book and on the invoice.
+ *
+ * @spec L2-INVOICE-29
+ */
+export const customerSchema = partySchema.extend({
+  id: z.string().trim().optional(),
+  companyName: text().refine((v) => v.length > 0, "Enter a company name."),
+})
+
+export type CustomerInput = z.infer<typeof customerSchema>

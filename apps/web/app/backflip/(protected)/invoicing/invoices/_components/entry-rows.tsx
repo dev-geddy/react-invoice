@@ -5,8 +5,8 @@ import { RiAddBoxLine, RiDeleteBinLine } from "@remixicon/react"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 
-import { recalcEntry } from "../_lib/calc"
-import type { InvoiceEntry } from "../_lib/types"
+import { recalcEntry } from "../../_lib/calc"
+import type { InvoiceEntry } from "../../_lib/types"
 
 /**
  * Line items. Editing qty or rate recomputes the line total; editing the total

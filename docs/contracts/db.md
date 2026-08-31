@@ -38,6 +38,7 @@ Shared data layer: `packages/db` (`@workspace/db`) — Drizzle schema, client, m
 - `L2-DB-30` — `invoice_party_kind` enum (`provider` | `customer`) + `invoice_party` table: `id`, `invoiceId` (fk → `invoice`, cascade), `kind`, and the 13 party fields (company name/reg/VAT, representative name/role, four address lines, IBAN/BIC/account/sort code). Unique on (`invoiceId`, `kind`) — exactly one of each per invoice. Owned by the `invoice` domain (`L2-INVOICE-02`).
 - `L2-DB-31` — `invoice_entry` table: `id`, `invoiceId` (fk → `invoice`, cascade), `position`, `dateProvided` (date), `description`, `qty` (numeric 12,2), `qtyType`, `rate` (numeric 12,2), `total` (numeric 14,2). Index on (`invoiceId`, `position`). Owned by the `invoice` domain (`L2-INVOICE-03`).
 - `L2-DB-33` — `invoice_series` table: `id`, `code` (unique), `brandName`, `brandSubName`, `createdAt`, `updatedAt`. Migration `0013` creates. No FK from `invoice` — invoices store the code and branding as a snapshot (`L2-INVOICE-22`). Owned by the `invoice` domain.
+- `L2-DB-34` — `customer` table: `id`, `companyName` (required), plus the same 12 optional party fields as `invoice_party`, `createdAt`, `updatedAt`. Migration `0014` creates. No FK from `invoice_party` — invoices snapshot the customer (`L2-INVOICE-29`). Owned by the `invoice` domain.
 
 ## Invariants
 - `L2-DB-09` — One schema source: `packages/db/src/schema.ts`. Apps import types/tables from `@workspace/db`, never redeclare.

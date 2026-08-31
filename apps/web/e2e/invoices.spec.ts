@@ -19,7 +19,7 @@ async function login(page: Page, email: string, password: string) {
 
 /** Series are operator configuration, so an invoice needs one to exist first. */
 async function ensureSeries(page: Page, code: string) {
-  await page.goto("/backflip/invoices/settings")
+  await page.goto("/backflip/invoicing/settings")
   await page.getByLabel("Series code").fill(code)
   await page.getByRole("button", { name: "Add series" }).click()
   // Idempotent: a series may already exist from an earlier step in the test.
@@ -30,7 +30,7 @@ async function ensureSeries(page: Page, code: string) {
 
 async function createInvoice(page: Page, series: string, number: string) {
   await ensureSeries(page, series)
-  await page.goto("/backflip/invoices")
+  await page.goto("/backflip/invoicing/invoices")
 
   // Party details live behind their summary cards (L2-INVOICE-28).
   await page.getByRole("button", { name: "Edit provider details" }).click()
@@ -81,7 +81,7 @@ test("a teammate reads another user's invoice but cannot edit it", async ({
   await expect(page).toHaveURL(/\/backflip\/login/)
 
   await login(page, TEAMMATE.email, TEAMMATE.password)
-  await page.goto("/backflip/invoices")
+  await page.goto("/backflip/invoicing/invoices")
 
   // Shared ledger: the invoice another user created is listed…
   await page.getByRole("button", { name: /SHARED0001/ }).first().click()
@@ -110,7 +110,7 @@ test("locking an invoice freezes the form until it is unlocked", async ({
 test("a teammate cannot reach invoice settings", async ({ page }) => {
   await login(page, TEAMMATE.email, TEAMMATE.password)
 
-  await page.goto("/backflip/invoices/settings")
+  await page.goto("/backflip/invoicing/settings")
 
   // The capability guard sends them back to the dashboard.
   await expect(page).toHaveURL("/backflip")
@@ -120,9 +120,32 @@ test("a series in use cannot be removed", async ({ page }) => {
   await login(page, OWNER.email, OWNER.password)
   await createInvoice(page, "USED", "0001")
 
-  await page.goto("/backflip/invoices/settings")
+  await page.goto("/backflip/invoicing/settings")
 
   await expect(
     page.getByRole("button", { name: "Remove series USED" })
   ).toBeDisabled()
+})
+
+test("a customer saved in the address book prefills an invoice", async ({
+  page,
+}) => {
+  await login(page, OWNER.email, OWNER.password)
+
+  await page.goto("/backflip/invoicing/customers")
+  await page.getByRole("button", { name: "Add customer" }).click()
+  await page.getByLabel("Company name").fill("Book Customer Ltd")
+  await page.getByLabel("Address line 1").fill("9 Ledger Lane")
+  await page.getByRole("button", { name: "Add customer" }).last().click()
+  await expect(page.getByText("Customer added.")).toBeVisible()
+
+  await ensureSeries(page, "BOOK")
+  await page.goto("/backflip/invoicing/invoices")
+  await page.getByRole("button", { name: "Prefill" }).click()
+  await page.getByRole("button", { name: /Book Customer Ltd/ }).click()
+
+  // The customer card now carries the address-book entry.
+  await expect(
+    page.getByRole("button", { name: "Edit customer details" })
+  ).toContainText("Book Customer Ltd")
 })

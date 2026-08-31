@@ -99,6 +99,13 @@
       "when": 1788192594001,
       "tag": "0013_yellow_cassandra_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1788194351610,
+      "tag": "0014_jazzy_maverick",
+      "breakpoints": true
     }
   ]
 }

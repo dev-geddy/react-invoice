@@ -7,7 +7,7 @@
 > **Depends on L2:** `auth` (session + capabilities), `db` (schema, migrations), `ui` (component set)
 
 ## Owns
-The invoicing surface: the shared invoice ledger under `/backflip/invoices`, its
+The invoicing surface: the shared invoice ledger under `/backflip/invoicing/invoices`, its
 data model (`invoice`, `invoice_party`, `invoice_entry`), its arithmetic, and the
 printable invoice document. Ported from the legacy CRA app kept for reference in
 `.legacy-ref-project/` (localStorage, MUI) — the behaviour is carried over, none
@@ -20,8 +20,10 @@ generation server-side (printing is the browser's), multi-currency conversion.
 - `L2-INVOICE-04` _(iface)_ — `_lib/calc.ts` — pure, client-safe invoice arithmetic: `num`, `round2`, `money`, `recalcEntry`, `chargesVat`, `getTotals`, `invoiceRef`, `currencyIso`, `invoiceTitle`, `today`, `formatDate`, `nextNumber`. Single source of truth for totals across form, preview and title.
 - `L2-INVOICE-06` _(iface)_ — `_lib/validation.ts` → `invoiceDraftSchema` — zod shape for the save action: ISO dates, decimal strings (blank → `"0"`), field length caps, ≤200 lines.
 - `L2-INVOICE-07` _(iface)_ — server actions (`_actions.ts`): `saveInvoice(draft)` (create or update, one transaction), `setInvoiceLock(id, locked)`, `deleteInvoice(id)`. All return `{ ok, message }`; `saveInvoice` also returns the invoice `id`.
-- `L2-INVOICE-24` _(iface)_ — Route `/backflip/invoices/settings` — series + branding management (capability `invoices.settings`). Actions `saveInvoiceSeries` / `deleteInvoiceSeries` in `settings/_actions.ts`; deletion is refused while invoices carry the code.
-- `L2-INVOICE-08` _(iface)_ — Route `/backflip/invoices` — three-column master/detail: ledger list, editor, live preview. One server load carries the whole ledger (the client needs it for customer prefill and series numbering).
+- `L2-INVOICE-30` — Routes live under one `invoicing` section, mirrored by an "Invoicing" sidebar group: `/backflip/invoicing/invoices`, `/backflip/invoicing/customers`, `/backflip/invoicing/settings`. Shared party UI (`_components`) and invoice logic (`_lib`) sit at the section root. Sidebar highlighting is longest-prefix, so a nested route lights its own entry.
+- `L2-INVOICE-29` _(iface)_ — Route `/backflip/invoicing/customers` — the customer address book over the `customer` table (capability `invoices`): search, add/edit through the party dialog, remove, and one-click adoption of companies that so far exist only on invoices. Feeds the invoice form's prefill (saved customers first, then invoice history). Invoices keep their own snapshot, so edits here never rewrite an issued invoice.
+- `L2-INVOICE-24` _(iface)_ — Route `/backflip/invoicing/settings` — series + branding management (capability `invoices.settings`). Actions `saveInvoiceSeries` / `deleteInvoiceSeries` in `settings/_actions.ts`; deletion is refused while invoices carry the code.
+- `L2-INVOICE-08` _(iface)_ — Route `/backflip/invoicing/invoices` — three-column master/detail: ledger list, editor, live preview. One server load carries the whole ledger (the client needs it for customer prefill and series numbering).
 
 ## Schemas
 - `L2-INVOICE-01` — `invoice` table: `id`, `ownerId` (fk → `user`, **restrict**), `invoiceDate` (date), `series`, `number`, `currency`, `vatRate` (numeric 5,2), `brandName`, `brandSubName`, `locked`, `createdAt`, `updatedAt`. See `L2-DB-29`.
@@ -53,7 +55,7 @@ generation server-side (printing is the browser's), multi-currency conversion.
 - `L2-INVOICE-26` — The preview rail centres the sheet on a vignetted canvas and scales it to the rail width (`zoom`, capped at 1:1); a toggle hides the rail to hand the width back to the form.
 - `L2-INVOICE-10` — Lines: qty or rate edits recompute the line total; a total edit back-solves the rate.
 - `L2-INVOICE-11` — Preview is the print artifact: a print stylesheet hides everything but `#invoice-print-root`, A4 with 14 mm margins; `document.title` is set to `invoiceTitle(draft)` so a print-to-PDF is named after the invoice.
-- `L2-INVOICE-12` — Customer prefill: distinct customers across the ledger (company name + address line 1 present), most recently invoiced first.
+- `L2-INVOICE-12` — Customer prefill: saved customers first (`L2-INVOICE-29`), then distinct customers from the ledger that are not saved (company name + address line 1 present), most recently invoiced first.
 - `L2-INVOICE-21` — Numbering: the generator takes the highest number within the same series, adds one, and keeps the widest zero-padding in use; an empty series starts at `0001`. A new draft carries provider details, currency and VAT rate over from the most recent invoice, and its series (falling back to the first configured one) with that series' branding.
 
 ## Constrained L3

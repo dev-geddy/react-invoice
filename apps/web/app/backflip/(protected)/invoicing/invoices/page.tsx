@@ -1,4 +1,5 @@
 import {
+  customers,
   db,
   invoiceEntries,
   invoiceParties,
@@ -19,10 +20,10 @@ import {
   type Invoice,
   type InvoiceEntry,
   type InvoiceParty,
-} from "./_lib/types"
+} from "../_lib/types"
 
 /**
- * /backflip/invoices — the shared invoice ledger. Every signed-in user reads
+ * /backflip/invoicing/invoices — the shared invoice ledger. Every signed-in user reads
  * every invoice (`invoices` capability); `canManage` marks per row whether this
  * user may also write it back (creator, or a platform operator).
  *
@@ -54,9 +55,13 @@ export default async function InvoicesPage() {
     .innerJoin(users, eq(users.id, invoices.ownerId))
     .orderBy(desc(invoices.createdAt))
 
-  const [partyRows, entryRows, seriesRows] = await Promise.all([
+  const [partyRows, entryRows, customerRows, seriesRows] = await Promise.all([
     db.select().from(invoiceParties),
     db.select().from(invoiceEntries).orderBy(invoiceEntries.position),
+    db
+      .select()
+      .from(customers)
+      .orderBy(asc(customers.companyName)),
     db
       .select({
         code: invoiceSeries.code,
@@ -135,6 +140,21 @@ export default async function InvoicesPage() {
     <InvoicesView
       invoices={ledger}
       series={seriesRows}
+      savedCustomers={customerRows.map((row) => ({
+        companyName: row.companyName,
+        companyRegNo: row.companyRegNo,
+        companyVatNo: row.companyVatNo,
+        name: row.name,
+        role: row.role,
+        addressLine1: row.addressLine1,
+        addressLine2: row.addressLine2,
+        addressLine3: row.addressLine3,
+        addressLine4: row.addressLine4,
+        billingBankAccountIban: row.billingBankAccountIban,
+        billingBankAccountBic: row.billingBankAccountBic,
+        billingBankAccountNo: row.billingBankAccountNo,
+        billingBankAccountSortCode: row.billingBankAccountSortCode,
+      }))}
       canManageSettings={canManageInvoiceSettings(sessionUser.role)}
     />
   )

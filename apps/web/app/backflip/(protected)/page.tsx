@@ -98,7 +98,7 @@ export default async function OverviewPage() {
     {
       label: "Create your first invoice",
       done: invoiceTotal > 0,
-      href: "/backflip/invoices",
+      href: "/backflip/invoicing/invoices",
       cta: "Invoices",
     },
     {

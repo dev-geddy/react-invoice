@@ -483,3 +483,33 @@ export const invoiceSeries = pgTable("invoice_series", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
 })
+
+/**
+ * Saved customers — the address book invoices are raised against. An invoice
+ * still snapshots the party it was issued to (`invoice_party`), so editing or
+ * deleting a customer never rewrites an issued document.
+ *
+ * @spec L2-INVOICE-29, L2-DB-34
+ */
+export const customers = pgTable("customer", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  companyName: text("companyName").notNull(),
+  companyRegNo: text("companyRegNo").notNull().default(""),
+  companyVatNo: text("companyVatNo").notNull().default(""),
+  name: text("name").notNull().default(""),
+  role: text("role").notNull().default(""),
+  addressLine1: text("addressLine1").notNull().default(""),
+  addressLine2: text("addressLine2").notNull().default(""),
+  addressLine3: text("addressLine3").notNull().default(""),
+  addressLine4: text("addressLine4").notNull().default(""),
+  billingBankAccountIban: text("billingBankAccountIban").notNull().default(""),
+  billingBankAccountBic: text("billingBankAccountBic").notNull().default(""),
+  billingBankAccountNo: text("billingBankAccountNo").notNull().default(""),
+  billingBankAccountSortCode: text("billingBankAccountSortCode")
+    .notNull()
+    .default(""),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+})
