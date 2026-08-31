@@ -8,9 +8,11 @@ import type { InvoiceParty } from "../_lib/types"
 
 /**
  * The provider/customer detail form — the same 13 fields for both sides, in the
- * reference app's grouping (company / representative / address / billing).
+ * reference app's grouping (company / representative / address / billing). Each
+ * group is its own hairline-separated column inside the dialog, so the whole
+ * party is visible at once instead of scrolling past 13 stacked inputs.
  *
- * @spec L2-INVOICE-09
+ * @spec L2-INVOICE-28
  */
 
 const GROUPS: {
@@ -64,9 +66,13 @@ export function PartyFields({
   onChange: (field: keyof InvoiceParty, value: string) => void
 }) {
   return (
-    <div className="flex flex-col gap-4">
+    // One column per group at dialog width, hairline-separated; stacked below.
+    <div className="grid gap-y-5 sm:grid-cols-4 sm:gap-y-0 sm:divide-x sm:divide-border">
       {GROUPS.map((group) => (
-        <div key={group.label} className="flex flex-col gap-2">
+        <div
+          key={group.label}
+          className="flex min-w-0 flex-col gap-2 sm:px-4 sm:first:pl-0 sm:last:pr-0"
+        >
           <SectionLabel>{group.label}</SectionLabel>
           <div className="flex flex-col gap-2.5">
             {group.fields.map(({ key, label }) => (

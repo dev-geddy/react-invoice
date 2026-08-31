@@ -12,7 +12,7 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 - `_lib/types.ts` — `Invoice`, `InvoiceDraft`, `InvoiceParty`, `InvoiceEntry`, `EMPTY_PARTY`.
 - `_components/invoices-view.tsx` — shell. `InvoicesView` holds selection + search; `InvoiceWorkspace` (keyed on the selected id, so switching rows remounts rather than patching state in an effect) holds the draft, the save/lock/delete transitions and the prefill dialog.
 - `_components/invoice-editor.tsx`, `entry-rows.tsx` — the form, `L2-INVOICE-09/10`.
-- `_components/party-card.tsx` + `party-dialog.tsx` + `party-fields.tsx` — provider/customer as a summary card opening a dialog over the same field set (`L2-INVOICE-28`). Both dialogs mount only while open, so the shared field ids/labels never collide.
+- `_components/party-card.tsx` + `party-dialog.tsx` + `party-fields.tsx` — provider/customer as a summary card opening a dialog over the same field set (`L2-INVOICE-28`). Both dialogs mount only while open, so the shared field ids/labels never collide. The dialog overrides the base `sm:max-w-sm` cap with `sm:max-w-4xl` — the override must carry the same breakpoint variant, or tailwind-merge keeps both and the narrow one wins.
 - `_components/invoice-preview.tsx` — the printed document + its print stylesheet, `L2-INVOICE-11`.
 - `_components/invoice-list.tsx`, `prefill-customer-dialog.tsx` — ledger column and customer prefill, `L2-INVOICE-12`.
 

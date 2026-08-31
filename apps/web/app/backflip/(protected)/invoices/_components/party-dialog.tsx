@@ -43,7 +43,9 @@ export function PartyDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+      <DialogContent // The base dialog caps at `sm:max-w-sm`; a two-column party form needs the
+      // wider ceiling, and the override has to match that breakpoint variant.
+      className="max-h-[85vh] overflow-y-auto sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>{label} details</DialogTitle>
           <DialogDescription>
