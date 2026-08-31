@@ -1,13 +1,16 @@
 import {
   boolean,
+  date,
   index,
   integer,
+  numeric,
   pgEnum,
   pgTable,
   primaryKey,
   real,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core"
 
 /** @spec L2-DB-05, L2-DB-06, L2-DB-07, L2-DB-17, L2-DB-18, L2-DB-20, L2-DB-22, L2-ANALYTICS-01 */
@@ -340,4 +343,124 @@ export const oauthTokens = pgTable(
     // Per-user grant listing + disconnect in the account UI (`L2-MCP-17`).
     index("oauth_token_user_client_idx").on(t.userId, t.clientId),
   ]
+)
+
+/* ---------------------------------------------------------------------------
+ * Invoices
+ * ------------------------------------------------------------------------ */
+
+/**
+ * Which side of an invoice a party row describes. `provider` is the issuer
+ * (the invoicing company), `customer` the bill-to party.
+ */
+export const invoicePartyKind = pgEnum("invoice_party_kind", [
+  "provider",
+  "customer",
+])
+
+/**
+ * Invoices. Shared: every signed-in user sees every invoice; `ownerId` records
+ * who created it (and, with the platform roles, who may edit it).
+ *
+ * Money is `numeric` (exact decimal), never float — drizzle surfaces it as a
+ * string, so callers parse at the edge instead of accumulating binary error.
+ * `locked` freezes an invoice against further edits (the reference app's
+ * lock/unlock), and `series` + `number` together form the human invoice id.
+ *
+ * @spec L2-INVOICE-01, L2-DB-29
+ */
+export const invoices = pgTable(
+  "invoice",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    // Creator. `restrict`: an invoice is a financial record — removing a user
+    // must not silently take their invoices with them.
+    ownerId: text("ownerId")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    invoiceDate: date("invoiceDate", { mode: "string" }).notNull(),
+    series: text("series").notNull().default(""),
+    number: text("number").notNull().default(""),
+    currency: text("currency").notNull().default("€"),
+    vatRate: numeric("vatRate", { precision: 5, scale: 2 })
+      .notNull()
+      .default("0"),
+    brandName: text("brandName").notNull().default(""),
+    brandSubName: text("brandSubName").notNull().default(""),
+    locked: boolean("locked").notNull().default(false),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull().defaultNow(),
+  },
+  (t) => [
+    // Invoice list (newest first) and the per-series next-number lookup.
+    index("invoice_created_idx").on(t.createdAt),
+    index("invoice_series_idx").on(t.series),
+  ]
+)
+
+/**
+ * Provider / customer details for one invoice — one row per kind, so the same
+ * field set serves both sides and past customers can be listed for prefill
+ * without duplicating 13 columns on the invoice itself.
+ *
+ * @spec L2-INVOICE-02, L2-DB-30
+ */
+export const invoiceParties = pgTable(
+  "invoice_party",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    invoiceId: text("invoiceId")
+      .notNull()
+      .references(() => invoices.id, { onDelete: "cascade" }),
+    kind: invoicePartyKind("kind").notNull(),
+    companyName: text("companyName").notNull().default(""),
+    companyRegNo: text("companyRegNo").notNull().default(""),
+    companyVatNo: text("companyVatNo").notNull().default(""),
+    name: text("name").notNull().default(""),
+    role: text("role").notNull().default(""),
+    addressLine1: text("addressLine1").notNull().default(""),
+    addressLine2: text("addressLine2").notNull().default(""),
+    addressLine3: text("addressLine3").notNull().default(""),
+    addressLine4: text("addressLine4").notNull().default(""),
+    billingBankAccountIban: text("billingBankAccountIban").notNull().default(""),
+    billingBankAccountBic: text("billingBankAccountBic").notNull().default(""),
+    billingBankAccountNo: text("billingBankAccountNo").notNull().default(""),
+    billingBankAccountSortCode: text("billingBankAccountSortCode")
+      .notNull()
+      .default(""),
+  },
+  (t) => [
+    // Exactly one provider and one customer per invoice.
+    unique("invoice_party_invoice_kind_key").on(t.invoiceId, t.kind),
+  ]
+)
+
+/**
+ * Line items. `position` keeps the operator's ordering stable (rows are
+ * rewritten wholesale on save, so the index is explicit, not implied by id).
+ *
+ * @spec L2-INVOICE-03, L2-DB-31
+ */
+export const invoiceEntries = pgTable(
+  "invoice_entry",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    invoiceId: text("invoiceId")
+      .notNull()
+      .references(() => invoices.id, { onDelete: "cascade" }),
+    position: integer("position").notNull().default(0),
+    dateProvided: date("dateProvided", { mode: "string" }).notNull(),
+    description: text("description").notNull().default(""),
+    qty: numeric("qty", { precision: 12, scale: 2 }).notNull().default("1"),
+    qtyType: text("qtyType").notNull().default(""),
+    rate: numeric("rate", { precision: 12, scale: 2 }).notNull().default("0"),
+    total: numeric("total", { precision: 14, scale: 2 }).notNull().default("0"),
+  },
+  (t) => [index("invoice_entry_invoice_idx").on(t.invoiceId, t.position)]
 )
