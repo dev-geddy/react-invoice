@@ -1,0 +1,98 @@
+# syntax=docker/dockerfile:1
+# @spec L2-DEVOPS-16
+# Build-only image: produce the deployable Next standalone artifact for the
+# DROPLET's platform, from any operator machine. Nothing here ever runs in
+# production — the output is a single `/artifact.tgz` exported to the host by
+# devops/deploy-for-pm2-build-docker.sh (`--output type=local`).
+#
+# Why a second Dockerfile instead of reusing apps/web/Dockerfile:
+#   - apps/web/Dockerfile is alpine (musl) and produces a RUNNABLE image. The
+#     droplet is Ubuntu (glibc) and runs the app under pm2, not in a container —
+#     a musl-linked artifact would ship the wrong sharp/native binaries.
+#   - bookworm-slim is glibc and its Node 24 matches the droplet's nvm Node 24;
+#     bookworm's glibc 2.36 is older than Ubuntu 24.04's 2.39, so anything linked
+#     here loads there (the reverse would not). Same image the Drone runner uses.
+#   - apps/web/Dockerfile provisions production and must not change (`L2-DEVOPS-03`
+#     keeps deploy logic in devops/); this file is strictly additive.
+#
+# Build context = repo root. Ignore rules come from the sidecar
+# Dockerfile.build-artifact.dockerignore, NOT the repo-root .dockerignore.
+#
+# Cache strategy (a cross-arch build is emulated and therefore slower than
+# native — ~2x under Docker Desktop's Rosetta backend, much worse under plain
+# QEMU — so a cold build on every run would defeat the purpose):
+#   - `deps` copies ONLY package manifests + the lockfile, so a source-only edit
+#     leaves the yarn install layer cached.
+#   - Named BuildKit cache mounts keep yarn's package cache and Next's
+#     `.next/cache` (turbopack persistent fs cache) warm ACROSS builds, so even
+#     a source change gets an incremental compile instead of a cold one.
+
+ARG NODE_IMAGE=node:24-bookworm-slim
+
+FROM ${NODE_IMAGE} AS base
+# Non-interactive corepack: never prompt before fetching the pinned yarn.
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV CI=1
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable
+WORKDIR /repo
+
+# --- manifests -------------------------------------------------------------
+# Extract every workspace package.json (plus lockfile + yarnrc) into a tree of
+# its own. Copying them one-by-one in the Dockerfile would silently break the
+# moment a workspace is added; harvesting them with `find` cannot. This stage's
+# COPY busts on any source change, but it only shuffles a few KB of JSON.
+FROM base AS manifests
+COPY . /src
+RUN set -eux; \
+    cd /src; \
+    mkdir -p /manifests; \
+    find . -name package.json -not -path './node_modules/*' -not -path '*/node_modules/*' \
+      -exec install -D {} /manifests/{} \; ; \
+    install -D yarn.lock /manifests/yarn.lock; \
+    install -D .yarnrc.yml /manifests/.yarnrc.yml
+
+# --- deps ------------------------------------------------------------------
+# BuildKit keys a `COPY --from=<stage>` layer on the CONTENT it copies, so this
+# layer (and the install below it) stays cached until a manifest or the lockfile
+# actually changes.
+FROM base AS deps
+COPY --from=manifests /manifests/ /repo/
+# .yarnrc.yml sets enableGlobalCache:false → yarn caches into /repo/.yarn/cache.
+# Mounting it keeps downloads across builds without baking them into the layer.
+# Full install (not --production): the Next build needs devDependencies.
+RUN --mount=type=cache,id=backflip-yarn-cache,target=/repo/.yarn/cache,sharing=locked \
+    corepack yarn install --immutable
+
+# --- build -----------------------------------------------------------------
+FROM deps AS build
+COPY . /repo
+# NEXT_SKIP_TYPECHECK: the deploy script typechecks natively on the operator's
+# machine before it ever starts this build — don't pay for the pass twice, and
+# especially not under emulation.
+RUN --mount=type=cache,id=backflip-next-cache,target=/repo/apps/web/.next/cache,sharing=locked \
+    NEXT_SKIP_TYPECHECK=1 corepack yarn workspace web build
+
+# --- assemble --------------------------------------------------------------
+# Same layout devops/lib/remote/app-release.sh builds on the droplet and
+# artifact-extract.sh expects to untar: <root>/apps/web/server.js, a minimal
+# node_modules at the root, .next/static + public/ copied in, devops/pm2/ riding
+# along. `shared -> ../shared` is created remotely, not packed here.
+FROM build AS assemble
+RUN set -eux; \
+    rm -rf /release; mkdir -p /release; \
+    cp -a apps/web/.next/standalone/. /release/; \
+    mkdir -p /release/apps/web/.next; \
+    cp -a apps/web/.next/static /release/apps/web/.next/static; \
+    if [ -d apps/web/public ]; then cp -a apps/web/public /release/apps/web/public; fi; \
+    mkdir -p /release/devops; \
+    cp -a devops/pm2 /release/devops/pm2; \
+    test -f /release/apps/web/server.js; \
+    test -f /release/devops/pm2/ecosystem.config.cjs; \
+    tar --numeric-owner --owner=0 --group=0 -czf /artifact.tgz -C /release .
+
+# --- artifact --------------------------------------------------------------
+# Export target. `--output type=local,dest=<dir>` on this stage drops exactly
+# one file on the host; nothing else from the build tree leaks out.
+FROM scratch AS artifact
+COPY --from=assemble /artifact.tgz /artifact.tgz

@@ -1,0 +1,10 @@
+dist/
+node_modules/
+.next/
+.next-e2e/
+.turbo/
+playwright-report/
+test-results/
+coverage/
+pnpm-lock.yaml
+.pnpm-store/

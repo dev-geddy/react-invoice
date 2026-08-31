@@ -1,0 +1,83 @@
+# @spec L2-DEVOPS-25
+# Checks on every push / PR: install → typecheck → lint. No secrets, no droplet
+# access. On a master push this runs alongside `deploy` (below) rather than
+# gating it — `deploy` typechecks internally before it builds or ships anything,
+# so a type error still cannot reach the droplet. Lint is advisory.
+kind: pipeline
+type: docker
+name: ci
+
+trigger:
+  event:
+    - push
+    - pull_request
+
+steps:
+  - name: checks
+    image: node:24-bookworm-slim
+    commands:
+      - corepack enable
+      - corepack yarn install --immutable
+      - corepack yarn typecheck
+      - corepack yarn lint
+
+---
+# @spec L2-DEVOPS-09
+# Thin wrapper over devops/deploy-for-pm2-build-locally.sh: the build runs on
+# the Drone runner (typecheck → build → pack), only the assembled artifact
+# ships to the droplet; migrations run from the runner via an ssh tunnel.
+#
+# Required Drone secrets:
+#   deploy_host       - droplet host/IP
+#   deploy_domain     - instance domain (deploy dir /var/www/<domain>)
+#   deploy_ssh_key    - private SSH key, no passphrase
+#   deploy_env        - optional, full contents of .env      (uploaded every deploy when set)
+#   deploy_env_local  - optional, full contents of .env.local (uploaded every deploy when set)
+#
+# Triggers:
+#   push to master                                  — automatic deploy, the normal path
+#   drone build promote <repo> <build> production   — manual re-deploy of an older master build
+# The local `./devops/deploy-for-pm2-build-locally.sh` stays the break-glass path
+# for shipping straight from a workstation without waiting on CI.
+kind: pipeline
+type: docker
+name: deploy
+
+trigger:
+  event:
+    - push
+    - promote
+  branch:
+    - master
+
+steps:
+  - name: deploy
+    # Debian (glibc) on purpose: the runner builds the artifact, so its traced
+    # node_modules must match the droplet's Ubuntu. An alpine/musl build would
+    # ship musl binaries (sharp) the droplet cannot load.
+    image: node:24-bookworm-slim
+    environment:
+      DEPLOY_HOST:
+        from_secret: deploy_host
+      DEPLOY_DOMAIN:
+        from_secret: deploy_domain
+      DEPLOY_SSH_KEY:
+        from_secret: deploy_ssh_key
+      DEPLOY_ENV:
+        from_secret: deploy_env
+      DEPLOY_ENV_LOCAL:
+        from_secret: deploy_env_local
+    commands:
+      # bash: the deploy script is bash (arrays, /dev/tcp port probe).
+      # openssh-client: scp upload + the ControlMaster migration tunnel.
+      - apt-get update -qq && apt-get install -y -qq --no-install-recommends bash openssh-client
+      - corepack enable
+      # The build-locally flow refuses without local deps — install them here.
+      - corepack yarn install --immutable
+      - umask 077
+      - printf '%s\n' "$DEPLOY_SSH_KEY" > key.pem
+      - chmod 600 key.pem
+      - ARGS=""
+      - if test -n "$DEPLOY_ENV"; then printf '%s' "$DEPLOY_ENV" > env.deploy; ARGS="$ARGS --env env.deploy"; fi
+      - if test -n "$DEPLOY_ENV_LOCAL"; then printf '%s' "$DEPLOY_ENV_LOCAL" > env.local.deploy; ARGS="$ARGS --env-local env.local.deploy"; fi
+      - ./devops/deploy-for-pm2-build-locally.sh -h "$DEPLOY_HOST" -i key.pem -d "$DEPLOY_DOMAIN" $ARGS

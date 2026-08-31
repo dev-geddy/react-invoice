@@ -1,0 +1,56 @@
+# Build context filter for devops/Dockerfile.build-artifact.
+# BuildKit prefers `<dockerfile>.dockerignore` over the repo-root .dockerignore,
+# so this file lets the artifact build have its own (stricter) rules without
+# touching the root .dockerignore that apps/web/Dockerfile + compose depend on.
+#
+# Goal: ship the sources the Next build needs and nothing else. Local build
+# output alone is multiple GB — without these rules every build would stream it
+# to the daemon.
+
+# deps + build output (the container installs and builds from scratch)
+**/node_modules
+**/.next
+**/.next-e2e
+**/.turbo
+.turbo
+.yarn/cache
+.yarn/install-state.gz
+out
+build
+dist
+
+# vcs + editor + agent scaffolding
+.git
+.gitignore
+.idea
+.vscode
+.claude
+.DS_Store
+**/.DS_Store
+
+# secrets: never let an env file or key into the build context
+.env
+.env.*
+!.env.example
+**/*.pem
+gauth-client-secret*.json
+env.deploy
+env.local.deploy
+
+# test / capture artifacts
+coverage
+playwright-report
+test-results
+blob-report
+.playwright
+.screenshots
+**/test-results
+**/playwright-report
+
+# scratch + docs-only trees the build never reads
+.external-repos
+.artifacts
+.vercel
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

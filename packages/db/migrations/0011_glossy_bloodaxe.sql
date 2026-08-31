@@ -1,0 +1,1 @@
+ALTER TABLE "connector_config" ADD COLUMN "enabled" boolean DEFAULT false NOT NULL;

@@ -1,0 +1,14 @@
+**/node_modules
+**/.next
+**/.turbo
+.git
+.env
+.env.*
+!.env.example
+npm-debug.log
+.turbo
+.yarn/cache
+.yarn/install-state.gz
+.external-repos
+.screenshots
+.claude

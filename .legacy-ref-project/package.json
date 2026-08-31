@@ -1,0 +1,46 @@
+{
+  "name": "react-invoice",
+  "version": "2.0.1",
+  "author": "Gediminas Ginkevicius",
+  "description": "Use YARN for running the commands!",
+  "private": true,
+  "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.16.4",
+    "@emotion/react": "^11.7.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.1",
+    "@mui/lab": "^5.0.0-alpha.59",
+    "@mui/material": "^5.2.3",
+    "@mui/styles": "^5.2.3",
+    "customize-cra": "^1.0.0",
+    "date-fns": "^2.27.0",
+    "dayjs": "^1.10.7",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.2",
+    "react-app-rewired": "^2.1.8",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "react-scripts": "^4.0.3",
+    "redux": "^4.1.2",
+    "redux-saga": "^1.1.3",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
