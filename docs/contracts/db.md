@@ -34,11 +34,16 @@ Shared data layer: `packages/db` (`@workspace/db`) — Drizzle schema, client, m
 - `L2-DB-27` — `oauth_token` table: `id`, `tokenHash` (hash-only, sha256, same pattern as `L2-DB-21`), `type` (`access`|`refresh`), `clientId` (fk → `oauth_client`, cascade), `userId` (fk → `user`, cascade), `scopes` (text array), `resource`, `familyId`, `parentId` (nullable — prior token in a rotation chain), `userTokenVersion` (int snapshot of `user.tokenVersion` at issue time, `L2-DB-22`), `expiresAt`, `revokedAt` (nullable), `lastUsedAt` (nullable). Owned by the `mcp` domain (`L2-MCP-23`).
 - `L2-DB-28` — `connector_config` table (single row, `kind` unique default `mcp`): `id`, `kind`, `enabled` (bool, default **false** — owner-toggled master switch, `L2-MCP-25`), `dcrMode` (`connector_dcr_mode` enum `off` | `allowlist` | `open`, default `off`), `redirectHosts` (text array, default `{claude.ai, claude.com}`), `updatedAt`. Migration `0010` creates it (with the enum + the `oauth_client` columns `origin`/`createdByUserId`/`allowLoopbackPorts`); `0011` adds `enabled`. No seed migration — the row is read-or-created with defaults on first read. Owned by the `mcp` domain (`L2-MCP-48`).
 
+- `L2-DB-29` — `invoice` table: `id`, `ownerId` (fk → `user`, **on delete restrict**), `invoiceDate` (date), `series`, `number`, `currency`, `vatRate` (numeric 5,2), `brandName`, `brandSubName`, `locked` (bool, default false), `createdAt`, `updatedAt`. Indexes on `createdAt` (ledger listing) and `series` (next-number lookup). Migration `0012` creates. Owned by the `invoice` domain (`L2-INVOICE-01`).
+- `L2-DB-30` — `invoice_party_kind` enum (`provider` | `customer`) + `invoice_party` table: `id`, `invoiceId` (fk → `invoice`, cascade), `kind`, and the 13 party fields (company name/reg/VAT, representative name/role, four address lines, IBAN/BIC/account/sort code). Unique on (`invoiceId`, `kind`) — exactly one of each per invoice. Owned by the `invoice` domain (`L2-INVOICE-02`).
+- `L2-DB-31` — `invoice_entry` table: `id`, `invoiceId` (fk → `invoice`, cascade), `position`, `dateProvided` (date), `description`, `qty` (numeric 12,2), `qtyType`, `rate` (numeric 12,2), `total` (numeric 14,2). Index on (`invoiceId`, `position`). Owned by the `invoice` domain (`L2-INVOICE-03`).
+
 ## Invariants
 - `L2-DB-09` — One schema source: `packages/db/src/schema.ts`. Apps import types/tables from `@workspace/db`, never redeclare.
 - `L2-DB-10` — Passwords stored only as bcrypt hashes (`passwordHash`). Never plaintext.
 - `L2-DB-21` — One-time tokens stored only as `hashToken` output (`tokenHash`), never the raw token. Raw exists only in the emailed link. Validity requires un-consumed + un-expired.
 - `L2-DB-11` — Migrations are forward-only committed artifacts; schema change → `db:generate` + commit the SQL.
+- `L2-DB-32` — Money and quantities are `numeric`, never float; drizzle surfaces them as strings and callers parse at the edge (`L2-INVOICE-15`).
 
 ## Errors
 - `L2-DB-12` — Missing `DATABASE_URL` → client/seed throws. Ensure `.env` present (db up).

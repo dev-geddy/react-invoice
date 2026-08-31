@@ -1,8 +1,22 @@
 # react-invoice
 
-A full-stack **platform foundation** for kicking off new projects fast — auth, admin dashboard, database, and UI system already wired, so you build features instead of boilerplate.
+Invoicing behind a login. A shared ledger every signed-in user can read, each
+invoice recording who created it, with a live preview that is also the printed
+document.
+
+Built on a full-stack platform foundation — auth, admin shell, database and UI
+system already wired.
 
 Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres · Auth.js · Turborepo · yarn 4.
+
+## Invoicing
+- **Shared ledger** — `/backflip/invoices`. Every user sees every invoice; the creator (or an owner/admin) may edit, lock or delete it.
+- **Editor + live preview** — provider and customer detail, line items with qty/rate/total that recompute each other, series-aware numbering, VAT.
+- **Print** — the preview *is* the document: print (or save to PDF) prints the invoice alone, named after it.
+- **Prefill** — copy a customer off an earlier invoice; a new draft carries the provider, series, currency, VAT rate and branding over from the last one.
+
+Contract: [`docs/contracts/invoice.md`](./docs/contracts/invoice.md) · notes: [`docs/notes/invoice.md`](./docs/notes/invoice.md).
+The original CRA/MUI/localStorage app this replaces is kept for reference in `.legacy-ref-project/` — reference only, not built or deployed.
 
 ![React Invoice admin console — Integrations, with AI providers and email configured per workspace](./docs/assets/admin-integrations.png)
 
