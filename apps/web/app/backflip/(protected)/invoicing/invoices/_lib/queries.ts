@@ -134,6 +134,46 @@ const EMPTY_ENTRY: InvoiceEntry = {
   total: "0",
 }
 
+/**
+ * The brand wording an invoice prints. An invoice snapshots its own brand at
+ * save time, but invoices written before a brand existed carry an empty
+ * snapshot — those fall back to the series brand, then to the platform brand,
+ * so the document's logo area is never blank.
+ *
+ * @spec L2-INVOICE-32
+ */
+async function resolveBrand(
+  code: string,
+  snapshot: { brandName: string; brandSubName: string }
+): Promise<{ brandName: string; brandSubName: string }> {
+  if (snapshot.brandName || snapshot.brandSubName) return snapshot
+
+  const [seriesRow, configRow] = await Promise.all([
+    db
+      .select({
+        brandName: invoiceSeries.brandName,
+        brandSubName: invoiceSeries.brandSubName,
+      })
+      .from(invoiceSeries)
+      .where(eq(invoiceSeries.code, code))
+      .then(([row]) => row),
+    db
+      .select({
+        brandName: invoiceConfig.brandName,
+        brandSubName: invoiceConfig.brandSubName,
+      })
+      .from(invoiceConfig)
+      .where(eq(invoiceConfig.kind, "invoice"))
+      .then(([row]) => row),
+  ])
+
+  if (seriesRow?.brandName || seriesRow?.brandSubName) return seriesRow
+  return {
+    brandName: configRow?.brandName ?? "",
+    brandSubName: configRow?.brandSubName ?? "",
+  }
+}
+
 /** One invoice with its parties and lines, or `null` when it does not exist. */
 export async function loadInvoice(
   id: string,
@@ -160,13 +200,17 @@ export async function loadInvoice(
     .where(eq(invoices.id, id))
   if (!row) return null
 
-  const [partyRows, entryRows] = await Promise.all([
+  const [partyRows, entryRows, brand] = await Promise.all([
     db.select().from(invoiceParties).where(eq(invoiceParties.invoiceId, id)),
     db
       .select()
       .from(invoiceEntries)
       .where(eq(invoiceEntries.invoiceId, id))
       .orderBy(asc(invoiceEntries.position)),
+    resolveBrand(row.series, {
+      brandName: row.brandName,
+      brandSubName: row.brandSubName,
+    }),
   ])
 
   const parties: Partial<Record<"provider" | "customer", InvoiceParty>> = {}
@@ -188,8 +232,8 @@ export async function loadInvoice(
       number: row.number,
       currency: row.currency,
       vatRate: row.vatRate,
-      brandName: row.brandName,
-      brandSubName: row.brandSubName,
+      brandName: brand.brandName,
+      brandSubName: brand.brandSubName,
     },
     provider: parties.provider ?? EMPTY_PARTY,
     customer: parties.customer ?? EMPTY_PARTY,

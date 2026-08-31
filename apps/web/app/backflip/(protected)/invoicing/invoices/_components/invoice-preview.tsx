@@ -17,7 +17,7 @@ import type { InvoiceDraft, InvoiceParty } from "../../_lib/types"
  * below hide the admin shell and hand the page to this element alone, so
  * "print → save as PDF" produces the document without extra tooling.
  *
- * @spec L2-INVOICE-11
+ * @spec L2-INVOICE-11, L2-INVOICE-38
  */
 
 const PRINT_CSS = `
@@ -120,9 +120,12 @@ function InvoiceDocument({
         className="mx-auto w-full max-w-[820px] bg-white p-8 text-neutral-900 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.55)] ring-1 ring-black/10 print:shadow-none print:ring-0"
       >
         <header className="flex items-start justify-between gap-6 border-b border-neutral-300 pb-4">
-          <h1 className="text-2xl leading-none font-light tracking-tight">
-            <span>{meta.brandName}</span>
-            <span className="font-bold">{meta.brandSubName}</span>
+          {/* The logo area, as the legacy document set it: one uppercase
+              wordmark in two weights — a light grey first part carrying a
+              solid black second part. */}
+          <h1 className="flex min-h-8 items-center text-[30px] leading-none font-extralight tracking-tight uppercase">
+            <span className="text-neutral-500">{meta.brandName}</span>
+            <span className="font-medium text-black">{meta.brandSubName}</span>
           </h1>
           <div className="text-right text-[11px] leading-relaxed text-neutral-600">
             {provider.companyName ? <div>{provider.companyName}</div> : null}
