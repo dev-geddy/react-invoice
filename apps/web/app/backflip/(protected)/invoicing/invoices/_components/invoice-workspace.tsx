@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
+import { RiFilePdf2Line, RiPrinterLine } from "@remixicon/react"
 import { toast } from "sonner"
 
+import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { deleteInvoice, saveInvoice, setInvoiceLock } from "../_actions"
-import { invoiceTitle, nextNumber } from "../../_lib/calc"
+import { invoiceTitle, nextNumber, pdfFilename } from "../../_lib/calc"
 import type {
   Invoice,
   InvoiceDraft,
@@ -51,6 +53,7 @@ export function InvoiceWorkspace({
   const [prefillOpen, setPrefillOpen] = useState(false)
   const [previewOpen, setPreviewOpen] = useState(true)
   const [saving, startSave] = useTransition()
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
 
   // Browsers name a printed PDF after the document title (L2-INVOICE-11).
   useEffect(() => {
@@ -157,6 +160,38 @@ export function InvoiceWorkspace({
     })
   }
 
+  /**
+   * Downloads the invoice as a PDF. The *draft* is posted rather than an id, so
+   * the file matches the preview on screen even before the invoice is saved;
+   * the server renders it and never stores anything (`L2-INVOICE-39`).
+   */
+  async function handleDownloadPdf() {
+    if (downloadingPdf) return
+    setDownloadingPdf(true)
+    try {
+      const res = await fetch("/api/backflip/invoices/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(draft),
+      })
+      if (!res.ok) throw new Error("pdf")
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = pdfFilename(draft)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      toast.error("Could not generate the PDF.")
+    } finally {
+      setDownloadingPdf(false)
+    }
+  }
+
   return (
     <div className="flex h-[calc(100svh-var(--header-height,3.5rem))] min-h-0 bg-card">
       {/* Form and preview share the row evenly; hiding the preview hands the
@@ -182,7 +217,8 @@ export function InvoiceWorkspace({
           onDelete={handleDelete}
           onPrefillCustomer={() => setPrefillOpen(true)}
           onGenerateNumber={generateNumber}
-          onPrint={() => window.print()}
+          onDownloadPdf={handleDownloadPdf}
+          downloadingPdf={downloadingPdf}
           previewOpen={previewOpen}
           onTogglePreview={() => setPreviewOpen((open) => !open)}
         />
@@ -203,7 +239,22 @@ export function InvoiceWorkspace({
             never crops the top edge the way `items-center` does. */}
         <div className="flex min-h-full flex-col">
           <div className="my-auto w-full">
+            {/* The same two actions above and below the sheet: whichever end of
+                a long invoice the reader is at, the buttons are in reach
+                without going back to the form's toolbar. */}
+            <PreviewActions
+              onPrint={() => window.print()}
+              onDownloadPdf={handleDownloadPdf}
+              downloadingPdf={downloadingPdf}
+              className="mb-4"
+            />
             <InvoicePreview draft={draft} />
+            <PreviewActions
+              onPrint={() => window.print()}
+              onDownloadPdf={handleDownloadPdf}
+              downloadingPdf={downloadingPdf}
+              className="mt-4"
+            />
           </div>
         </div>
       </div>
@@ -217,6 +268,67 @@ export function InvoiceWorkspace({
           setPrefillOpen(false)
         }}
       />
+    </div>
+  )
+}
+
+/**
+ * Both floating buttons carry the same lighting. On the light canvas an inset
+ * white glow lifts them off the vignette; in dark mode they sit a shade lighter
+ * than the surface and take an inset dark shadow instead, since a white glow
+ * there would read as a blown-out edge.
+ */
+const FLOATING = cn(
+  "backdrop-blur-sm",
+  "bg-background/75 hover:bg-background",
+  "shadow-[inset_0_1px_0_rgb(255_255_255/0.95),inset_0_0_12px_rgb(255_255_255/0.7),0_1px_2px_rgb(0_0_0/0.12)]",
+  "dark:bg-foreground/15 dark:hover:bg-foreground/25",
+  "dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),inset_0_0_12px_rgb(0_0_0/0.55),0_1px_2px_rgb(0_0_0/0.45)]"
+)
+
+/**
+ * Print / download, floating on the preview canvas. Deliberately translucent
+ * rather than solid chrome — they sit on the vignette beside the paper, not on
+ * a panel of their own — and they are hidden from the printed page by the
+ * preview's own print rules (only the portalled document survives).
+ */
+function PreviewActions({
+  onPrint,
+  onDownloadPdf,
+  downloadingPdf,
+  className,
+}: {
+  onPrint: () => void
+  onDownloadPdf: () => void
+  downloadingPdf: boolean
+  className?: string
+}) {
+  return (
+    <div className={cn("flex justify-center gap-2", className)}>
+      <Button
+        variant="secondary"
+        size="sm"
+        className={FLOATING}
+        onClick={onDownloadPdf}
+        disabled={downloadingPdf}
+      >
+        <RiFilePdf2Line className="size-4" />
+        {/* `leading-none` on the label: the button centres line boxes, and this
+            face's line box is taller below the glyphs than above, so a label
+            carrying its full leading sits a fraction low against the icon. */}
+        <span className="leading-none">
+          {downloadingPdf ? "Preparing…" : "Download PDF"}
+        </span>
+      </Button>
+      <Button
+        variant="secondary"
+        size="sm"
+        className={FLOATING}
+        onClick={onPrint}
+      >
+        <RiPrinterLine className="size-4" />
+        <span className="leading-none">Print</span>
+      </Button>
     </div>
   )
 }

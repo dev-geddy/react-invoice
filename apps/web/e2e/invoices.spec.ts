@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises"
+
 import { expect, test, type Page } from "@playwright/test"
 
 import { OWNER, TEAMMATE } from "./env"
@@ -6,7 +8,7 @@ import { OWNER, TEAMMATE } from "./env"
  * The shared invoice ledger: create, list, share across users, and the
  * ownership rule that keeps another user's invoice read-only.
  *
- * @spec L2-INVOICE-05, L2-INVOICE-08, L2-INVOICE-09
+ * @spec L2-INVOICE-05, L2-INVOICE-08, L2-INVOICE-09, L2-INVOICE-39
  */
 
 async function login(page: Page, email: string, password: string) {
@@ -67,7 +69,25 @@ test("owner creates an invoice and sees it totalled and listed", async ({
   // 2 × 100 net, 21% VAT → 242.00 payable.
   await expect(page.getByText("242.00").first()).toBeVisible()
   await page.goto("/backflip/invoicing/invoices")
-  await expect(page.getByRole("link", { name: /INV0001/ })).toBeVisible()
+  await expect(page.getByRole("link", { name: /INV-0001/ })).toBeVisible()
+})
+
+test("an invoice downloads as a PDF named after itself", async ({ page }) => {
+  await login(page, OWNER.email, OWNER.password)
+  await createInvoice(page, "PDF", "0001")
+
+  // Both the form's bottom row and the preview rail offer the download.
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Download PDF" }).first().click(),
+  ])
+
+  expect(download.suggestedFilename()).toContain("PDF-0001")
+  expect(download.suggestedFilename()).toMatch(/\.pdf$/)
+
+  const path = await download.path()
+  const head = (await readFile(path)).subarray(0, 5).toString("latin1")
+  expect(head).toBe("%PDF-")
 })
 
 test("a teammate reads another user's invoice but cannot edit it", async ({
@@ -85,7 +105,7 @@ test("a teammate reads another user's invoice but cannot edit it", async ({
   await page.goto("/backflip/invoicing/invoices")
 
   // Shared ledger: the invoice another user created is listed…
-  await page.getByRole("link", { name: /SHARED0001/ }).click()
+  await page.getByRole("link", { name: /SHARED-0001/ }).click()
 
   // …but it is read-only for a teammate who does not own it.
   await expect(

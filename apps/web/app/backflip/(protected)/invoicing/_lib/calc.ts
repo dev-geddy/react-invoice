@@ -83,8 +83,15 @@ export function getTotals(
 }
 
 /** `INV0007`, or `0007` when no series is set. */
+/**
+ * The printed reference. Series and number are always hyphen-separated
+ * (`INV-0007`) so the sequence stays legible however short the series code is;
+ * either half on its own prints alone, and neither prints an em dash.
+ */
 export function invoiceRef(series: string, number: string): string {
-  return `${series}${number}`.trim() || "—"
+  return (
+    [series.trim(), number.trim()].filter(Boolean).join("-") || "—"
+  )
 }
 
 const CURRENCY_ISO: Record<string, string> = {
@@ -116,6 +123,18 @@ export function invoiceTitle(draft: InvoiceDraft): string {
     `${currencyIso(meta.currency)}${money(gross)} ${vatLabel}`,
     billed || "unnamed customer",
   ].join(" - ")
+}
+
+/**
+ * Filename for a downloaded PDF — the same wording as the print title, with the
+ * characters filesystems refuse taken out.
+ */
+export function pdfFilename(draft: InvoiceDraft): string {
+  const safe = invoiceTitle(draft)
+    .replace(/[\\/:*?"<>|]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+  return `${safe || "invoice"}.pdf`
 }
 
 /** Today as `yyyy-mm-dd` in the viewer's own timezone (not UTC). */

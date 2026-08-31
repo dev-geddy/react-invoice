@@ -7,16 +7,21 @@ import Link from "next/link"
 import {
   RiArrowLeftLine,
   RiDeleteBinLine,
+  RiFilePdf2Line,
   RiLayoutRightLine,
   RiLockLine,
   RiLockUnlockLine,
   RiMagicLine,
-  RiPrinterLine,
   RiSaveLine,
   RiDraftLine,
   RiSettings3Line,
 } from "@remixicon/react"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -75,7 +80,8 @@ export function InvoiceEditor({
   onDelete,
   onPrefillCustomer,
   onGenerateNumber,
-  onPrint,
+  onDownloadPdf,
+  downloadingPdf,
   previewOpen,
   onTogglePreview,
 }: {
@@ -97,7 +103,8 @@ export function InvoiceEditor({
   onDelete: () => void
   onPrefillCustomer: () => void
   onGenerateNumber: () => void
-  onPrint: () => void
+  onDownloadPdf: () => void
+  downloadingPdf: boolean
   previewOpen: boolean
   onTogglePreview: () => void
 }) {
@@ -131,15 +138,30 @@ export function InvoiceEditor({
           headers cannot cover, and rows scroll through it. */}
       <div className="pt-5" />
 
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mb-3 -ml-2 self-start"
-        render={<Link href="/backflip/invoicing/invoices" />}
-      >
-        <RiArrowLeftLine className="size-4" />
-        Invoices
-      </Button>
+      {/* Leaving and destroying the invoice are both "exits" — they share the
+          row above the title, at opposite ends, well away from Save. */}
+      <div className="mb-3 flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-ml-2"
+          render={<Link href="/backflip/invoicing/invoices" />}
+        >
+          <RiArrowLeftLine className="size-4" />
+          Invoices
+        </Button>
+        {invoice && invoice.canManage && !locked ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-auto text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => setConfirmDelete(true)}
+          >
+            <RiDeleteBinLine className="size-4" />
+            Delete invoice
+          </Button>
+        ) : null}
+      </div>
 
       {/* An unsaved draft is nowhere in the ledger yet, so it says so here
           rather than occupying a phantom row in the list. */}
@@ -192,10 +214,6 @@ export function InvoiceEditor({
               Series & currency
             </Button>
           ) : null}
-          <Button variant="outline" size="sm" onClick={onPrint}>
-            <RiPrinterLine className="size-4" />
-            Print
-          </Button>
           {invoice && invoice.canManage ? (
             <Button variant="outline" size="sm" onClick={onToggleLock}>
               {locked ? (
@@ -204,17 +222,6 @@ export function InvoiceEditor({
                 <RiLockLine className="size-4" />
               )}
               {locked ? "Unlock" : "Lock"}
-            </Button>
-          ) : null}
-          {invoice && invoice.canManage && !locked ? (
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-destructive"
-              onClick={() => setConfirmDelete(true)}
-            >
-              <RiDeleteBinLine className="size-4" />
-              Delete
             </Button>
           ) : null}
           <Button size="sm" disabled={disabled} onClick={onSave}>
@@ -287,16 +294,28 @@ export function InvoiceEditor({
                 disabled={disabled}
                 onChange={(e) => onMetaChange("number", e.target.value)}
               />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8 flex-none"
-                aria-label="Generate next number in this series"
-                disabled={disabled}
-                onClick={onGenerateNumber}
-              >
-                <RiMagicLine className="size-4" />
-              </Button>
+              {/* Icon-only, and the wand says nothing on its own — the
+                  tooltip names the action for pointer users, the aria-label
+                  for everyone else. */}
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 flex-none"
+                      aria-label="Generate next number in this series"
+                      disabled={disabled}
+                      onClick={onGenerateNumber}
+                    >
+                      <RiMagicLine className="size-4" />
+                    </Button>
+                  }
+                />
+                <TooltipContent>
+                  Fill in the next free number in this series
+                </TooltipContent>
+              </Tooltip>
             </div>
           </Field>
           <Field className="w-[100px]">
@@ -350,15 +369,25 @@ export function InvoiceEditor({
         <section className="flex min-w-0 flex-col gap-2">
           <div className="flex h-9 items-center justify-between gap-2">
             <SectionLabel>Customer</SectionLabel>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={disabled}
-              onClick={onPrefillCustomer}
-            >
-              <RiMagicLine className="size-4" />
-              Prefill
-            </Button>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={disabled}
+                    onClick={onPrefillCustomer}
+                  >
+                    <RiMagicLine className="size-4" />
+                    Prefill
+                  </Button>
+                }
+              />
+              <TooltipContent>
+                Copy a customer's details from the address book or an earlier
+                invoice
+              </TooltipContent>
+            </Tooltip>
           </div>
           <PartyCard
             party={draft.customer}
@@ -477,6 +506,19 @@ export function InvoiceEditor({
             Locked — unlock to make changes.
           </span>
         ) : null}
+        {/* Writing actions sit together on the leading edge; the download is
+            the one action that leaves the app, so it sits opposite them. Print
+            keeps to the preview rail, where the paper is. */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="ml-auto"
+          disabled={downloadingPdf}
+          onClick={onDownloadPdf}
+        >
+          <RiFilePdf2Line className="size-4" />
+          {downloadingPdf ? "Preparing…" : "Download PDF"}
+        </Button>
       </div>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
@@ -486,8 +528,13 @@ export function InvoiceEditor({
               Delete invoice {invoiceRef(draft.meta.series, draft.meta.number)}?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This removes the invoice, its parties and all its lines. It can’t
-              be undone.
+              Deleting removes the invoice from the shared ledger for everyone,
+              along with its provider and customer details and all{" "}
+              {draft.entries.length}{" "}
+              {draft.entries.length === 1 ? "line" : "lines"} — a payable total
+              of {draft.meta.currency}
+              {money(gross)}. Its number stays free for reuse in the{" "}
+              {draft.meta.series || "same"} series. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

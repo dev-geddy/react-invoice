@@ -6,6 +6,7 @@ import {
   formatDate,
   getTotals,
   invoiceRef,
+  pdfFilename,
   invoiceTitle,
   money,
   nextNumber,
@@ -112,7 +113,9 @@ describe("chargesVat / formatting helpers", () => {
 
   it("renders dates and refs the way the printed invoice does", () => {
     expect(formatDate("2026-08-31")).toBe("31/08/2026")
-    expect(invoiceRef("INV", "0007")).toBe("INV0007")
+    expect(invoiceRef("INV", "0007")).toBe("INV-0007")
+    expect(invoiceRef("INV", "")).toBe("INV")
+    expect(invoiceRef("", "0007")).toBe("0007")
     expect(invoiceRef("", "")).toBe("—")
   })
 
@@ -139,7 +142,36 @@ describe("invoiceTitle", () => {
     })
 
     expect(title).toBe(
-      "2026_08_31 - INV0007 - EUR242.00 VAT incl. - Acme Ltd, Jane Doe"
+      "2026_08_31 - INV-0007 - EUR242.00 VAT incl. - Acme Ltd, Jane Doe"
+    )
+  })
+})
+
+describe("pdfFilename", () => {
+  const draft = (customer: string) => ({
+    meta: {
+      invoiceDate: "2026-08-31",
+      series: "INV",
+      number: "0007",
+      currency: "€",
+      vatRate: "21",
+      brandName: "",
+      brandSubName: "",
+    },
+    provider: vatProvider,
+    customer: { ...EMPTY_PARTY, companyName: customer },
+    entries: [entry()],
+  })
+
+  it("is the print title with a .pdf extension", () => {
+    expect(pdfFilename(draft("Acme Ltd"))).toBe(
+      "2026_08_31 - INV-0007 - EUR242.00 VAT incl. - Acme Ltd.pdf"
+    )
+  })
+
+  it("drops characters a filesystem would refuse", () => {
+    expect(pdfFilename(draft('Acme / "Trading" Ltd'))).toBe(
+      "2026_08_31 - INV-0007 - EUR242.00 VAT incl. - Acme Trading Ltd.pdf"
     )
   })
 })

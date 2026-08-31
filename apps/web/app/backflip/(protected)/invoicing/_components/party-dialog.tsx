@@ -2,6 +2,12 @@
 
 import { RiMagicLine } from "@remixicon/react"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
+
 import { Button } from "@workspace/ui/components/button"
 import {
   Dialog,
@@ -62,15 +68,24 @@ export function PartyDialog({
 
         {onPrefill ? (
           <div>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={disabled}
-              onClick={onPrefill}
-            >
-              <RiMagicLine className="size-4" />
-              Prefill from an earlier invoice
-            </Button>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={disabled}
+                    onClick={onPrefill}
+                  >
+                    <RiMagicLine className="size-4" />
+                    Prefill from an earlier invoice
+                  </Button>
+                }
+              />
+              <TooltipContent>
+                Replaces every field below with the chosen customer's details
+              </TooltipContent>
+            </Tooltip>
           </div>
         ) : null}
 
