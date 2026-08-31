@@ -3,7 +3,7 @@
 > L3 = how / volatile. AI writes free. Cites L2 IDs up. Matches code as-is.
 
 ## What this is
-A Claude-compatible **remote MCP connector**: a read-only tool surface at `/api/mcp` (Streamable HTTP, `L2-MCP-01`) protected by an in-app **OAuth 2.1 authorization server** (`/api/oauth/*` + `/.well-known/*`, `L2-MCP-10`–`L2-MCP-17`). Lets a Claude client (claude.ai custom connector, Claude Desktop, Claude Code) authenticate as a React Invoice admin user and call a handful of dashboard/user/settings-read tools, scoped to that user's role. No write tools in this phase (`L2-MCP-09`).
+A Claude-compatible **remote MCP connector**: a read-only tool surface at `/api/mcp` (Streamable HTTP, `L2-MCP-01`) protected by an in-app **OAuth 2.1 authorization server** (`/api/oauth/*` + `/.well-known/*`, `L2-MCP-10`–`L2-MCP-17`). Lets a Claude client (claude.ai custom connector, Claude Desktop, Claude Code) authenticate as a Backflip Invoice admin user and call a handful of dashboard/user/settings-read tools, scoped to that user's role. No write tools in this phase (`L2-MCP-09`).
 
 Whole domain is opt-in and off by default: until an owner enables it (`connector_config.enabled`, `L2-MCP-25`) every connector route 404s (`L2-MCP-37`, `L2-INF-17`).
 
@@ -58,7 +58,7 @@ Redirect hosts are allowlisted (`claude.ai`, `claude.com` seeded) and checked bo
 **Self-registration path** (only if an owner sets `dcrMode` to `allowlist` or `open`):
 1. claude.ai → Settings → Connectors → Add custom connector → `https://<origin>/api/mcp`, Advanced settings left blank.
 2. Claude reads `WWW-Authenticate` off an unauthenticated probe (`L2-MCP-03`), fetches the protected-resource + authorization-server metadata (`L2-MCP-10`, `L2-MCP-11`), then DCRs itself via `POST /api/oauth/register` (`L2-MCP-12`). With `dcrMode = "off"` that endpoint is `404` and this path simply does not exist.
-3. Claude opens `/api/oauth/authorize` in a browser tab. No React Invoice session → redirected to `/backflip/login?from=…` (`L2-MCP-13`, the standard `/backflip` gate, `L2-AUTH-01`).
+3. Claude opens `/api/oauth/authorize` in a browser tab. No Backflip Invoice session → redirected to `/backflip/login?from=…` (`L2-MCP-13`, the standard `/backflip` gate, `L2-AUTH-01`).
 4. After login, lands on `/backflip/connect` — consent screen: client name, requested scopes in plain language, the signed-in account, Allow/Deny (`L2-MCP-14`).
 5. Allow → `approveAuthorization` mints a single-use authorization code, redirects back to Claude's `redirect_uri` (`L2-MCP-32`).
 6. Claude exchanges the code at `/api/oauth/token` with its PKCE `code_verifier` (`L2-MCP-15`, `L2-MCP-26`) → access + refresh token pair (`L2-MCP-24` lifetimes).

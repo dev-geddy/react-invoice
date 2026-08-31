@@ -8,7 +8,7 @@ import { DockerSetupGuide } from "./_components/setup-guide"
 export const metadata: Metadata = {
   title: "Setup on a DigitalOcean droplet — Docker flavour",
   description:
-    "A guided, step-by-step wizard for deploying React Invoice to a DigitalOcean droplet with Postgres in Docker and Caddy for automatic TLS — fill in your variables and copy the ready-made commands.",
+    "A guided, step-by-step wizard for deploying Backflip Invoice to a DigitalOcean droplet with Postgres in Docker and Caddy for automatic TLS — fill in your variables and copy the ready-made commands.",
 }
 
 // Server Component (RSC) shell around the client guide island. The guide is

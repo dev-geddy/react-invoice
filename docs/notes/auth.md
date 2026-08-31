@@ -81,7 +81,7 @@ Colocated next to the sources they protect. They exist to freeze the security in
 - Sign-out wired in `nav-user` → `signOut({ callbackUrl: "/backflip/login" })`.
 
 ## Dashboard notes
-- Admin shell replicated from `dashboard-01` (inset sidebar + `site-header`, `--sidebar-width`/`--header-height` vars). Logo = icon + "React Invoice" (no "Admin"). Dashboard content (cards + chart) from the shadcn dashboard example. Icons mapped tabler/lucide → remixicon (project convention).
+- Admin shell replicated from `dashboard-01` (inset sidebar + `site-header`, `--sidebar-width`/`--header-height` vars). Logo = icon + "Backflip Invoice" (no "Admin"). Dashboard content (cards + chart) from the shadcn dashboard example. Icons mapped tabler/lucide → remixicon (project convention).
 - Simplification vs example: the heavy dnd/tanstack `data-table` was replaced with a plain `@workspace/ui` table (`recent-table`). Revisit if a sortable/editable grid is needed.
 - base-mira composition uses base-ui `render={<el/>}` (not `asChild`) — see [[ui]] notes.
 

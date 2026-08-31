@@ -15,7 +15,7 @@ export type PasswordResetEmailProps = {
 export function PasswordResetEmail({
   name,
   resetUrl,
-  appName = "React Invoice",
+  appName = "Backflip Invoice",
   expiresIn = "60 minutes",
 }: PasswordResetEmailProps) {
   const greetingName = name?.trim() || "there"

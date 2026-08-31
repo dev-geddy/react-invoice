@@ -14,7 +14,7 @@ function Wordmark({ className }: { className?: string }) {
       <span className="inline-flex size-[22px] items-center justify-center rounded-md border bg-card">
         <BrandIcon className="text-primary" />
       </span>
-      React Invoice
+      Backflip Invoice
     </a>
   )
 }

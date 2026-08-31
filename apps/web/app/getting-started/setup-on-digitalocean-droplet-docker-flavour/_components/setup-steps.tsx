@@ -49,7 +49,7 @@ export const STEPS: StepMeta[] = [
   },
   {
     id: "clone",
-    title: "Clone React Invoice locally",
+    title: "Clone Backflip Invoice locally",
     short: "Clone",
     lead: "Everything in this guide runs from a local clone — provisioning, deploys, migrations, the admin seed. Grab the repo and the few tools the scripts expect.",
   },
@@ -170,8 +170,8 @@ export function StepBody({
           Upload the printed <Mono>.pub</Mono> contents in the DigitalOcean
           panel under Settings → Security → SSH keys, then pick that key when
           creating the droplet. The private half (
-          <Mono>~/.ssh/id_react-invoice</Mono>) stays on your machine — it&apos;s the
-          key path variable in step 3.
+          <Mono>~/.ssh/id_react-invoice</Mono>) stays on your machine —
+          it&apos;s the key path variable in step 3.
         </Note>
         <div>
           <Button
@@ -267,12 +267,13 @@ export function StepBody({
           pm2 flavour.
         </Note>
         <Note>
-          React Invoice is developed primarily with <strong>Claude Code</strong> —
-          the repo ships instructions, skills and doc contracts tuned for it
-          (that&apos;s what the Start building phase leans on). Other AI coding
-          agents are untested. That is also what makes the handoff in the last
-          step work: point Claude Code at this clone and it can run the rest of
-          this guide for you, docker flavour included.
+          Backflip Invoice is developed primarily with{" "}
+          <strong>Claude Code</strong> — the repo ships instructions, skills and
+          doc contracts tuned for it (that&apos;s what the Start building phase
+          leans on). Other AI coding agents are untested. That is also what
+          makes the handoff in the last step work: point Claude Code at this
+          clone and it can run the rest of this guide for you, docker flavour
+          included.
         </Note>
       </div>
     )
@@ -320,8 +321,9 @@ export function StepBody({
           Nothing is created yet. The <Mono>postgres:17-alpine</Mono> container
           starts on the first deploy, publishes on{" "}
           <Mono>127.0.0.1:{DEFAULT_DB_PORT}</Mono> only, and keeps its data in
-          the named volume <Mono>react_invoice_pgdata</Mono> — deploys and container
-          restarts never touch it. The role and database are created from the
+          the named volume <Mono>react_invoice_pgdata</Mono> — deploys and
+          container restarts never touch it. The role and database are created
+          from the
           <Mono>POSTGRES_*</Mono> values you set in the next step.
         </Note>
       </div>
@@ -493,7 +495,8 @@ export function StepBody({
         <Note>
           No <Mono>nvm</Mono> here, unlike the pm2 flavour: Node is installed
           system-wide from apt on this droplet, so the locked{" "}
-          <Mono>react-invoice</Mono> user finds <Mono>corepack</Mono> on its PATH.
+          <Mono>react-invoice</Mono> user finds <Mono>corepack</Mono> on its
+          PATH.
         </Note>
         <Note>
           Done. Sign in at <Mono>{r.appUrl}/backflip</Mono> with the owner email

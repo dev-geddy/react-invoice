@@ -114,7 +114,7 @@ export function EmailIntegration({
                 id="resend-from-name"
                 name="fromName"
                 autoComplete="off"
-                placeholder="React Invoice"
+                placeholder="Backflip Invoice"
                 defaultValue={email.fromName}
               />
             </Field>

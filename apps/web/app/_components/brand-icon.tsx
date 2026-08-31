@@ -1,5 +1,5 @@
 /**
- * The React Invoice brand glyph (arc-over-pole), shared by the public wordmark and
+ * The Backflip Invoice brand glyph (arc-over-pole), shared by the public wordmark and
  * the admin sidebar logo so the mark stays identical across surfaces. Color
  * comes from `currentColor` — wrap it in a `text-*` class.
  */
