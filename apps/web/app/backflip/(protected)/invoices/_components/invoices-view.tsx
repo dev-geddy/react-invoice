@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 
 import { toast } from "sonner"
 
+import { cn } from "@workspace/ui/lib/utils"
+
 import { deleteInvoice, saveInvoice, setInvoiceLock } from "../_actions"
 import { invoiceTitle, nextNumber, today } from "../_lib/calc"
 import {
@@ -57,9 +59,11 @@ export function InvoicesView({ invoices }: { invoices: Invoice[] }) {
     )
   }, [invoices, query])
 
+  // The admin shell lets its children grow, so the row is bounded here: each
+  // column then scrolls on its own, and the preview can centre in its rail.
   return (
-    <div className="flex h-full min-h-0 bg-card">
-      <div className="hidden min-h-0 w-[300px] flex-none flex-col overflow-hidden border-r bg-background lg:flex">
+    <div className="flex h-[calc(100svh-var(--header-height,3.5rem))] min-h-0 bg-card">
+      <div className="hidden min-h-0 w-[240px] flex-none flex-col overflow-hidden border-r bg-background lg:flex">
         <InvoiceList
           invoices={filtered}
           selectedId={selectedId}
@@ -105,6 +109,9 @@ function InvoiceWorkspace({
 }) {
   const router = useRouter()
   const [prefillOpen, setPrefillOpen] = useState(false)
+  // The preview shares the row with the ledger and the form; hiding it hands
+  // the whole width back to the editor.
+  const [previewOpen, setPreviewOpen] = useState(true)
   const [saving, startSave] = useTransition()
   const [draft, setDraft] = useState<InvoiceDraft>(
     () =>
@@ -204,7 +211,14 @@ function InvoiceWorkspace({
 
   return (
     <>
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      {/* The form is capped: it needs a fixed, modest width, and everything
+          left over belongs to the preview. Hiding the preview releases the cap. */}
+      <div
+        className={cn(
+          "flex min-h-0 min-w-0 flex-1 flex-col",
+          previewOpen && "xl:max-w-[500px] xl:flex-none xl:basis-[500px]"
+        )}
+      >
         <InvoiceEditor
           draft={draft}
           invoice={selected}
@@ -218,15 +232,31 @@ function InvoiceWorkspace({
           onPrefillCustomer={() => setPrefillOpen(true)}
           onGenerateNumber={generateNumber}
           onPrint={() => window.print()}
+          previewOpen={previewOpen}
+          onTogglePreview={() => setPreviewOpen((open) => !open)}
         />
       </div>
 
       {/* The document is laid out at its real width (820px) and zoomed down to
           fit the rail; `zoom` reflows, so nothing is clipped. Print resets it
           (see the preview's print stylesheet). */}
-      <div className="hidden min-h-0 w-[500px] flex-none overflow-y-auto border-l bg-muted/50 p-4 xl:block">
-        <div className="invoice-preview-scale" style={{ zoom: 0.56 }}>
-          <InvoicePreview draft={draft} />
+      <div
+        className={cn(
+          "hidden min-h-0 flex-1 overflow-y-auto border-l p-6",
+          "min-w-[380px]",
+          // Darker, vignetted canvas so the sheet reads as paper resting on a
+          // surface rather than as another panel of the admin chrome.
+          "bg-[radial-gradient(ellipse_at_50%_30%,var(--muted)_0%,color-mix(in_oklab,var(--muted)_80%,black)_55%,color-mix(in_oklab,var(--muted)_58%,black)_100%)]",
+          previewOpen && "xl:block"
+        )}
+      >
+        {/* `my-auto` inside a min-h-full column centres a short invoice and
+            simply stops centring once the document outgrows the rail — margin
+            centring never crops the top edge the way `items-center` does. */}
+        <div className="flex min-h-full flex-col">
+          <div className="my-auto w-full">
+            <InvoicePreview draft={draft} />
+          </div>
         </div>
       </div>
 

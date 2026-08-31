@@ -37,64 +37,71 @@ export function EntryRows({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="hidden gap-2 px-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase sm:flex">
-        <span className="w-[130px] flex-none">Date</span>
+    <div className="@container flex flex-col gap-2">
+      {/* The header only lines up while the row is on one line — below that
+          width the row wraps and each field carries its own aria-label. */}
+      <div className="hidden gap-2 px-1 text-[11px] font-semibold tracking-wide text-muted-foreground uppercase @2xl:flex">
+        <span className="w-[120px] flex-none">Date</span>
         <span className="flex-1">Description</span>
-        <span className="w-[64px] flex-none">Qty</span>
-        <span className="w-[64px] flex-none">Unit</span>
-        <span className="w-[80px] flex-none">Rate</span>
-        <span className="w-[92px] flex-none">Total</span>
+        <span className="w-[56px] flex-none">Qty</span>
+        <span className="w-[56px] flex-none">Unit</span>
+        <span className="w-[72px] flex-none">Rate</span>
+        <span className="w-[84px] flex-none">Total</span>
         <span className="w-8 flex-none" />
       </div>
 
       {entries.map((entry, index) => (
         <div
           key={index}
-          className="flex flex-wrap items-center gap-2 sm:flex-nowrap"
+          className="flex flex-wrap items-center gap-2 border-b pb-2 last:border-b-0 @2xl:flex-nowrap @2xl:border-b-0 @2xl:pb-0"
         >
           <Input
             aria-label="Date provided"
             type="date"
-            className="w-[130px] flex-none"
+            className="w-[120px] flex-none"
             value={entry.dateProvided}
             disabled={disabled}
             onChange={(e) => update(index, entry, "dateProvided", e.target.value)}
           />
           <Input
             aria-label="Description"
-            className="min-w-[160px] flex-1"
+            placeholder="Description"
+            className="min-w-[120px] flex-1 basis-[160px]"
             value={entry.description}
             disabled={disabled}
             onChange={(e) => update(index, entry, "description", e.target.value)}
           />
           <Input
             aria-label="Quantity"
+            placeholder="Qty"
             inputMode="decimal"
-            className="w-[64px] flex-none"
+            className="w-[56px] flex-none"
             value={entry.qty}
             disabled={disabled}
             onChange={(e) => update(index, entry, "qty", e.target.value)}
           />
           <Input
             aria-label="Unit"
-            className="w-[64px] flex-none"
+            placeholder="Unit"
+            className="w-[56px] flex-none"
             value={entry.qtyType}
             disabled={disabled}
             onChange={(e) => update(index, entry, "qtyType", e.target.value)}
           />
           <Input
             aria-label="Rate"
+            placeholder="Rate"
             inputMode="decimal"
-            className="w-[80px] flex-none"
+            className="w-[72px] flex-none"
             value={entry.rate}
             disabled={disabled}
             onChange={(e) => update(index, entry, "rate", e.target.value)}
           />
           <Input
             aria-label="Line total"
+            placeholder="Total"
             inputMode="decimal"
-            className="w-[92px] flex-none"
+            className="w-[84px] flex-none"
             value={entry.total}
             disabled={disabled}
             onChange={(e) => update(index, entry, "total", e.target.value)}

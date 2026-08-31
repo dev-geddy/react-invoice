@@ -4,6 +4,7 @@ import { useState } from "react"
 
 import {
   RiDeleteBinLine,
+  RiLayoutRightLine,
   RiLockLine,
   RiLockUnlockLine,
   RiMagicLine,
@@ -58,6 +59,8 @@ export function InvoiceEditor({
   onPrefillCustomer,
   onGenerateNumber,
   onPrint,
+  previewOpen,
+  onTogglePreview,
 }: {
   draft: InvoiceDraft
   invoice: Invoice | null
@@ -75,6 +78,8 @@ export function InvoiceEditor({
   onPrefillCustomer: () => void
   onGenerateNumber: () => void
   onPrint: () => void
+  previewOpen: boolean
+  onTogglePreview: () => void
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -88,7 +93,7 @@ export function InvoiceEditor({
   )
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-5">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-card p-5">
       <PageHeading
         title={
           invoice
@@ -102,40 +107,52 @@ export function InvoiceEditor({
               }`
             : "Provider details and numbering carry over from the last invoice."
         }
-        action={
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" size="sm" onClick={onPrint}>
-              <RiPrinterLine className="size-4" />
-              Print
-            </Button>
-            {invoice && invoice.canManage ? (
-              <Button variant="outline" size="sm" onClick={onToggleLock}>
-                {locked ? (
-                  <RiLockUnlockLine className="size-4" />
-                ) : (
-                  <RiLockLine className="size-4" />
-                )}
-                {locked ? "Unlock" : "Lock"}
-              </Button>
-            ) : null}
-            {invoice && invoice.canManage && !locked ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-destructive"
-                onClick={() => setConfirmDelete(true)}
-              >
-                <RiDeleteBinLine className="size-4" />
-                Delete
-              </Button>
-            ) : null}
-            <Button size="sm" disabled={disabled} onClick={onSave}>
-              <RiSaveLine className="size-4" />
-              {saving ? "Saving…" : invoice ? "Save" : "Create invoice"}
-            </Button>
-          </div>
-        }
       />
+
+      {/* Actions live on their own row: five buttons plus a long invoice
+          title do not fit one line once the preview rail is open. */}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+          {/* Preview is a rail on wide screens only, so is its toggle. */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden xl:inline-flex"
+            aria-pressed={previewOpen}
+            onClick={onTogglePreview}
+          >
+            <RiLayoutRightLine className="size-4" />
+            {previewOpen ? "Hide preview" : "Show preview"}
+          </Button>
+          <Button variant="outline" size="sm" onClick={onPrint}>
+            <RiPrinterLine className="size-4" />
+            Print
+          </Button>
+          {invoice && invoice.canManage ? (
+            <Button variant="outline" size="sm" onClick={onToggleLock}>
+              {locked ? (
+                <RiLockUnlockLine className="size-4" />
+              ) : (
+                <RiLockLine className="size-4" />
+              )}
+              {locked ? "Unlock" : "Lock"}
+            </Button>
+          ) : null}
+          {invoice && invoice.canManage && !locked ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive"
+              onClick={() => setConfirmDelete(true)}
+            >
+              <RiDeleteBinLine className="size-4" />
+              Delete
+            </Button>
+          ) : null}
+          <Button size="sm" disabled={disabled} onClick={onSave}>
+            <RiSaveLine className="size-4" />
+            {saving ? "Saving…" : invoice ? "Save" : "Create invoice"}
+          </Button>
+      </div>
 
       {readOnly ? (
         <p className="mt-3 rounded-lg border bg-muted/60 px-3 py-2 text-[13px] text-muted-foreground">
@@ -145,78 +162,7 @@ export function InvoiceEditor({
         </p>
       ) : null}
 
-      <div className="mt-5 grid gap-6 lg:grid-cols-2">
-        <section className="flex flex-col gap-3">
-          <SectionLabel>Provider</SectionLabel>
-          <PartyFields
-            party={draft.provider}
-            idPrefix="provider"
-            disabled={disabled}
-            onChange={(field, value) =>
-              onPartyChange("provider", field, value)
-            }
-          />
-        </section>
-
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-2">
-            <SectionLabel>Customer</SectionLabel>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={disabled}
-              onClick={onPrefillCustomer}
-            >
-              <RiMagicLine className="size-4" />
-              Prefill
-            </Button>
-          </div>
-          <PartyFields
-            party={draft.customer}
-            idPrefix="customer"
-            disabled={disabled}
-            onChange={(field, value) =>
-              onPartyChange("customer", field, value)
-            }
-          />
-        </section>
-      </div>
-
-      <Separator className="my-6" />
-
-      <section className="flex flex-col gap-3">
-        <SectionLabel>Works completed / services provided</SectionLabel>
-        <EntryRows
-          entries={draft.entries}
-          disabled={disabled}
-          onChange={(index, entry) => {
-            const next = [...draft.entries]
-            next[index] = entry
-            onEntriesChange(next)
-          }}
-          onAdd={() =>
-            onEntriesChange([
-              ...draft.entries,
-              {
-                dateProvided:
-                  draft.entries.at(-1)?.dateProvided ?? draft.meta.invoiceDate,
-                description: "",
-                qty: "1",
-                qtyType: draft.entries.at(-1)?.qtyType ?? "h",
-                rate: "0",
-                total: "0",
-              },
-            ])
-          }
-          onRemove={(index) =>
-            onEntriesChange(draft.entries.filter((_, i) => i !== index))
-          }
-        />
-      </section>
-
-      <Separator className="my-6" />
-
-      <section className="flex flex-col gap-3">
+      <section className="mt-6 flex flex-col gap-3">
         <SectionLabel>Invoice meta</SectionLabel>
         <div className="flex flex-wrap gap-3">
           <Field className="w-[150px]">
@@ -319,6 +265,87 @@ export function InvoiceEditor({
           </Field>
         </div>
       </section>
+      <Separator className="my-6" />
+
+      {/* Provider and customer always sit side by side, the way the reference
+          app laid them out; the columns are capped narrow so the pair fits
+          even when the preview rail is open. */}
+      <div className="mt-5">
+        <div className="grid grid-cols-2 gap-4">
+        <section className="flex min-w-0 max-w-[14rem] flex-col gap-3">
+          {/* Both headers are one fixed-height row — the customer side carries
+              a button, and without a matching row the two field columns would
+              start at different heights. */}
+          <div className="sticky top-0 z-10 flex h-8 items-center justify-between gap-2 bg-card">
+            <SectionLabel>Provider</SectionLabel>
+          </div>
+          <PartyFields
+            party={draft.provider}
+            idPrefix="provider"
+            disabled={disabled}
+            onChange={(field, value) =>
+              onPartyChange("provider", field, value)
+            }
+          />
+        </section>
+
+        <section className="flex min-w-0 max-w-[14rem] flex-col gap-3">
+          <div className="sticky top-0 z-10 flex h-8 items-center justify-between gap-2 bg-card">
+            <SectionLabel>Customer</SectionLabel>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={disabled}
+              onClick={onPrefillCustomer}
+            >
+              <RiMagicLine className="size-4" />
+              Prefill
+            </Button>
+          </div>
+          <PartyFields
+            party={draft.customer}
+            idPrefix="customer"
+            disabled={disabled}
+            onChange={(field, value) =>
+              onPartyChange("customer", field, value)
+            }
+          />
+        </section>
+        </div>
+      </div>
+
+      <Separator className="my-6" />
+
+      <section className="flex flex-col gap-3">
+        <SectionLabel>Works completed / services provided</SectionLabel>
+        <EntryRows
+          entries={draft.entries}
+          disabled={disabled}
+          onChange={(index, entry) => {
+            const next = [...draft.entries]
+            next[index] = entry
+            onEntriesChange(next)
+          }}
+          onAdd={() =>
+            onEntriesChange([
+              ...draft.entries,
+              {
+                dateProvided:
+                  draft.entries.at(-1)?.dateProvided ?? draft.meta.invoiceDate,
+                description: "",
+                qty: "1",
+                qtyType: draft.entries.at(-1)?.qtyType ?? "h",
+                rate: "0",
+                total: "0",
+              },
+            ])
+          }
+          onRemove={(index) =>
+            onEntriesChange(draft.entries.filter((_, i) => i !== index))
+          }
+        />
+      </section>
+
 
       <Separator className="my-6" />
 

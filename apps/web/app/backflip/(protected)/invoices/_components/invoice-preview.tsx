@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { createPortal } from "react-dom"
 
 import {
@@ -117,7 +117,7 @@ function InvoiceDocument({
   return (
     <div
       {...(printable ? { id: "invoice-print-root" } : {})}
-        className="mx-auto w-full max-w-[820px] bg-white p-8 text-neutral-900 shadow-sm ring-1 ring-black/5 print:ring-0"
+        className="mx-auto w-full max-w-[820px] bg-white p-8 text-neutral-900 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.55)] ring-1 ring-black/10 print:shadow-none print:ring-0"
       >
         <header className="flex items-start justify-between gap-6 border-b border-neutral-300 pb-4">
           <h1 className="text-2xl leading-none font-light tracking-tight">
@@ -274,18 +274,52 @@ function InvoiceDocument({
   )
 }
 
+/** The document's natural (paper) width, before the preview scales it down. */
+const DOCUMENT_WIDTH = 820
+
+/** Client/server split store: the value never changes, so it never notifies. */
+const subscribeNever = () => () => {}
+
 /**
- * Preview rail + the print copy. `document.body` only exists in the browser, so
- * the portal mounts after hydration.
+ * Preview rail + the print copy. The on-screen copy is laid out at paper width
+ * and zoomed to whatever the rail measures, so it always fills the space
+ * available rather than sitting at a guessed scale. `document.body` only exists
+ * in the browser, so the portal mounts after hydration.
  */
 export function InvoicePreview({ draft }: { draft: InvoiceDraft }) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+  // `false` on the server, `true` once hydrated — the portal needs a real
+  // `document.body`. A store subscription rather than a mount effect, so no
+  // state is set synchronously during the first commit.
+  const mounted = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false
+  )
+  const [zoom, setZoom] = useState(1)
+  const railRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const rail = railRef.current
+    if (!rail) return
+
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry?.contentRect.width ?? 0
+      if (width > 0) setZoom(Math.min(1, width / DOCUMENT_WIDTH))
+    })
+    observer.observe(rail)
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <>
       <style>{PRINT_CSS}</style>
-      <InvoiceDocument draft={draft} />
+      <div ref={railRef}>
+        {/* `zoom` reflows (unlike `transform: scale`), so the rail's scroll
+            height matches what is drawn and nothing is clipped. */}
+        <div className="invoice-preview-scale" style={{ zoom }}>
+          <InvoiceDocument draft={draft} />
+        </div>
+      </div>
       {mounted
         ? createPortal(
             <div className="invoice-print-portal hidden">
