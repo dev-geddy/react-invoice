@@ -8,3 +8,5 @@ test-results/
 coverage/
 pnpm-lock.yaml
 .pnpm-store/
+# legacy reference app — kept verbatim, not part of the build
+.legacy-ref-project
