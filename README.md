@@ -1,26 +1,28 @@
-# react-invoice
+# React Invoice
 
-Invoicing behind a login. A shared ledger every signed-in user can read, each
-invoice recording who created it, with a live preview that is also the printed
-document.
+**v3.0.0** — invoicing behind a login. A shared ledger every signed-in user can
+read, each invoice recording who raised it, with a live preview that *is* the
+printed document.
 
-Built on a full-stack platform foundation — auth, admin shell, database and UI
-system already wired.
+v1–v2 were a Create React App single-pager that kept invoices in `localStorage`.
+v3 is the same job rebuilt on a full-stack platform foundation: Postgres, real
+accounts and roles, an admin shell, and a shared UI system.
 
 Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres · Auth.js · Turborepo · yarn 4.
 
 ## Invoicing
 - **Shared ledger** — `/backflip/invoicing/invoices`. Every user sees every invoice; the creator (or an owner/admin) may edit, lock or delete it.
-- **Editor + live preview** — provider and customer detail, line items with qty/rate/total that recompute each other, series-aware numbering, VAT.
+- **Editor + live preview** — provider and customer as cards opening a four-column detail dialog, line items whose qty/rate/total recompute each other, series-aware numbering, VAT.
 - **Print** — the preview *is* the document: print (or save to PDF) prints the invoice alone, named after it.
-- **Prefill** — copy a customer off an earlier invoice; a new draft carries the provider, series, currency, VAT rate and branding over from the last one.
+- **Customers** — `/backflip/invoicing/customers`. An address book that feeds the invoice form's prefill; companies invoiced but not saved are offered for one-click adoption.
+- **Series & currency** — `/backflip/invoicing/settings`. Each series owns its numbering prefix, default currency and branding, with a platform brand as fallback. Invoices snapshot all three, so editing a series never rewrites an issued invoice.
 
 Contract: [`docs/contracts/invoice.md`](./docs/contracts/invoice.md) · notes: [`docs/notes/invoice.md`](./docs/notes/invoice.md).
-The original CRA/MUI/localStorage app this replaces is kept for reference in `.legacy-ref-project/` — reference only, not built or deployed.
+The v2 CRA/MUI/localStorage app is kept for reference in `.legacy-ref-project/` — reference only, not built or deployed.
 
 ![React Invoice admin console — Integrations, with AI providers and email configured per workspace](./docs/assets/admin-integrations.png)
 
-> **Self-hosted starter.** You run this yourself and supply your own secrets. The values in `.env.example` are local-dev defaults only — generate real secrets before deploying anywhere (see [Security](#security)).
+> **Self-hosted.** You run this yourself and supply your own secrets. The values in `.env.example` are local-dev defaults only — generate real secrets before deploying anywhere (see [Security](#security)).
 
 ## How it works
 Set up once — clone, [provision a droplet](./devops.md), first deploy — then every feature runs the same loop: describe it, let Claude Code build to spec, review the PR, deploy.
