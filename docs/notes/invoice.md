@@ -24,6 +24,7 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 
 ## Series + settings
 - `settings/page.tsx` + `_components/series-settings.tsx` + `settings/_actions.ts` — the series list, its inline editor and the two brand-name parts. Reached from the "Invoice settings" button in the editor toolbar (owner/admin only); no sidebar entry of its own.
+- Codes that invoices already carry but that nobody configured (invoices raised before series existed) are listed as one-click "add" chips with their invoice count.
 - Deletion is refused while any invoice carries the code, and the settings page shows the per-series invoice count so the disabled remove button explains itself.
 - The invoice keeps its own `series`/`brandName`/`brandSubName` columns. Renaming a series therefore leaves existing invoices printing what they were issued under — deliberate, and the reason there is no FK between `invoice` and `invoice_series`.
 

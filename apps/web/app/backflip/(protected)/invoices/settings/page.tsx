@@ -32,12 +32,20 @@ export default async function InvoiceSettingsPage() {
     .groupBy(invoices.series)
   const usedByCode = new Map(usage.map((u) => [u.series, Number(u.used)]))
 
+  // Codes that invoices already use but that nobody has defined — typically
+  // invoices raised before series existed. Offered for one-click adoption.
+  const configured = new Set(rows.map((row) => row.code))
+  const unconfigured = usage
+    .filter((u) => u.series.length > 0 && !configured.has(u.series))
+    .map((u) => ({ code: u.series, invoiceCount: Number(u.used) }))
+
   return (
     <SeriesSettings
       series={rows.map((row) => ({
         ...row,
         invoiceCount: usedByCode.get(row.code) ?? 0,
       }))}
+      unconfigured={unconfigured}
     />
   )
 }

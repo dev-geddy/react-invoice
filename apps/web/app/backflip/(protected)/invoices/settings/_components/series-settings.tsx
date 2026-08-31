@@ -31,7 +31,13 @@ const EMPTY = { code: "", brandName: "", brandSubName: "" }
  *
  * @spec L2-INVOICE-22
  */
-export function SeriesSettings({ series }: { series: SeriesRow[] }) {
+export function SeriesSettings({
+  series,
+  unconfigured,
+}: {
+  series: SeriesRow[]
+  unconfigured: { code: string; invoiceCount: number }[]
+}) {
   const [draft, setDraft] = useState(EMPTY)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [pending, start] = useTransition()
@@ -138,6 +144,45 @@ export function SeriesSettings({ series }: { series: SeriesRow[] }) {
           </ul>
         )}
       </section>
+
+      {unconfigured.length > 0 ? (
+        <section className="mt-6 flex flex-col gap-3">
+          <SectionLabel>Used but not configured</SectionLabel>
+          <div className="rounded-xl border border-dashed bg-muted/40 p-4">
+            <p className="text-xs text-muted-foreground">
+              Invoices already carry these codes — add them to pick them from
+              the invoice form and give them branding.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {unconfigured.map((row) => (
+                <Button
+                  key={row.code}
+                  variant="outline"
+                  size="sm"
+                  disabled={pending}
+                  onClick={() =>
+                    start(async () => {
+                      const res = await saveInvoiceSeries({
+                        code: row.code,
+                        brandName: "",
+                        brandSubName: "",
+                      })
+                      if (res.ok) toast.success(res.message)
+                      else toast.error(res.message)
+                    })
+                  }
+                >
+                  <RiAddLine className="size-4" />
+                  {row.code}
+                  <span className="text-muted-foreground">
+                    ({row.invoiceCount})
+                  </span>
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <Separator className="my-6" />
 
