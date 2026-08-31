@@ -31,13 +31,27 @@ export function SiteHeader() {
           <Button
             variant="ghost"
             size="sm"
+            className="hidden text-muted-foreground sm:inline-flex"
+            render={<a href="/#platform" />}
+          >
+            Platform
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
             className="text-muted-foreground"
             render={<a href="/getting-started" />}
           >
             Getting started
           </Button>
           <ThemeToggle />
-          <Button size="sm" render={<a href="/backflip" />}>
+          {/* The brand tokens only exist on the homepage; every other public
+              page falls back to the theme's own primary. */}
+          <Button
+            size="sm"
+            className="bg-[var(--brand,var(--primary))] text-[var(--brand-ink,var(--primary-foreground))] hover:bg-[var(--brand,var(--primary))] hover:opacity-90"
+            render={<a href="/backflip" />}
+          >
             Admin
           </Button>
         </div>
