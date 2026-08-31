@@ -1,0 +1,103 @@
+# @spec L2-INF-01, L2-INF-02, L2-INF-05, L2-INF-06, L2-INF-14
+name: react-invoice
+
+# Modes (profiles):
+#   docker compose up -d                           → react-invoice-db only (native dev: corepack yarn dev on 3080)
+#   docker compose --profile web up -d --build     → db + one-shot migrate + react-invoice-web on http://localhost:3081
+#   docker compose --profile seed run --rm db-seed → one-shot owner seed (ADMIN_EMAIL/ADMIN_PASSWORD via .env.init or shell env)
+
+x-db-url: &db-url postgres://${POSTGRES_USER:-react_invoice}:${POSTGRES_PASSWORD:-react_invoice_local_dev}@db:5432/${POSTGRES_DB:-react_invoice}
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: react-invoice-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-react_invoice}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-react_invoice_local_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-react_invoice}
+    ports:
+      # Host port off the default 5432 to avoid clashing with other local pg.
+      # Bound to loopback so the dev db with its default password isn't exposed
+      # on the network if this file is ever run on a non-local host.
+      - "127.0.0.1:${POSTGRES_PORT:-5545}:5432"
+    volumes:
+      - react_invoice_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-react_invoice}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # One-shot: applies committed drizzle migrations, then exits. Runs
+  # automatically before react-invoice-web (and before the owner seed).
+  db-migrate:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: deps
+    container_name: react-invoice-db-migrate
+    profiles: [web, seed]
+    command: ["corepack", "yarn", "db:migrate"]
+    environment:
+      DATABASE_URL: *db-url
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: react-invoice-web
+    profiles: [web]
+    restart: unless-stopped
+    # AUTH_SECRET, AUTH_GOOGLE_* etc. come from the root env files.
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false
+    environment:
+      # Inside the compose network the db is reachable at host `db`, port 5432
+      # (overrides DATABASE_URL from env_file, which points at localhost).
+      DATABASE_URL: *db-url
+      # The dockerized app is reached on host port 3081, not the native 3080.
+      AUTH_URL: http://localhost:3081
+      AUTH_TRUST_HOST: "true"
+    ports:
+      # Host 3081 → container 3080 (same internal port as local dev).
+      - "3081:3080"
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
+
+  # One-shot owner seed (`corepack yarn init-owner`). Reads ADMIN_EMAIL /
+  # ADMIN_PASSWORD from .env.init (env_file below); to pass them from the
+  # shell instead: docker compose --profile seed run --rm -e ADMIN_EMAIL -e ADMIN_PASSWORD db-seed
+  db-seed:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: deps
+    container_name: react-invoice-db-seed
+    profiles: [seed]
+    command: ["corepack", "yarn", "init-owner"]
+    env_file:
+      - path: .env.init
+        required: false
+    environment:
+      DATABASE_URL: *db-url
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migrate:
+        condition: service_completed_successfully
+
+volumes:
+  react_invoice_pgdata:

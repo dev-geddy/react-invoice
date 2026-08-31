@@ -1,0 +1,29 @@
+# @spec L2-DEVOPS-04
+# Production database — the ONLY dockerized service on the droplet.
+# The app runs on the host via pm2 (Next standalone build); Caddy is a native
+# systemd service. Always run from /var/www/<domain> as:
+#   docker compose --project-directory . -f devops/compose.prod.yml <cmd>
+# `--project-directory .` → compose reads /var/www/<domain>/.env for ${...} interpolation.
+name: react-invoice
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-react_invoice}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-react_invoice}
+    ports:
+      # Loopback only — reachable by the host app/migrations, never the network.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - react_invoice_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-react_invoice}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  react_invoice_pgdata:
