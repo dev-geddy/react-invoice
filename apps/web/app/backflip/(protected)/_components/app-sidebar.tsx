@@ -18,6 +18,7 @@ import {
 } from "@workspace/ui/components/sidebar"
 import {
   RiDashboardLine,
+  RiFileList3Line,
   RiGroupLine,
   RiCheckboxMultipleBlankLine,
   RiShapesLine,
@@ -47,6 +48,12 @@ const NAV_GROUPS: { label: string; pinBottom?: boolean; items: NavItem[] }[] = [
         url: "/backflip",
         icon: RiDashboardLine,
         capability: "dashboard",
+      },
+      {
+        title: "Invoices",
+        url: "/backflip/invoices",
+        icon: RiFileList3Line,
+        capability: "invoices",
       },
       {
         title: "UI samples",

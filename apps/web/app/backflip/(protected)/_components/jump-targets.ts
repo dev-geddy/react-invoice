@@ -9,6 +9,11 @@ export const JUMP_GROUPS: {
     items: [
       { label: "Overview", href: "/backflip", keywords: "dashboard home" },
       {
+        label: "Invoices",
+        href: "/backflip/invoices",
+        keywords: "invoice billing customers vat entries",
+      },
+      {
         label: "Members",
         href: "/backflip/users",
         keywords: "users people team",
@@ -33,6 +38,11 @@ export const JUMP_GROUPS: {
   {
     heading: "Actions",
     items: [
+      {
+        label: "New invoice",
+        href: "/backflip/invoices/new",
+        keywords: "create invoice bill draft",
+      },
       {
         label: "Add member",
         href: "/backflip/users",

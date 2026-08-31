@@ -21,13 +21,25 @@ export const ROLE_LABELS: Record<Role, string> = {
 }
 
 export type Capability =
-  "dashboard" | "account" | "users.view" | "users.edit" | "settings"
+  | "dashboard"
+  | "account"
+  | "users.view"
+  | "users.edit"
+  | "settings"
+  | "invoices"
 
 /** Capabilities granted per role. Owner is the superset. */
 const CAPABILITIES: Record<Role, readonly Capability[]> = {
-  owner: ["dashboard", "account", "users.view", "users.edit", "settings"],
-  admin: ["dashboard", "account", "users.view"],
-  teammate: ["dashboard", "account"],
+  owner: [
+    "dashboard",
+    "account",
+    "users.view",
+    "users.edit",
+    "settings",
+    "invoices",
+  ],
+  admin: ["dashboard", "account", "users.view", "invoices"],
+  teammate: ["dashboard", "account", "invoices"],
 }
 
 export function isRole(value: unknown): value is Role {
@@ -44,3 +56,24 @@ export function can(role: string | undefined | null, capability: Capability) {
 export const canViewUsers = (role?: string | null) => can(role, "users.view")
 export const canEditUsers = (role?: string | null) => can(role, "users.edit")
 export const canAccessSettings = (role?: string | null) => can(role, "settings")
+export const canUseInvoices = (role?: string | null) => can(role, "invoices")
+
+/**
+ * Who may change an existing invoice (edit fields, lock/unlock, delete).
+ *
+ * Invoices are a shared ledger — every signed-in user reads every invoice
+ * (`canUseInvoices`) — but writing one back is limited to the user who created
+ * it plus the platform operators (owner/admin), so one teammate cannot rewrite
+ * another's billing record.
+ *
+ * @spec L2-INVOICE-05
+ */
+export function canManageInvoice(
+  role: string | undefined | null,
+  invoiceOwnerId: string,
+  sessionUserId: string | undefined | null
+) {
+  if (!canUseInvoices(role)) return false
+  if (sessionUserId && sessionUserId === invoiceOwnerId) return true
+  return role === "owner" || role === "admin"
+}

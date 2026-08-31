@@ -3,6 +3,7 @@ import {
   can,
   canAccessSettings,
   canEditUsers,
+  canManageInvoice,
   canViewUsers,
   type Capability,
   type Role,
@@ -14,13 +15,22 @@ const ALL_CAPABILITIES: Capability[] = [
   "users.view",
   "users.edit",
   "settings",
+  "invoices",
 ]
 
-// Contract L2-AUTH-21: owner = all 5, admin = dashboard/account/users.view, teammate = dashboard/account.
+// Contract L2-AUTH-21: owner = all 6, admin = dashboard/account/users.view/invoices,
+// teammate = dashboard/account/invoices (invoices are shared, L2-INVOICE-05).
 const GRANTED: Record<Role, Capability[]> = {
-  owner: ["dashboard", "account", "users.view", "users.edit", "settings"],
-  admin: ["dashboard", "account", "users.view"],
-  teammate: ["dashboard", "account"],
+  owner: [
+    "dashboard",
+    "account",
+    "users.view",
+    "users.edit",
+    "settings",
+    "invoices",
+  ],
+  admin: ["dashboard", "account", "users.view", "invoices"],
+  teammate: ["dashboard", "account", "invoices"],
 }
 
 describe("can", () => {
@@ -71,5 +81,25 @@ describe("canAccessSettings", () => {
     expect(canAccessSettings("owner")).toBe(true)
     expect(canAccessSettings("admin")).toBe(false)
     expect(canAccessSettings("teammate")).toBe(false)
+  })
+})
+
+describe("canManageInvoice", () => {
+  it("lets the creator manage their own invoice, whatever their role", () => {
+    expect(canManageInvoice("teammate", "u1", "u1")).toBe(true)
+  })
+
+  it("lets platform operators manage someone else's invoice", () => {
+    expect(canManageInvoice("owner", "u1", "u2")).toBe(true)
+    expect(canManageInvoice("admin", "u1", "u2")).toBe(true)
+  })
+
+  it("denies a teammate someone else's invoice", () => {
+    expect(canManageInvoice("teammate", "u1", "u2")).toBe(false)
+  })
+
+  it("denies unknown roles and missing sessions", () => {
+    expect(canManageInvoice("superuser", "u1", "u1")).toBe(false)
+    expect(canManageInvoice(null, "u1", null)).toBe(false)
   })
 })
