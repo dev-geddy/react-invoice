@@ -12,6 +12,7 @@ import {
   RiMagicLine,
   RiPrinterLine,
   RiSaveLine,
+  RiDraftLine,
   RiSettings3Line,
 } from "@remixicon/react"
 
@@ -124,6 +125,19 @@ export function InvoiceEditor({
           padded scrollport leaves a transparent strip that `sticky top-0`
           headers cannot cover, and rows scroll through it. */}
       <div className="pt-5" />
+
+      {/* An unsaved draft is nowhere in the ledger yet, so it says so here
+          rather than occupying a phantom row in the list. */}
+      {invoice == null ? (
+        <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-400 bg-amber-50 px-3 py-2 dark:border-amber-700 dark:bg-amber-950/40">
+          <RiDraftLine className="mt-0.5 size-4 flex-none text-amber-700 dark:text-amber-300" />
+          <p className="text-xs text-amber-800 dark:text-amber-300">
+            <strong className="font-semibold">New invoice — not saved.</strong>{" "}
+            It joins the ledger once you create it.
+          </p>
+        </div>
+      ) : null}
+
       <PageHeading
         title={
           invoice

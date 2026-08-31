@@ -37,6 +37,7 @@ All page-scoped, under `apps/web/app/backflip/(protected)/invoices/` (`L1-ARCH-0
 ## Layout
 - The admin shell does not bound its children's height, so `invoices-view` sets `h-[calc(100svh-var(--header-height))]` itself; without it the whole page scrolls and the preview cannot centre in its rail.
 - The form scroll container carries `px-5 pb-5` only — a padded scrollport leaves a transparent strip that `sticky top-0` column headers cannot cover, so the top padding lives on a spacer inside instead.
+- A new draft shows an amber "not saved" banner above the title (`L2-INVOICE-27`); the ledger list carries stored invoices only.
 - Provider/customer columns are capped at 14rem and always side by side; the form column is capped at 500px while the preview is open.
 
 ## Gotchas

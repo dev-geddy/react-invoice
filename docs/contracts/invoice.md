@@ -48,6 +48,7 @@ generation server-side (printing is the browser's), multi-currency conversion.
 ## UI
 - `L2-INVOICE-09` — Editor: invoice meta first (date, series, number + generator, currency, VAT rate), then provider and customer field sets side by side (13 fields each, grouped company / representative / address / billing, column headers sticky), then lines, then the running totals. The form column is capped at 500px so the preview rail keeps the rest of the width.
 - `L2-INVOICE-25` — Series is a select over configured series, never free text; picking one stamps its branding onto the draft. Brand name parts are edited in invoice settings (`L2-INVOICE-24`), not per invoice. A code that is no longer configured stays selectable on the invoice that used it.
+- `L2-INVOICE-27` — An unsaved draft is announced by an amber banner above the editor title, not by a placeholder row in the ledger list: the list shows stored invoices only.
 - `L2-INVOICE-26` — The preview rail centres the sheet on a vignetted canvas and scales it to the rail width (`zoom`, capped at 1:1); a toggle hides the rail to hand the width back to the form.
 - `L2-INVOICE-10` — Lines: qty or rate edits recompute the line total; a total edit back-solves the rate.
 - `L2-INVOICE-11` — Preview is the print artifact: a print stylesheet hides everything but `#invoice-print-root`, A4 with 14 mm margins; `document.title` is set to `invoiceTitle(draft)` so a print-to-PDF is named after the invoice.

@@ -19,7 +19,6 @@ export function InvoiceList({
   invoices,
   selectedId,
   query,
-  creating,
   onQueryChange,
   onSelect,
   onNew,
@@ -27,7 +26,6 @@ export function InvoiceList({
   invoices: Invoice[]
   selectedId: string | null
   query: string
-  creating: boolean
   onQueryChange: (value: string) => void
   onSelect: (id: string) => void
   onNew: () => void
@@ -48,12 +46,6 @@ export function InvoiceList({
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
-        {creating ? (
-          <div className="border-b bg-accent/60 px-3 py-2.5 text-[13px] font-medium">
-            New invoice (unsaved)
-          </div>
-        ) : null}
-
         {invoices.length === 0 ? (
           <p className="p-4 text-sm text-muted-foreground">
             No invoices yet. Create the first one.

@@ -77,7 +77,6 @@ export function InvoicesView({
           invoices={filtered}
           selectedId={selectedId}
           query={query}
-          creating={selected == null}
           onQueryChange={setQuery}
           onSelect={setSelectedId}
           onNew={() => setSelectedId(null)}
