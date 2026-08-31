@@ -3823,19 +3823,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-invoice@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "react-invoice@workspace:."
-  dependencies:
-    "@workspace/eslint-config": "npm:*"
-    "@workspace/typescript-config": "npm:*"
-    prettier: "npm:^3.8.3"
-    prettier-plugin-tailwindcss: "npm:^0.8.0"
-    turbo: "npm:^2.9.18"
-    typescript: "npm:^5"
-  languageName: unknown
-  linkType: soft
-
 "bail@npm:^2.0.0":
   version: 2.0.2
   resolution: "bail@npm:2.0.2"
@@ -4585,7 +4572,7 @@ __metadata:
   resolution: "devlop@npm:1.1.0"
   dependencies:
     dequal: "npm:^2.0.0"
-  checksum: 10c0/e0928ab8f94c59417a2b8389c45c55ce0a02d9ac7fd74ef62d01ba48060129e1d594501b77de01f3eeafc7cb00773819b0df74d96251cf20b31c5b3081f45c0e
+  checksum: 10c0/e0928ab8f94c59417a2b8389c45c55ce0a02d9ac7fd74ef62d01ba48060129e1d594501b77de01f3eeafc7cb00773819b0df74d96251cf20b31c5b3071f45c0e
   languageName: node
   linkType: hard
 
@@ -6126,7 +6113,7 @@ __metadata:
   resolution: "glob-parent@npm:6.0.2"
   dependencies:
     is-glob: "npm:^4.0.3"
-  checksum: 10c0/318034d88654730230b3f43bb7ad4f7c90257a426e872ea0bf157473ac61c99bf5d205fad8f0185f989be8d2fa6d3c7dce1645d99d545b6ea9089c39f838e7f8
+  checksum: 10c0/317034d88654730230b3f43bb7ad4f7c90257a426e872ea0bf157473ac61c99bf5d205fad8f0185f989be8d2fa6d3c7dce1645d99d545b6ea9089c39f838e7f8
   languageName: node
   linkType: hard
 
@@ -9088,6 +9075,19 @@ __metadata:
   checksum: 10c0/f0c63f1794dedb154136d4d0f59af00b41907f4859571c155940296808f4b94bf9c0c20633db75b5b2112ec13d8d7dd4f9bf57362ed48782f317b11d05a44f35
   languageName: node
   linkType: hard
+
+"react-invoice@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "react-invoice@workspace:."
+  dependencies:
+    "@workspace/eslint-config": "npm:*"
+    "@workspace/typescript-config": "npm:*"
+    prettier: "npm:^3.8.3"
+    prettier-plugin-tailwindcss: "npm:^0.8.0"
+    turbo: "npm:^2.9.18"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
 
 "react-is@npm:^16.13.1":
   version: 16.13.1
