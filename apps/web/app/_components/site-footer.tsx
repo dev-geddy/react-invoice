@@ -26,7 +26,7 @@ export function SiteFooter() {
               strokeLinecap="round"
               strokeLinejoin="round"
               aria-hidden="true"
-              className="text-primary"
+              className="text-[var(--brand,var(--primary))]"
             >
               <path d="M12 3v7" />
               <path d="M6 8a7 7 0 1 0 12 0" />
@@ -44,9 +44,17 @@ export function SiteFooter() {
           <a href="/backflip" className="hover:text-foreground">
             Admin
           </a>
+          <a
+            href="https://github.com/dev-geddy/react-invoice"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-foreground"
+          >
+            GitHub
+          </a>
         </nav>
         <p className="flex items-baseline gap-2 text-[0.8125rem] text-muted-foreground">
-          © {new Date().getFullYear()} Backflip Invoice
+          © {new Date().getFullYear()} Backflip Invoice · MIT
           <AppVersion />
         </p>
       </div>
