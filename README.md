@@ -26,7 +26,6 @@ Stack: Next.js 16 · React 19 · Tailwind v4 · shadcn/ui · Drizzle + Postgres 
 - **Series & currency** — `/backflip/invoicing/settings`. Each series owns its numbering prefix, default currency and branding, with a platform brand as fallback. Invoices snapshot all three, so editing a series never rewrites an issued invoice.
 
 Contract: [`docs/contracts/invoice.md`](./docs/contracts/invoice.md) · notes: [`docs/notes/invoice.md`](./docs/notes/invoice.md).
-The v2 CRA/MUI/localStorage app is kept for reference in `.legacy-ref-project/` — reference only, not built or deployed.
 
 ![The invoice editor: form on the left, the printable document previewed on the right, with download and print actions beside the paper](./docs/assets/invoice-editor.png)
 

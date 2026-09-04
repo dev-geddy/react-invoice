@@ -9,9 +9,8 @@
 ## Owns
 The invoicing surface: the shared invoice ledger under `/backflip/invoicing/invoices`, its
 data model (`invoice`, `invoice_party`, `invoice_entry`), its arithmetic, and the
-printable invoice document. Ported from the legacy CRA app kept for reference in
-`.legacy-ref-project/` (localStorage, MUI) — the behaviour is carried over, none
-of its code is.
+printable invoice document. Ported from a legacy CRA/MUI/localStorage app — the
+behaviour is carried over, none of its code is.
 
 Explicitly **not** owned: payment collection, dunning, tax reporting, PDF
 generation server-side (printing is the browser's), multi-currency conversion.
