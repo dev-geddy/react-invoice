@@ -12,7 +12,7 @@ import { InvoicePaperStack } from "./invoice-paper"
 /** The claim strip under the CTAs: what it costs, what it runs on. */
 const FACTS = [
   "£0 forever",
-  "MIT licensed",
+  "Source-available",
   "Your Postgres",
   "Next.js 16 · React 19",
 ]
@@ -39,7 +39,7 @@ export function Hero() {
         <div className="max-w-2xl">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--brand-line)] bg-[var(--brand-soft)] px-2 py-0.5 text-[0.625rem] font-medium text-[var(--brand)]">
             <RiSparkling2Line className="size-3.5" aria-hidden="true" />
-            Free · MIT · self-hosted
+            Free · source-available · self-hosted
           </span>
           <h1 className="mt-5 text-[clamp(2.5rem,6.4vw,4.25rem)] leading-[1.02] font-bold tracking-tight">
             Invoicing you
