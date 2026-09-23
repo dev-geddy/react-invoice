@@ -17,7 +17,7 @@ own typecheck before it builds or touches the droplet, so a type error cannot sh
 
 Pipeline: `deploy` — a thin wrapper over `devops/deploy-for-pm2-build-locally.sh`.
 
-The build happens **on the Drone runner** (`node:24-bookworm-slim`): `corepack yarn install` → typecheck → Next standalone build → tarball artifact. Only the artifact ships to the droplet; migrations run from the runner through an ssh tunnel (droplet Postgres is loopback-only). The droplet needs no Node deps, no build — same blue/green flip and rollback semantics as every pm2-flavor deploy.
+The build happens **on the Drone runner** (`node:26-bookworm-slim` + `npm i -g corepack` — Node 25+ ships without it; matches the droplet's Node 26): `corepack yarn install` → typecheck → Next standalone build → tarball artifact. Only the artifact ships to the droplet; migrations run from the runner through an ssh tunnel (droplet Postgres is loopback-only). The droplet needs no Node deps, no build — same blue/green flip and rollback semantics as every pm2-flavor deploy.
 
 Matches the pm2 droplet flavor (`setup-droplet-for-pm2.sh`). The runner image is Debian (glibc) on purpose — the artifact's traced `node_modules` must match the droplet's Ubuntu; don't swap in an alpine image.
 

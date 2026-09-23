@@ -14,8 +14,10 @@ trigger:
 
 steps:
   - name: checks
-    image: node:24-bookworm-slim
+    image: node:26-bookworm-slim
     commands:
+      # Node 25+ ships without corepack — install it before enabling.
+      - npm i -g corepack
       - corepack enable
       - corepack yarn install --immutable
       - corepack yarn typecheck
@@ -55,7 +57,7 @@ steps:
     # Debian (glibc) on purpose: the runner builds the artifact, so its traced
     # node_modules must match the droplet's Ubuntu. An alpine/musl build would
     # ship musl binaries (sharp) the droplet cannot load.
-    image: node:24-bookworm-slim
+    image: node:26-bookworm-slim
     environment:
       DEPLOY_HOST:
         from_secret: deploy_host
@@ -71,6 +73,7 @@ steps:
       # bash: the deploy script is bash (arrays, /dev/tcp port probe).
       # openssh-client: scp upload + the ControlMaster migration tunnel.
       - apt-get update -qq && apt-get install -y -qq --no-install-recommends bash openssh-client
+      - npm i -g corepack
       - corepack enable
       # The build-locally flow refuses without local deps — install them here.
       - corepack yarn install --immutable
