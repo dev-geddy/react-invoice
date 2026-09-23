@@ -21,7 +21,7 @@ const POINTS: {
   {
     icon: RiPriceTag3Line,
     title: "Free, and it stays free",
-    body: "MIT licensed, no seats, no per-invoice fee, no plan that suddenly needs upgrading when a second person joins.",
+    body: "Source-available, no seats, no per-invoice fee, no plan that suddenly needs upgrading when a second person joins.",
   },
   {
     icon: RiServerLine,

@@ -2,6 +2,7 @@
   "name": "react-invoice",
   "version": "3.0.0",
   "private": true,
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",

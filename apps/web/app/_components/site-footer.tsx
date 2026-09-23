@@ -54,7 +54,7 @@ export function SiteFooter() {
           </a>
         </nav>
         <p className="flex items-baseline gap-2 text-[0.8125rem] text-muted-foreground">
-          © {new Date().getFullYear()} Backflip Invoice · MIT
+          © {new Date().getFullYear()} Backflip Invoice · Source-available
           <AppVersion />
         </p>
       </div>

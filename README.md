@@ -31,6 +31,8 @@ Contract: [`docs/contracts/invoice.md`](./docs/contracts/invoice.md) · notes: [
 
 > **Self-hosted.** You run this yourself and supply your own secrets. The values in `.env.example` are local-dev defaults only — generate real secrets before deploying anywhere (see [Security](#security)).
 
+> **License notice.** As of September 23, 2026, this project is licensed under the [PolyForm Internal Use License 1.0.0](./LICENSE), mirroring [Backflip](https://github.com/dev-geddy/backflip)'s license. Versions released before this date remain available under the MIT License under which they were originally published.
+
 ## How it works
 Set up once — clone, [provision a droplet](./devops.md), first deploy — then every feature runs the same loop: describe it, let Claude Code build to spec, review the PR, deploy.
 
@@ -124,4 +126,6 @@ Before deploying, generate real secrets — never reuse the `.env.example` defau
 To report a vulnerability, see [`SECURITY.md`](./SECURITY.md).
 
 ## License
-[MIT](./LICENSE) © dev-geddy
+[PolyForm Internal Use License 1.0.0](./LICENSE) © dev-geddy
+
+Internal business use is permitted, and so is personal, non-commercial use — hobby projects, study, experiments (see the additional permission at the end of [`LICENSE`](./LICENSE)). Distribution is not permitted. Releases published before September 23, 2026 remain available under the MIT License they shipped with.

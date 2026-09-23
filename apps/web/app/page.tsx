@@ -14,7 +14,7 @@ import { WordmarkBand } from "./_components/wordmark-band"
 export const metadata: Metadata = {
   title: "Backflip Invoice — invoicing you own outright",
   description:
-    "Self-hosted invoicing on the Backflip foundation: a shared ledger behind your own login, a live preview that is the printed document, and an A4 PDF at the end of it. MIT licensed, no seats, your Postgres.",
+    "Self-hosted invoicing on the Backflip foundation: a shared ledger behind your own login, a live preview that is the printed document, and an A4 PDF at the end of it. Source-available, no seats, your Postgres.",
 }
 
 /**
